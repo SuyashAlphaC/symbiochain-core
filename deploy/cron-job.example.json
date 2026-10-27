@@ -1,0 +1,18 @@
+{
+  "job": {
+    "title": "SymbioChain readiness",
+    "url": "https://YOUR-SERVICE.onrender.com/readyz",
+    "enabled": false,
+    "saveResponses": false,
+    "requestMethod": 0,
+    "schedule": {
+      "timezone": "UTC",
+      "expiresAt": 0,
+      "hours": [-1],
+      "mdays": [-1],
+      "months": [-1],
+      "wdays": [-1],
+      "minutes": [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]
+    }
+  }
+}

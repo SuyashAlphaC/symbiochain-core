@@ -1,0 +1,20 @@
+{
+  "capturedAt": "2026-10-27T16:38:23.049Z",
+  "mode": "PAPER",
+  "supabase": {
+    "migrationsApplied": 7,
+    "clientTlsEncrypted": true,
+    "clientTlsAuthorized": true,
+    "backendTables": 18,
+    "rlsEnabledTables": 18,
+    "dataApiTableGrants": 0
+  },
+  "render": {
+    "blueprintValidation": "PASSED",
+    "plan": "free",
+    "hostedRuntime": "PENDING"
+  },
+  "cron": {
+    "configured": false
+  }
+}

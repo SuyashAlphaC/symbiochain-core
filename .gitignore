@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+coverage/
+*.log
+.data/
+target/
+.DS_Store
+artifacts/*.wasm
+artifacts/*private*
+!artifacts/.gitkeep
+src/generated/

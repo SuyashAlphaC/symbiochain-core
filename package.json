@@ -1,0 +1,73 @@
+{
+  "name": "symbiochain-core",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Durable, policy-controlled autonomous agent treasury on NEAR",
+  "type": "module",
+  "engines": {
+    "node": ">=24.0.0 <25"
+  },
+  "scripts": {
+    "dev": "tsx watch src/main.ts",
+    "worker": "tsx src/worker-main.ts",
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "infra:check": "tsc --noEmit --target ES2022 --module NodeNext --moduleResolution NodeNext --skipLibCheck .railway/railway.ts",
+    "start": "node dist/main.js",
+    "start:worker": "node dist/worker-main.js",
+    "test": "vitest run",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
+    "db:harden": "node dist/harden-main.js",
+    "start:render": "bash scripts/start-render.sh",
+    "db:dev": "prisma migrate dev",
+    "demo": "tsx scripts/demo.ts",
+    "probe:market": "tsx scripts/probe-market.ts",
+    "probe:attestation": "tsx scripts/probe-attestation.ts",
+    "live:preflight": "tsx scripts/live-preflight.ts",
+    "check": "npm run db:generate && npm run typecheck && npm test && npm run build",
+    "contract:build": "bash scripts/build-contract.sh",
+    "contract:test": "cargo test --manifest-path contracts/treasury/Cargo.toml --lib",
+    "contract:integration": "tsx scripts/contract-integration.ts",
+    "evidence:export": "tsx scripts/evidence.ts export",
+    "evidence:replay": "tsx scripts/evidence.ts replay",
+    "format": "prettier --write src scripts test docs README.md HACKATHON.md '.railway/*.{ts,md,json}' '*.json' '*.ts' && cargo fmt --manifest-path contracts/treasury/Cargo.toml",
+    "format:check": "prettier --check src scripts test docs README.md HACKATHON.md '.railway/*.{ts,md,json}' '*.json' '*.ts'"
+  },
+  "dependencies": {
+    "@defuse-protocol/one-click-sdk-typescript": "0.1.26",
+    "@fastify/cors": "11.3.1",
+    "@fastify/rate-limit": "11.2.1",
+    "@fastify/swagger": "9.9.2",
+    "@fastify/swagger-ui": "6.1.2",
+    "@fastify/websocket": "11.3.4",
+    "@noble/hashes": "2.4.0",
+    "@phala/dcap-qvl": "0.7.0",
+    "@prisma/adapter-pg": "7.10.1",
+    "@prisma/client": "7.10.1",
+    "@solana/web3.js": "1.98.4",
+    "bs58": "6.0.0",
+    "chainsig.js": "1.1.16",
+    "dotenv": "18.0.9",
+    "fastify": "5.12.7",
+    "near-api-js": "7.4.0",
+    "pg": "8.23.1",
+    "viem": "2.57.12",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.5",
+    "@types/pg": "8.23.1",
+    "@types/ws": "8.18.2",
+    "near-workspaces": "5.0.0",
+    "prettier": "3.8.3",
+    "prisma": "7.10.1",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3",
+    "vitest": "5.0.5"
+  },
+  "overrides": {
+    "tar": "7.5.22"
+  }
+}

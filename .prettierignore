@@ -1,0 +1,7 @@
+node_modules
+dist
+src/generated
+package-lock.json
+contracts
+.data
+artifacts

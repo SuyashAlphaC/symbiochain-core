@@ -1,0 +1,49 @@
+name: Backend and contract verification
+on: [push, pull_request]
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: symbio
+          POSTGRES_PASSWORD: symbio_ci
+          POSTGRES_DB: symbiochain_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd 'pg_isready -U symbio -d symbiochain_test'
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql://symbio:symbio_ci@localhost:5432/symbiochain_test
+      TEST_DATABASE_URL: postgresql://symbio:symbio_ci@localhost:5432/symbiochain_test
+      EXECUTION_MODE: PAPER
+      ADMIN_TOKEN: ci-admin-token-nonsecret-0000000000000000
+      READ_TOKEN: ci-read-token-nonsecret-00000000000000000
+      EVIDENCE_ENCRYPTION_KEY: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 24, cache: npm }
+      - run: npm ci
+      - run: npm ci --prefix .railway --ignore-scripts
+      - run: npm run infra:check
+      - run: npm run db:migrate
+      - run: npm run check
+      - run: npm run db:harden
+      - run: npm run test:integration
+      - run: npm run demo
+      - run: npm audit --audit-level=high
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 24, cache: npm }
+      - run: npm ci
+      - run: rustup show
+      - run: npm run contract:test
+      - run: npm run contract:build
+      - run: bash scripts/build-mock.sh
+      - run: bash scripts/install-sandbox.sh
+      - run: npm run contract:integration

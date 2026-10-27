@@ -1,0 +1,52 @@
+# Verification record
+
+Local verification performed on 2026-10-27. Evidence categories are kept separate. No funded mainnet transaction, authenticated real model completion, completed public hosting or external financial self-sufficiency is asserted.
+
+| Gate                   | Result                                                                                                                                                                                                                                                                                          |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Prisma migrations      | Seven versioned migrations applied to local PostgreSQL and the isolated `_test` database                                                                                                                                                                                                        |
+| TypeScript             | Strict typecheck and production build pass                                                                                                                                                                                                                                                      |
+| Unit tests             | 35 pass: units, commitments, policy economics, encryption, quote/response signatures, hardware policy, malformed DCAP input, EVM/SOL assembly, receipt freshness, archives, safe RPC values, optional JWT, plus five public-ITA cases for signature, nonce, time, issuer and platform rejection |
+| PostgreSQL integration | 34 pass: workflow closure, concurrent processing, stale leases, held reserves, auth/replay, immutable journals, paid-inference and Intents nonce recovery, cost approval, plus 12 LIVE-orchestration cases covering both legs, dropped sends, refunds, retry limits and idle funding            |
+| Rust unit tests        | 12 pass: roles/revocation, pause, budget and independent token caps, one-use signing, service conservation, receipt mechanics, failed payout credit and Solana payload structure                                                                                                                |
+| NEAR sandbox           | 10 checks pass: real local contract calls, payload equality against viem/web3.js, duplicate/unauthorized rejection, NFT mint, distribution/claim, service settlement/storage and withdrawal protection                                                                                          |
+| PAPER demo             | Reaches CLOSED with zero active reservation, balanced journals and explicit SIMULATED evidence                                                                                                                                                                                                  |
+| Export/replay          | A private PAPER archive exports and replays with source mode preserved and checksum valid                                                                                                                                                                                                       |
+| Docker                 | Non-root image builds; local container readiness returns 200, authenticated swarm read returns 200, unauthenticated read returns 401                                                                                                                                                            |
+| Hosted deployment      | Render free-service Blueprint validated by its API. Dedicated Supabase login and verified client TLS pass; migrations and hosted-runtime verification are in progress.                                                                                                                          |
+| npm audit              | Zero high/critical findings; transitive low/moderate findings remain documented in the operations guide                                                                                                                                                                                         |
+| Public market probe    | Actual dry quotes verified using the approved 1Click manager key; captured conservative return is below input, so profit gate rejects it                                                                                                                                                        |
+| Public gateway probe   | Real Intel Trust Authority gateway token: PS384 signature, pinned issuer/key source, fresh signed nonce, expiry, UpToDate TDX and debug-disabled claims verified; application measurement remains unapproved and model inference remains unverified                                             |
+
+## Commands
+
+```bash
+npm run check
+npm run test:integration
+npm run demo
+npm run contract:test
+npm run contract:build
+bash scripts/build-mock.sh
+bash scripts/install-sandbox.sh
+npm run contract:integration
+npm run probe:market
+npm run probe:attestation
+npm audit --audit-level=high
+docker build -t symbiochain-core:local .
+```
+
+`artifacts/market-probe.json` is a real public quote snapshot with signatures and its capture time. It is not a settlement. Sandbox output uses an intentionally invalid-signature MPC stub and synthetic accountant-reported P&L. Hardware-policy tests inject verified-report fixtures; the separate malformed-quote test calls the actual DCAP library and rejects invalid bytes. Valid offline signing tests use locally generated keys, not MPC-generated signatures.
+
+`test/integration/live.test.ts` exercises the production LIVE orchestration against PostgreSQL with injected RPC, treasury, inference and payment transports. Quotes and EVM/Solana transaction signatures are cryptographically verified using local test keys; network balances, hardware evidence and chain settlement are fixtures. These tests reproduce the PostgreSQL advisory-lock deserialization failure, recover lost broadcasts using identical signed bytes, retain reservations on exhausted retries, close first-leg refund authorizations, and verify the idle-funding confirmation boundary. They do not establish mainnet execution or genuine confidential inference. Production configuration exposes no fixture or attestation-bypass switch.
+
+The optional-JWT regression first failed with `LIVE requires ONECLICK_JWT` and now passes without a partner token. The same test still rejects unarmed trading, missing approved model measurements and a missing inference key. This removes an unnecessary access dependency; it does not waive anonymous platform fees or establish funded settlement. `live:preflight` now lists the remaining 16 missing settings and reports the selected 1Click authentication mode separately.
+
+The contract build emits the current `artifacts/symbiochain_treasury.wasm` SHA-256. Use the hash from your build/release; an artifact hash alone does not imply deployment.
+
+`artifacts/public-attestation-probe.json` contains a real public gateway ITA token and Intel public keys acquired from a pinned HTTPS endpoint. The signature and signed caller nonce were checked at capture time. The token expires after a short interval; the artifact records historical verification, not permanent freshness. `deploymentMeasurementApproved` and `modelInferenceVerified` are false. This diagnostic neither exercises the production DCAP verifier nor purchases inference or moves funds. Its adversarial unit cases use locally generated RSA fixtures.
+
+## Remaining live evidence
+
+Infrastructure verification additionally checked the pinned SDK's types, preservation of Docker builds/API migration/readiness/worker startup, and a read-only Railway plan with three additions, zero changes and zero destructions. See [plan summary](../artifacts/infrastructure-plan.json). Provisioning attempts are rejected despite Hobby metadata; the selected empty environment has no services or pending deployment work. A queued template response was not counted as successful provisioning. Infrastructure has not been applied, and this is not a hosted-runtime check.
+
+Run `npm run live:preflight` to list missing configuration **names** without displaying secrets or issuing a transaction. Dedicated funded accounts/wallets, provider/session credentials, approved measurements and target-chain gas remain prerequisites. Supabase and Render were selected for the PAPER deployment. Real attested inference, actual MPC signing, funded two-leg settlement, live cost valuation and a demonstrated compute-funding cycle remain external validation work. Direct purchase of NEAR AI credits also needs a supported customer payment protocol; the inspected public interfaces do not supply one. See the [provider funding decision](PROVIDER_FUNDING.md). Do not replace those gates with paper/sandbox output.

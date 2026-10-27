@@ -1,0 +1,14 @@
+[package]
+name = "symbiochain-mpc-mock"
+version = "0.1.0"
+edition = "2021"
+publish = false
+[lib]
+crate-type = ["cdylib"]
+[dependencies]
+near-sdk = "=5.27.0"
+borsh = "1.5"
+[profile.release]
+opt-level = "z"
+lto = true
+panic = "abort"

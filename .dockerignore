@@ -1,0 +1,12 @@
+node_modules
+.railway
+dist
+.git
+.env
+.env.*
+!.env.example
+.data
+contracts/**/target
+artifacts
+coverage
+*.log

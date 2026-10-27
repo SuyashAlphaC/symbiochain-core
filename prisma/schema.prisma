@@ -1,0 +1,272 @@
+generator client {
+  provider = "prisma-client"
+  output = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum ExecutionMode {
+  PAPER
+  LIVE
+  REPLAY
+}
+
+enum CycleState {
+  DISCOVERED
+  QUOTED
+  ASSESSED
+  RESERVED
+  SUBMITTED
+  SETTLING
+  RECONCILED
+  CLOSED
+  REJECTED
+  EXPIRED
+  REFUNDED
+  UNKNOWN
+  FAILED
+}
+
+model Cycle {
+  id             String        @id @default(uuid())
+  mode           ExecutionMode
+  idempotencyKey String
+  strategy       String
+  state          CycleState    @default(DISCOVERED)
+  version        Int           @default(0)
+  proposal       Json
+  quote          Json?
+  assessment     Json?
+  submission     Json?
+  settlement     Json?
+  rejection      String?
+  expiresAt      DateTime
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  decisions      Decision[]
+  transactions   ChainTransaction[]
+  proofs         Proof[]
+  jobs           Job[]
+  reservation    Reservation?
+  journals       Journal[]
+  usage          ComputeUsage[]
+  inference      InferenceAttempt?
+  liveLegs       LiveLeg[]
+  costBasis      CostBasis?
+
+  @@unique([mode, idempotencyKey])
+  @@index([mode, state, createdAt])
+}
+
+model Decision {
+  id        String   @id @default(uuid())
+  cycleId   String
+  cycle     Cycle    @relation(fields: [cycleId], references: [id])
+  agent     String
+  action    String
+  details   Json
+  createdAt DateTime @default(now())
+  @@index([cycleId, createdAt])
+}
+
+model Proof {
+  id                  String   @id @default(uuid())
+  cycleId             String
+  cycle               Cycle    @relation(fields: [cycleId], references: [id])
+  kind                String
+  status              String
+  model               String?
+  requestHash         String?
+  responseHash        String?
+  signer              String?
+  measurement         String?
+  evidenceCiphertext  String?
+  publicDetails       Json
+  verifiedAt          DateTime?
+  createdAt           DateTime @default(now())
+  @@index([cycleId])
+}
+
+model ChainTransaction {
+  id          String   @id @default(uuid())
+  cycleId     String
+  cycle       Cycle    @relation(fields: [cycleId], references: [id])
+  chainId     String
+  txHash      String
+  operation   String
+  asset       String
+  amountAtoms String
+  status      String
+  blockNumber String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  @@unique([chainId, txHash, operation])
+  @@index([cycleId])
+}
+
+model Policy {
+  mode                 ExecutionMode @id
+  paused               Boolean       @default(false)
+  revision             Int           @default(1)
+  maxTradeAtoms        Decimal       @db.Decimal(78, 0)
+  maxDailySpendAtoms   Decimal       @db.Decimal(78, 0)
+  minReserveAtoms      Decimal       @db.Decimal(78, 0)
+  minNetProfitAtoms    Decimal       @db.Decimal(78, 0)
+  maxSlippageBps       Int
+  allowedAssets       String[]
+  allowedChains       String[]
+  allowedRecipients   String[]
+  updatedAt            DateTime      @updatedAt
+}
+
+model Reservation {
+  id          String        @id @default(uuid())
+  cycleId     String        @unique
+  cycle       Cycle         @relation(fields: [cycleId], references: [id])
+  mode        ExecutionMode
+  amountAtoms Decimal       @db.Decimal(78, 0)
+  status      String        @default("ACTIVE")
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  @@index([mode, status, createdAt])
+}
+
+model Journal {
+  id        String        @id @default(uuid())
+  mode      ExecutionMode
+  reference String
+  kind      String
+  cycleId   String?
+  cycle     Cycle?        @relation(fields: [cycleId], references: [id])
+  postings  Posting[]
+  createdAt DateTime      @default(now())
+  @@unique([mode, reference])
+  @@index([mode, kind])
+}
+
+model Posting {
+  id          String  @id @default(uuid())
+  journalId   String
+  journal     Journal @relation(fields: [journalId], references: [id])
+  account     String
+  asset       String
+  amountAtoms Decimal @db.Decimal(78, 0)
+  @@index([account, asset])
+}
+
+model ComputeUsage {
+  id              String        @id @default(uuid())
+  cycleId         String
+  cycle           Cycle         @relation(fields: [cycleId], references: [id])
+  mode            ExecutionMode
+  requestId       String        @unique
+  model           String
+  inputTokens     Int
+  outputTokens    Int
+  costUsdMicros   String
+  billingSource   String
+  createdAt       DateTime      @default(now())
+}
+
+model InferenceAttempt {
+  cycleId           String   @id
+  cycle             Cycle    @relation(fields: [cycleId], references: [id])
+  proposalDigest    String
+  status            String
+  evidenceCiphertext String
+  resultCiphertext  String?
+  billingRequestId  String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model LiveLeg {
+  id                String   @id
+  cycleId           String
+  cycle             Cycle    @relation(fields: [cycleId], references: [id])
+  leg               Int
+  termsDigest       String
+  status            String
+  // Quote, exact unsigned transaction and signed bytes are durable and encrypted.
+  payloadCiphertext String
+  txHash            String?
+  broadcastAttempts Int @default(0)
+  lastBroadcastAt   DateTime?
+  lastBroadcastError String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  @@unique([cycleId, leg])
+}
+
+model ComputeAccount {
+  mode                  ExecutionMode @id
+  remainingNanoUsd      String
+  providerEvidence      Json
+  updatedAt             DateTime @updatedAt
+}
+
+model ServicePayment {
+  id                String @id
+  cycleId           String
+  mode              ExecutionMode
+  termsDigest       String
+  status            String
+  attempts          Int @default(0)
+  payloadCiphertext String
+  txHash            String?
+  updatedAt         DateTime @updatedAt
+  createdAt         DateTime @default(now())
+  @@index([mode,cycleId])
+}
+
+model CostBasis {
+  cycleId           String @id
+  cycle             Cycle @relation(fields: [cycleId],references: [id])
+  mode              ExecutionMode
+  termsDigest       String
+  settlementDigest  String
+  inferenceCostUsdMicros String
+  computeBaseAtoms  String
+  nativeGasBaseAtoms String
+  hostingBaseAtoms  String
+  otherBaseAtoms    String
+  receiptBudgetBaseAtoms String
+  approvedBy        String
+  sourceEvidence    Json
+  createdAt         DateTime @default(now())
+}
+
+model Job {
+  id          String   @id @default(uuid())
+  cycleId     String
+  cycle       Cycle    @relation(fields: [cycleId], references: [id])
+  lane        String
+  dedupKey    String   @unique
+  availableAt DateTime @default(now())
+  leaseUntil  DateTime?
+  leaseToken  String?
+  attempts    Int      @default(0)
+  lastError   String?
+  doneAt      DateTime?
+  createdAt   DateTime @default(now())
+  @@index([lane, availableAt, leaseUntil])
+}
+
+model WorkerControl {
+  role      String   @id
+  paused    Boolean  @default(false)
+  heartbeat DateTime?
+  updatedAt DateTime @updatedAt
+}
+
+model OutboxEvent {
+  seq       BigInt        @id @default(autoincrement())
+  mode      ExecutionMode
+  topic     String
+  cycleId   String?
+  payload   Json
+  createdAt DateTime      @default(now())
+  @@index([mode, seq])
+}

@@ -1,0 +1,33 @@
+services:
+  - type: web
+    name: symbiochain-core
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    dockerCommand: bash scripts/start-render.sh
+    healthCheckPath: /readyz
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      - key: EXECUTION_MODE
+        value: PAPER
+      - key: LIVE_TRADING_ENABLED
+        value: 'false'
+      - key: DATABASE_POOL_MAX
+        value: '3'
+      - key: WORKER_POLL_MS
+        value: '2000'
+      - key: DATABASE_URL
+        sync: false
+      - key: ADMIN_TOKEN
+        generateValue: true
+      - key: READ_TOKEN
+        generateValue: true
+      - key: EVIDENCE_ENCRYPTION_KEY
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
