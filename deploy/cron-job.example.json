@@ -5,6 +5,13 @@
     "enabled": false,
     "saveResponses": false,
     "requestMethod": 0,
+    "requestTimeout": 30,
+    "notification": {
+      "onFailure": false,
+      "onSuccess": false,
+      "onDisable": false,
+      "onSslCertExpiry": false
+    },
     "schedule": {
       "timezone": "UTC",
       "expiresAt": 0,

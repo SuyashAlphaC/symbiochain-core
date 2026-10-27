@@ -31,8 +31,9 @@ jobs:
       - run: npm run db:migrate
       - run: npm run check
       - run: npm run db:harden
-      - run: npm run test:integration
+      # Integration fixtures deliberately leave pending recovery jobs in this isolated database.
       - run: npm run demo
+      - run: npm run test:integration
       - run: npm audit --audit-level=high
   contract:
     runs-on: ubuntu-latest
