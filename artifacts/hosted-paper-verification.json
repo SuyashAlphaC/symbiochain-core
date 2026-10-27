@@ -1,0 +1,35 @@
+{
+  "capturedAt": "2026-10-27T16:45:57.918Z",
+  "mode": "PAPER",
+  "disclosure": "Synthetic funding, inference, prices and settlement. No mainnet funds or model purchase.",
+  "url": "https://symbiochain-core.onrender.com",
+  "readinessStatus": 200,
+  "unauthenticatedStatus": 401,
+  "readTokenMutationStatus": 401,
+  "workers": [
+    {
+      "role": "SCOUT",
+      "heartbeat": "2026-10-27T16:45:54.477Z"
+    },
+    {
+      "role": "BRAIN",
+      "heartbeat": "2026-10-27T16:45:54.482Z"
+    },
+    {
+      "role": "HAND",
+      "heartbeat": "2026-10-27T16:45:54.487Z"
+    }
+  ],
+  "wssAuthenticated": true,
+  "wssCursorReplay": true,
+  "cycleId": "14abb224-416d-4619-a983-d0ac462c1b40",
+  "cycleState": "CLOSED",
+  "reservedAtoms": "0",
+  "netProfitStatus": "SIMULATED",
+  "cycleEventCount": 9,
+  "proofStatuses": [
+    "SIMULATED"
+  ],
+  "cycleJournals": 3,
+  "unbalancedJournalAssets": 0
+}

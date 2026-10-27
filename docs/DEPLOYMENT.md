@@ -2,6 +2,14 @@
 
 The selected demo stack is Supabase PostgreSQL, a Render Docker web service, and an optional cron-job.org availability check. LIVE and PAPER share code but never share accounting modes. Use separate databases/environments for demonstrations and funded operation.
 
+## Verified deployment
+
+The PAPER service is live at [API documentation](https://symbiochain-core.onrender.com/docs), with [public readiness](https://symbiochain-core.onrender.com/readyz). Source is the private [GitHub repository](https://github.com/SuyashAlphaC/symbiochain-core). The running deployment is `dep-dbgd7v4s728c738qjvbg`, built from revision `1e9535b1f4e25866d035519b4c880ee19686d344`; automatic deployments are disabled. Later documentation/CI commits do not change its running image.
+
+The [hosted verification record](../artifacts/hosted-paper-verification.json) captures authenticated HTTPS and WSS replay, three fresh worker heartbeats, a closed PAPER cycle and balanced journals. Supabase has seven applied migrations, verified client TLS, RLS on 18 backend tables and no Data API table grants. Application tokens and the persistent evidence key remain in the ignored local `.env` and Render runtime variables. The Render/cron management keys stay local.
+
+cron-job.org job `8735734` is enabled every five minutes against `/readyz`, with email notifications disabled. Its configuration was read back and checked; the first two scheduled requests returned HTTP 200. Scheduled-execution evidence is recorded separately in the [hosting preflight](../artifacts/hosting-preflight.json). Configure the real frontend origin in Render's `CORS_ORIGINS` before connecting a browser dashboard; browser origins currently have no allowlist entries.
+
 ## Supabase and Render
 
 Use a dedicated Supabase database. Set `DATABASE_URL` to the **session pooler on port 5432** from the project's Connect dialog. Persistent workers and migration sessions need session semantics; this backend rejects transaction-pooler port 6543. Percent-encode reserved characters in passwords and replace placeholder brackets. An optional `DIRECT_DATABASE_URL` overrides the migration/hardening connection only. Supabase direct endpoints can require IPv6; the session pooler supports IPv4 without that add-on. See [Supabase connection guidance](https://supabase.com/docs/guides/database/connecting-to-postgres).

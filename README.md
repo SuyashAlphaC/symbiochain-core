@@ -4,7 +4,7 @@
 
 The backend includes TypeScript/Fastify, PostgreSQL/Prisma, durable workers, a Rust NEAR treasury/NFT contract, EVM and native Solana transfer adapters, encrypted evidence, replayable WebSocket events, and Docker/CI configuration.
 
-**Evidence status:** the paper workflow, PostgreSQL recovery tests, real local NEAR contract calls, public signed quotes, and a public gateway Intel Trust Authority token check have run. A funded mainnet round trip and an authenticated NEAR AI model hardware verification have **not** been performed. This repository does not claim that an arbitrage opportunity exists or that the swarm has achieved financial self-sufficiency. See [implementation status](docs/IMPLEMENTATION.md).
+**Evidence status:** the [hosted PAPER backend](https://symbiochain-core.onrender.com/docs), PostgreSQL recovery tests, real local NEAR contract calls, public signed quotes, and a public gateway Intel Trust Authority token check have run. A funded mainnet round trip and an authenticated NEAR AI model hardware verification have **not** been performed. This repository does not claim that an arbitrage opportunity exists or that the swarm has achieved financial self-sufficiency. See [implementation status](docs/IMPLEMENTATION.md).
 
 ## Run locally
 
@@ -88,7 +88,7 @@ The hardware verifier uses patched `@phala/dcap-qvl`, not the vulnerable legacy 
 
 | Mode   | Behavior                                                                 | Evidence                                        |
 | ------ | ------------------------------------------------------------------------ | ----------------------------------------------- |
-| PAPER  | Synthetic market/model/settlement, local DB                              | `SIMULATED`                                     |
+| PAPER  | Synthetic market/model/settlement, persistent PostgreSQL                 | `SIMULATED`                                     |
 | LIVE   | Real provider/RPC/contract calls; explicitly armed and separately funded | Only checks actually passed are marked verified |
 | REPLAY | Offline archived data; no new inference or transactions                  | `REPLAY` plus original source mode              |
 
@@ -192,9 +192,9 @@ scripts/              Demo, export/replay, probes, contract build/tests
 test/                 Unit and PostgreSQL recovery/adapter/API tests
 ```
 
-Local setup has not created provider accounts, published a service, spent wallet funds, or deployed to mainnet.
+The PAPER backend is deployed with Supabase and Render. [Hosted verification](artifacts/hosted-paper-verification.json) records a closed simulated cycle, balanced journals, fresh worker heartbeats, HTTPS authorization and secure WebSocket cursor replay. No wallet funds were spent or mainnet contracts deployed.
 
-The selected hosting path uses Supabase's session pooler, a Render Docker web service, and an optional cron-job.org readiness monitor. Render accepted the free-service configuration; database login and verified client TLS pass, while hosted-runtime verification remains pending. The alternative Railway IaC plan remains unapplied. Live validation also needs the dedicated credentials and approved measurements listed by `npm run live:preflight`. See [deployment status](docs/DEPLOYMENT.md) and the [acceptance ledger](docs/IMPLEMENTATION.md).
+The selected hosting path uses Supabase's session pooler, a Render Docker web service, and an optional cron-job.org readiness monitor. Render deployment and Supabase migrations/TLS/RLS checks pass. The cron-job.org readiness check is enabled every five minutes. The alternative Railway IaC plan remains unapplied. Live validation also needs the dedicated credentials and approved measurements listed by `npm run live:preflight`. See [deployment status](docs/DEPLOYMENT.md) and the [acceptance ledger](docs/IMPLEMENTATION.md).
 
 ## Official sources
 

@@ -2,7 +2,7 @@
 
 ## Submission status
 
-Backend implementation with verified local execution, real signed market previews, and a public gateway attestation diagnostic. Funded mainnet trading, authenticated model inference and automatic purchases of compute credits remain unverified or incomplete. This submission does not claim financial self-sufficiency.
+Backend implementation with a [verified hosted PAPER demonstration](artifacts/hosted-paper-verification.json), local contract execution, real signed market previews, and a public gateway attestation diagnostic. Funded mainnet trading, authenticated model inference and automatic purchases of compute credits remain unverified or incomplete. This submission does not claim financial self-sufficiency.
 
 ## Idea-field pitch
 
@@ -66,6 +66,6 @@ Track names are the proposed submission mapping; confirm eligibility against the
 - Provision and fund dedicated accounts, target-chain gas, Intents service balances and provider credits; supply access credentials and independently approved gateway/model measurements.
 - Deploy the actual treasury and demonstrate real MPC signing, authenticated inference, two-leg funded settlement and complete realized cost valuation.
 - Establish a provider-approved compute purchase protocol, then implement and demonstrate payment-to-credit recovery using trading proceeds.
-- Publish and verify the configured Render API/worker service using the dedicated Supabase database. The optional cron-job.org monitor checks readiness. The alternative Railway [infrastructure plan](artifacts/infrastructure-plan.json) remains unapplied.
+- Connect the frontend to the published authenticated API/WSS and configure its exact CORS origin. The PAPER backend and five-minute readiness monitor are deployed. The alternative Railway [infrastructure plan](artifacts/infrastructure-plan.json) remains unapplied.
 
 See the [acceptance ledger](docs/IMPLEMENTATION.md), [deployment record](docs/DEPLOYMENT.md) and [judge walkthrough](docs/JUDGING.md). Submission evidence should include the actual revision, contract hash, network, model, approved measurements and transaction links for any funded live claim.
