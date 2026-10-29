@@ -15,6 +15,7 @@ import { cycleEconomics } from './economics.js';
 import type { PaperFaultController } from './paper-faults.js';
 import { dashboardHtml, dashboardCss } from './dashboard-page.js';
 import { readFile } from 'node:fs/promises';
+import { viewerSnapshot, viewerProof } from './viewer.js';
 
 export function tokenEquals(actual: string | undefined, expected: string): boolean {
   if (!actual) return false;
@@ -93,6 +94,18 @@ export async function createApp(
   };
   const secured = { preHandler: read, schema: { security: [{ bearerAuth: [] }] } };
   const privileged = { preHandler: admin, schema: { security: [{ bearerAuth: [] }] } };
+  app.get('/api/viewer/snapshot', secured, async (_req, reply) => {
+    reply.header('cache-control', 'private, no-store');
+    return viewerSnapshot(store);
+  });
+  app.get('/api/viewer/proof', secured, async (req, reply) => {
+    const { hash } = z
+      .object({ hash: z.string().regex(/^[a-f0-9]{64}$/i) })
+      .strict()
+      .parse(req.query);
+    reply.header('cache-control', 'private, no-store');
+    return viewerProof(store, hash.toLowerCase());
+  });
 
   app.get('/', async (_req, reply) => reply.redirect('/dashboard'));
   app.get('/dashboard', async (_req, reply) =>
