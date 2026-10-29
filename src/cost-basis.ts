@@ -82,6 +82,16 @@ export async function approveCostBasis(store: Store, cycleId: string, input: unk
       { cycleId, termsDigest, approvedBy: data.approvedBy, trust: 'ACCOUNTANT_APPROVED' },
       cycleId,
     );
+    await tx.job.updateMany({
+      where: {
+        cycleId,
+        lane: 'HAND',
+        doneAt: null,
+        leaseToken: null,
+        lastError: 'COST_BASIS_REQUIRED',
+      },
+      data: { availableAt: new Date() },
+    });
     return basis;
   });
 }

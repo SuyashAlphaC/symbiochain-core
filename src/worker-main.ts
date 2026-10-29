@@ -7,6 +7,7 @@ import { PaperProviders } from './providers/paper.js';
 import { LiveProviders } from './providers/live.js';
 import { scout } from './scout.js';
 import { refreshComputeCredits } from './providers/compute-credits.js';
+import { colocatedPaperFaults } from './paper-faults.js';
 
 const config = loadConfig();
 const db = createDatabase(config.DATABASE_URL, config.DATABASE_POOL_MAX);
@@ -16,7 +17,12 @@ if (config.EXECUTION_MODE === 'REPLAY')
   throw new Error('REPLAY is read-only; use the evidence replay command');
 const providers =
   config.EXECUTION_MODE === 'LIVE' ? new LiveProviders(store) : new PaperProviders();
-const engine = new Engine(store, providers);
+const faults = colocatedPaperFaults(config);
+const engine = new Engine(
+  store,
+  providers,
+  faults ? (job) => faults.afterClaim(store, job) : undefined,
+);
 const lanes = process.env.WORKER_ROLE ? [process.env.WORKER_ROLE] : ['SCOUT', 'BRAIN', 'HAND'];
 if (lanes.some((l) => !['SCOUT', 'BRAIN', 'HAND'].includes(l)))
   throw new Error('Invalid WORKER_ROLE');

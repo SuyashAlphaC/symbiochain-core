@@ -33,6 +33,8 @@ npm run worker
 
 API: `http://127.0.0.1:3001`; Swagger: `/docs`; readiness: `/readyz`. Application endpoints require the read/admin tokens in `.env`. Replace the example tokens and encryption key before hosting.
 
+The operator panel is at `/dashboard` (also the root redirect). It shows the three agents, treasury, cycles, durable events, cost approvals and net after approved costs. Administrator controls pause/resume spending and agents. The colocated PAPER profile can crash a worker after it claims a specific job and demonstrate recovery after restart and lease expiry. See the [operator demonstration](docs/OPERATIONS.md#user-facing-fault-and-cost-demonstration). PAPER rights are simulated and never presented as an on-chain mint.
+
 ## Architecture
 
 ```mermaid

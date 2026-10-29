@@ -1,0 +1,18 @@
+{
+  "capturedAt": "2026-10-29T15:54:56.287Z",
+  "mode": "PAPER",
+  "browser": "Chromium",
+  "readOnlyControlsDisabled": true,
+  "cycleId": "317b682f-5fd9-49bc-8667-a7641eaad2af",
+  "crashedWorkerRecovered": true,
+  "scoutClaimAttempts": 2,
+  "costApprovalRequired": true,
+  "costBasisApproved": true,
+  "cycleState": "CLOSED",
+  "netAfterApprovedCostsAtoms": "97900",
+  "simulatedRightsBps": 100,
+  "realOnChainMint": false,
+  "desktopNoOverflow": true,
+  "mobileNoOverflow": true,
+  "pageErrors": []
+}

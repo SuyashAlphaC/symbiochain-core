@@ -752,6 +752,7 @@ export class LiveProviders implements Providers {
       p = cycle.proposal as unknown as Proposal,
       settlement = cycle.settlement as unknown as Settlement;
     const gross = BigInt(settlement.receivedAtoms) - BigInt(p.amountAtoms);
+    const settlementFees = BigInt(settlement.feesAtoms);
     // Native gas and compute costs must be fully valued before claiming net profit or issuing economic rights.
     const usage = await this.store.db.computeUsage.findMany({ where: { cycleId } });
     const compute =
@@ -775,8 +776,9 @@ export class LiveProviders implements Providers {
         'Revenue-rights minting awaits accountant approval of complete costs',
       );
     const conservativePnl = basis
-      ? gross - totalApprovedCost(basis)
+      ? gross - settlementFees - totalApprovedCost(basis)
       : gross -
+        settlementFees -
         compute -
         BigInt(this.store.config.GAS_COST_BASE_ATOMS) -
         BigInt(this.store.config.LIVE_COST_BUFFER_ATOMS);

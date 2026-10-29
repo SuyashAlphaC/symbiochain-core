@@ -11,7 +11,15 @@
     "resolveJsonModule": true,
     "types": ["node"],
     "outDir": "dist",
-    "sourceMap": true
+    "sourceMap": true,
+    "allowJs": true
   },
-  "include": ["src/**/*.ts", "scripts/**/*.ts", "test/**/*.ts", "prisma.config.ts", "vitest*.ts"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.js",
+    "scripts/**/*.ts",
+    "test/**/*.ts",
+    "prisma.config.ts",
+    "vitest*.ts"
+  ]
 }

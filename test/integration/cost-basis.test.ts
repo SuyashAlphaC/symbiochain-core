@@ -108,6 +108,32 @@ it('withholds nonzero rights until costs are approved, then uses the approved ne
   });
   expect(result.mintedOnChain).toBe(true);
   expect(result.costBasisTrust).toBe('ACCOUNTANT_APPROVED');
-  expect(result.conservativePnlAtoms).toBe('98350');
+  expect(result.conservativePnlAtoms).toBe('97350');
   expect(calls.at(-1)?.args.share_bps).toBe(100);
+});
+it('does not mint rights when explicit settlement fees turn the approved result negative', async () => {
+  const cycle = await reconciled();
+  await approveCostBasis(store, cycle.id, {
+    ...approval(cycle.settlement),
+    nativeGasBaseAtoms: '98900',
+    hostingBaseAtoms: '0',
+    receiptBudgetBaseAtoms: '100',
+  });
+  const calls: string[] = [];
+  const context = Object.assign(Object.create(LiveProviders.prototype), {
+    store,
+    treasury: {
+      cycle: async () => null,
+      call: async (_role: string, method: string) => {
+        calls.push(method);
+        return {};
+      },
+    },
+  }) as LiveProviders;
+  const result = await LiveProviders.prototype.receipt.call(context, cycle.id, {
+    cycleId: cycle.id,
+  });
+  expect(result.mintedOnChain).toBe(false);
+  expect(result.conservativePnlAtoms).toBe('-100');
+  expect(calls).not.toContain('mint_proof_nft');
 });

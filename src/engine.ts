@@ -15,16 +15,19 @@ import {
 import { evaluatePolicy } from './policy.js';
 import { seal } from './crypto.js';
 import { z } from 'zod';
+import { cycleEconomics } from './economics.js';
 
 export class Engine {
   constructor(
     public readonly store: Store,
     public readonly providers: Providers,
+    private readonly afterClaim?: (job: ClaimedJob) => Promise<void>,
   ) {}
 
   async tick(lanes = ['SCOUT', 'BRAIN', 'HAND']): Promise<boolean> {
     const job = await this.store.claim(lanes);
     if (!job) return false;
+    await this.afterClaim?.(job);
     let lost = false;
     const heartbeat = setInterval(
       () => {
@@ -395,11 +398,20 @@ export class Engine {
       return;
     }
     if (cycle.state === 'RECONCILED') {
+      const economics = await cycleEconomics(this.store, cycle.id);
+      if (this.store.config.NFT_SHARE_BPS > 0 && economics.status !== 'ACCOUNTANT_APPROVED')
+        throw new DomainError(
+          'COST_BASIS_REQUIRED',
+          'Revenue rights await approval of the complete cost basis',
+        );
       const evidence = {
         cycleId: cycle.id,
         mode: this.store.mode,
         proposalDigest: digest(p),
         settlementDigest: digest(cycle.settlement),
+        requestedShareBps: this.store.config.NFT_SHARE_BPS,
+        approvedCostBasisDigest: economics.approvalDigest,
+        netAfterApprovedCostsAtoms: economics.netAfterApprovedCostsAtoms,
       };
       const receipt = await this.providers.receipt(cycle.id, evidence);
       await this.store.advance(job, 'RECONCILED', 'CLOSED', {}, { receipt }, null, async (tx) => {

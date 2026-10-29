@@ -38,3 +38,9 @@ Once supplied, the existing guarded-transfer, durable signed-material and journa
 - Live end-to-end validation also requires the dedicated funded accounts, keys and approved measurements listed by `npm run live:preflight`.
 
 Relevant sources: [request costs](https://docs.near.ai/api-reference/billing/get-costs-by-request-ids), [organization balance](https://docs.near.ai/api-reference/usage/get-organization-balance), [staking sync](https://docs.near.ai/api-reference/staking-farm/sync-organization-staking-farm-credits), [staking overview](https://docs.near.ai/cloud/staking-for-inference/overview), [public OpenAPI](https://docs.near.ai/api-reference/openapi.json).
+
+## Follow-up review on 2026-10-29
+
+Rechecked the official [vendored OpenAPI](https://github.com/nearai/docs/blob/main/api-reference/openapi.json), [billing route implementation](https://github.com/nearai/cloud-api/blob/main/crates/api/src/routes/billing.rs), and [external billing architecture](https://github.com/nearai/cloud-api/blob/main/CLAUDE.md#external-billing-service). Published customer routes still describe request costs, organization balances and staking source/sync operations; this review did not find a customer invoice/checkout/payment-to-credit purchase protocol in those interfaces. The architecture places Stripe checkout and credit synchronization in a separate UI/billing service. That service's privileged limit-update operation is not a customer payment integration.
+
+This establishes the remaining integration requirement, not the absence of all possible provider payment options. A provider-approved customer payment contract is still needed before implementing direct trading-profit purchases. `SYNC_STAKING_CREDITS` is optional and defaults to false; the backend does not count a sync or balance read as a purchase. No new payment adapter or fabricated checkout is claimed by the operator dashboard work.

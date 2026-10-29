@@ -109,3 +109,20 @@ The source evidence and cost-basis digest appear in cycle/export/receipt evidenc
 ## Dependency review
 
 The recorded npm audit has no high/critical findings and retains transitive low/moderate findings in the Chain Signatures/Solana toolchain. The known critical legacy DCAP binding was replaced with the advisory-recommended patched package; `tar` is pinned to a patched version. Do not apply a breaking dependency override just to suppress audit output. Re-run the adapter and sandbox gates when upgrading these dependencies.
+
+## User-facing fault and cost demonstration
+
+Open `/dashboard` and connect with the administrator token. On the colocated PAPER Render profile, `ENABLE_CHAOS_DEMO=true` enables the crash control and `NFT_SHARE_BPS=100` demonstrates the approval gate. Local `.env.example` keeps both features opt-in; its normal CLI demo uses zero rights.
+
+1. Pause Scout using its agent card.
+2. Create a PAPER cycle; its Scout job remains queued.
+3. Arm the worker crash for that selected cycle and Scout.
+4. Resume Scout. The worker claims the job, records the trigger and exits with SIGKILL.
+5. Wait for the host to restart the service and for the job's lease to expire. The normal lease is 60 seconds; host startup adds time. The same Scout job should show attempt two.
+6. The recovered cycle reaches `RECONCILED` and waits for cost approval.
+7. Inspect the economics, fill explicitly simulated costs, review the acknowledgement and submit the bound approval. This synthetic valuation includes automatically deducted settlement fees and a separately labeled receipt budget.
+8. The cycle closes with simulated rights. No on-chain mint, actual inference or real profit is claimed.
+
+Cancel an armed crash before resuming if the target is wrong. Pause/resume controls remain available independently of crash injection. The spending pause governs new backend spending; the offline owner must pause the contract separately when on-chain signing needs to stop.
+
+For LIVE, leave chaos controls disabled. Supply actual gas/hosting valuation and evidence references for cost approval. Receipt budgets are not final realized charges; a complete business expense observation window and funding costs are still needed for runway.

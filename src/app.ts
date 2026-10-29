@@ -11,6 +11,10 @@ import { Store, json } from './store.js';
 import { DomainError, Proposal, atoms, positiveAtoms, idSchema, eventCursor } from './domain.js';
 import { exportEvidence } from './evidence.js';
 import { approveCostBasis } from './cost-basis.js';
+import { cycleEconomics } from './economics.js';
+import type { PaperFaultController } from './paper-faults.js';
+import { dashboardHtml, dashboardCss } from './dashboard-page.js';
+import { readFile } from 'node:fs/promises';
 
 export function tokenEquals(actual: string | undefined, expected: string): boolean {
   if (!actual) return false;
@@ -18,7 +22,10 @@ export function tokenEquals(actual: string | undefined, expected: string): boole
     b = Buffer.from(expected);
   return a.length === b.length && timingSafeEqual(a, b);
 }
-export async function createApp(store: Store) {
+export async function createApp(
+  store: Store,
+  options: { faults?: PaperFaultController | undefined } = {},
+) {
   const c = store.config;
   const app = Fastify({
     logger: {
@@ -86,6 +93,33 @@ export async function createApp(store: Store) {
   };
   const secured = { preHandler: read, schema: { security: [{ bearerAuth: [] }] } };
   const privileged = { preHandler: admin, schema: { security: [{ bearerAuth: [] }] } };
+
+  app.get('/', async (_req, reply) => reply.redirect('/dashboard'));
+  app.get('/dashboard', async (_req, reply) =>
+    reply
+      .header(
+        'content-security-policy',
+        "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'",
+      )
+      .header('cache-control', 'no-store')
+      .header('referrer-policy', 'no-referrer')
+      .header('x-content-type-options', 'nosniff')
+      .type('text/html; charset=utf-8')
+      .send(dashboardHtml),
+  );
+  app.get('/dashboard.css', async (_req, reply) => reply.type('text/css').send(dashboardCss));
+  app.get('/dashboard.js', async (_req, reply) =>
+    reply
+      .type('application/javascript')
+      .send(await readFile(new URL('./dashboard-client.js', import.meta.url), 'utf8')),
+  );
+  app.get('/api/capabilities', secured, async (req) => ({
+    mode: store.mode,
+    admin: tokenEquals(req.headers.authorization?.replace(/^Bearer /, ''), c.ADMIN_TOKEN),
+    crashDemoEnabled: store.mode === 'PAPER' && c.ENABLE_CHAOS_DEMO && !!options.faults,
+    requestedShareBps: c.NFT_SHARE_BPS,
+    computePurchaseImplemented: false,
+  }));
 
   app.get('/healthz', async () => ({ status: 'ok', service: 'symbiochain-api' }));
   app.get('/readyz', async (_req, reply) => {
@@ -161,6 +195,7 @@ export async function createApp(store: Store) {
           lastError: true,
           availableAt: true,
           doneAt: true,
+          leaseUntil: true,
         },
       }),
       store.db.inferenceAttempt.findUnique({
@@ -184,6 +219,32 @@ export async function createApp(store: Store) {
     ]);
     const { submission: _submission, ...safe } = cycle;
     return { ...safe, decisions, transactions, proofs, jobs, inference, legs, costBasis };
+  });
+  app.get('/api/cycles/:id/economics', secured, async (req) => {
+    const { id } = z.object({ id: idSchema }).parse(req.params);
+    return cycleEconomics(store, id);
+  });
+  app.post('/api/admin/demo/crash-worker', privileged, async (req) => {
+    if (store.mode !== 'PAPER' || !c.ENABLE_CHAOS_DEMO || !options.faults)
+      throw new DomainError(
+        'DEMO_DISABLED',
+        'Crash demonstrations require explicitly enabled colocated PAPER workers',
+        403,
+      );
+    const { cycleId, role } = z
+      .object({ cycleId: idSchema, role: z.enum(['SCOUT', 'BRAIN', 'HAND']) })
+      .strict()
+      .parse(req.body);
+    return options.faults.arm(store, cycleId, role);
+  });
+  app.post('/api/admin/demo/cancel-crash', privileged, async () => {
+    if (store.mode !== 'PAPER' || !c.ENABLE_CHAOS_DEMO || !options.faults)
+      throw new DomainError(
+        'DEMO_DISABLED',
+        'Crash controls require explicitly enabled colocated PAPER workers',
+        403,
+      );
+    return options.faults.cancel(store);
   });
   app.get('/api/proofs/:id', secured, async (req) => {
     const { id } = z.object({ id: idSchema }).parse(req.params);

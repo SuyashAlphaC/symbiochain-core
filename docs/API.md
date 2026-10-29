@@ -99,3 +99,18 @@ Slow clients close with 1013 and resume by cursor. Authentication/protocol failu
 - Internal `agent.payment` events are not external revenue.
 
 Errors are structured as `{ "error":"CODE", "message":"..." }` where appropriate. Validation uses 400, unauthorized calls 401, forbidden mode 403, missing records 404, and financial/idempotency conflicts 409. Request bodies are bounded to 64 KiB; route limits and rate limits remain enforced.
+
+## Operator dashboard and recovery demonstration
+
+`GET /dashboard` serves the operator panel; `/` redirects there. It uses the same-origin REST and WebSocket interfaces. Enter a read or administrator token; the page keeps it in memory and clears it on disconnect/reload. Credentials are never put in URLs or browser storage. Read access disables administrative controls.
+
+`GET /api/capabilities` reports the authenticated caller's administrative capability, execution mode, configured receipt-share setting and whether crash controls are enabled. `GET /api/cycles/:id/economics` reports the exact settlement digest, billed inference, native fee evidence, separately recorded base-asset settlement fees, approved cost components and net after those costs and the receipt budget. Missing approvals produce `null` net values. `ACCOUNTANT_APPROVED` does not mean independently verified realized profit, and full-business runway remains unknown.
+
+For nonzero `NFT_SHARE_BPS`, both PAPER and LIVE wait at `RECONCILED` until a settlement-bound cost approval is recorded. Approval wakes an unleased receipt job waiting on `COST_BASIS_REQUIRED`. PAPER receipts expose simulated rights and explicitly report `mintedOnChain: false`. The panel's simulated-cost prefill is available only for PAPER USDC with six decimals; it is never an actual provider invoice or native-chain valuation.
+
+Administrator-only crash controls:
+
+- `POST /api/admin/demo/crash-worker`, body `{ "cycleId": "UUID", "role": "SCOUT" }` (also BRAIN/HAND). The selected lane must be paused and have an unclaimed job for that cycle. The one-shot command targets that cycle and role.
+- `POST /api/admin/demo/cancel-crash` cancels an unconsumed command.
+
+Controls require PAPER, `ENABLE_CHAOS_DEMO=true`, and colocated API/worker processes. The Render supervisor declares colocation. The worker consumes the ephemeral command after claiming the matching durable job and sends **SIGKILL to itself**. It accepts no arbitrary process ID, executable or file path from the API. The host restarts the service; the expired PostgreSQL job lease can then be reclaimed. All three lanes share that worker process in this hosting profile. The dashboard reconnects with its event cursor; it does not describe an agent pause as a process crash. Crash controls are refused in LIVE.

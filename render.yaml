@@ -17,6 +17,10 @@ services:
         value: PAPER
       - key: LIVE_TRADING_ENABLED
         value: 'false'
+      - key: ENABLE_CHAOS_DEMO
+        value: 'true'
+      - key: NFT_SHARE_BPS
+        value: '100'
       - key: DATABASE_POOL_MAX
         value: '3'
       - key: WORKER_POLL_MS

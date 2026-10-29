@@ -108,6 +108,11 @@ export class PaperProviders implements Providers {
       evidenceHash: digest(evidence),
       mode: 'PAPER',
       mintedOnChain: false,
+      simulatedRightsBps:
+        evidence.approvedCostBasisDigest &&
+        BigInt(String(evidence.netAfterApprovedCostsAtoms ?? '0')) > 0n
+          ? Number(evidence.requestedShareBps ?? 0)
+          : 0,
     };
   }
 }
