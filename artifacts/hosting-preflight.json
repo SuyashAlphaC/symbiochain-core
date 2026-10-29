@@ -14,10 +14,14 @@
     "plan": "free",
     "hostedRuntime": "PASSED",
     "serviceId": "srv-dbgd7u4s728c738qjstg",
-    "deployId": "dep-dbgd7v4s728c738qjvbg",
+    "deployId": "dep-dbhn8a0473hc73aeabpg",
     "url": "https://symbiochain-core.onrender.com",
-    "sourceRevision": "1e9535b1f4e25866d035519b4c880ee19686d344",
-    "repo": "https://github.com/SuyashAlphaC/symbiochain-core"
+    "sourceRevision": "10964bb497bcdb283a2fe3fc30569f89b1c187dd",
+    "repo": "https://github.com/SuyashAlphaC/symbiochain-core",
+    "operatorDashboard": "https://symbiochain-core.onrender.com/dashboard",
+    "hostedOperatorVerification": "PASSED",
+    "chaosControls": "PAPER_ONLY",
+    "simulatedReceiptShareBps": 100
   },
   "cron": {
     "configured": true,
@@ -46,11 +50,13 @@
     "status": "PASSED",
     "backend": "PASSED",
     "contract": "PASSED",
-    "revision": "af16c74068a28b99f668b1b57528f484ae8261df",
-    "runUrl": "https://github.com/SuyashAlphaC/symbiochain-core/actions/runs/40544585877",
+    "revision": "10964bb497bcdb283a2fe3fc30569f89b1c187dd",
+    "runUrl": "https://github.com/SuyashAlphaC/symbiochain-core/actions/runs/40911885653",
     "unitTests": 35,
-    "integrationTests": 34,
+    "integrationTests": 39,
     "rustUnitTests": 12,
     "sandboxChecks": 10
-  }
+  },
+  "updatedAt": "2026-10-29T16:36:31.325Z",
+  "operatorEvidence": "artifacts/operator-hosted-verification.json"
 }

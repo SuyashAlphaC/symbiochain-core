@@ -66,6 +66,6 @@ Track names are the proposed submission mapping; confirm eligibility against the
 - Provision and fund dedicated accounts, target-chain gas, Intents service balances and provider credits; supply access credentials and independently approved gateway/model measurements.
 - Deploy the actual treasury and demonstrate real MPC signing, authenticated inference, two-leg funded settlement and complete realized cost valuation.
 - Establish a provider-approved compute purchase protocol, then implement and demonstrate payment-to-credit recovery using trading proceeds.
-- Connect the frontend to the published authenticated API/WSS and configure its exact CORS origin. The PAPER backend and five-minute readiness monitor are deployed. The alternative Railway [infrastructure plan](artifacts/infrastructure-plan.json) remains unapplied.
+- Use the included same-origin operator dashboard for pause/resume, real PAPER worker-crash recovery, cost approval and receipt demonstrations. Configure an exact CORS origin only for a separately hosted frontend. The PAPER backend and five-minute readiness monitor are deployed. The alternative Railway [infrastructure plan](artifacts/infrastructure-plan.json) remains unapplied.
 
 See the [acceptance ledger](docs/IMPLEMENTATION.md), [deployment record](docs/DEPLOYMENT.md) and [judge walkthrough](docs/JUDGING.md). Submission evidence should include the actual revision, contract hash, network, model, approved measurements and transaction links for any funded live claim.

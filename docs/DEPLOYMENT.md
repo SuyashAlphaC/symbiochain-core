@@ -4,11 +4,11 @@ The selected demo stack is Supabase PostgreSQL, a Render Docker web service, and
 
 ## Verified deployment
 
-The PAPER service is live at [API documentation](https://symbiochain-core.onrender.com/docs), with [public readiness](https://symbiochain-core.onrender.com/readyz). Source is the private [GitHub repository](https://github.com/SuyashAlphaC/symbiochain-core). The running deployment is `dep-dbgd7v4s728c738qjvbg`, built from revision `1e9535b1f4e25866d035519b4c880ee19686d344`; automatic deployments are disabled. Later documentation/CI commits do not change its running image.
+The PAPER service is live at [operator dashboard](https://symbiochain-core.onrender.com/dashboard), [API documentation](https://symbiochain-core.onrender.com/docs), and [public readiness](https://symbiochain-core.onrender.com/readyz). Source is the private [GitHub repository](https://github.com/SuyashAlphaC/symbiochain-core). Deployment `dep-dbhn8a0473hc73aeabpg` runs revision `10964bb497bcdb283a2fe3fc30569f89b1c187dd`; automatic deployments are disabled.
 
 The [hosted verification record](../artifacts/hosted-paper-verification.json) captures authenticated HTTPS and WSS replay, three fresh worker heartbeats, a closed PAPER cycle and balanced journals. Supabase has seven applied migrations, verified client TLS, RLS on 18 backend tables and no Data API table grants. Application tokens and the persistent evidence key remain in the ignored local `.env` and Render runtime variables. The Render/cron management keys stay local.
 
-cron-job.org job `8735734` is enabled every five minutes against `/readyz`, with email notifications disabled. Its configuration was read back and checked; the first two scheduled requests returned HTTP 200. Scheduled-execution evidence is recorded separately in the [hosting preflight](../artifacts/hosting-preflight.json). Configure the real frontend origin in Render's `CORS_ORIGINS` before connecting a browser dashboard; browser origins currently have no allowlist entries.
+cron-job.org job `8735734` is enabled every five minutes against `/readyz`, with email notifications disabled. Its configuration was read back and checked; the first two scheduled requests returned HTTP 200. Scheduled-execution evidence is recorded separately in the [hosting preflight](../artifacts/hosting-preflight.json). The bundled dashboard uses the same origin and needs no additional CORS entry. Configure `CORS_ORIGINS` for a separately hosted teammate frontend.
 
 ## Supabase and Render
 
@@ -100,3 +100,5 @@ The config runs the API and three separate worker lanes. Do not nest PM2 inside 
 ## Release checks
 
 Use the CI workflow under `.github/workflows/ci.yml`: TypeScript checks, unit/integration tests, migration replay, paper demo, npm high/critical audit gate, Rust tests, WASM build and local chain integration. Re-run contract/adapter checks after dependency or network-protocol changes. Pin the resulting WASM hash in release evidence, review contract policy, and keep mainnet execution evidence separate from sandbox output.
+
+The deployed PAPER operator profile explicitly enables `ENABLE_CHAOS_DEMO=true` and uses `NFT_SHARE_BPS=100` for simulated cost-gated receipt rights. Hosted Chromium verification records a real worker crash, automatic host recovery, the same Scout job on attempt two, secure WebSocket reconnection, approved costs and a closed cycle. See [hosted operator evidence](../artifacts/operator-hosted-verification.json). LIVE refuses chaos controls; this demonstration performs no mainnet trade or actual NFT mint.
