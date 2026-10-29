@@ -53,6 +53,7 @@ function action(button, work) {
   button.addEventListener('click', async () => {
     if (busy) return;
     busy = true;
+    applyAccess();
     button.disabled = true;
     try {
       await work();

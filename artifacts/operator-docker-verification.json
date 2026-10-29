@@ -1,0 +1,23 @@
+{
+  "capturedAt": "2026-10-29T16:12:48.267Z",
+  "mode": "PAPER",
+  "browser": "Chromium",
+  "readOnlyControlsDisabled": true,
+  "cycleId": "d1ed9558-4b4d-431e-b1a8-976eb0086c29",
+  "crashedWorkerRecovered": true,
+  "scoutClaimAttempts": 2,
+  "costApprovalRequired": true,
+  "costBasisApproved": true,
+  "cycleState": "CLOSED",
+  "netAfterApprovedCostsAtoms": "97900",
+  "simulatedRightsBps": 100,
+  "realOnChainMint": false,
+  "desktopNoOverflow": true,
+  "mobileNoOverflow": true,
+  "pageErrors": [],
+  "restartPolicy": "on-failure",
+  "containerRestarts": 1,
+  "memoryLimitBytes": 536870912,
+  "runtimeUser": "node",
+  "outOfMemoryKilled": false
+}
