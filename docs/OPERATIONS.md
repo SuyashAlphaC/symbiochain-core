@@ -43,6 +43,8 @@ Model preflight is non-billable. The completion POST is paid. Hardware collatera
 
 ## Build and initialize the treasury
 
+Use the [funded execution runbook](MAINNET_EXECUTION.md) and `npm run live:inspect` to review the rebuilt WASM, current mainnet storage lock and configured account/code identities before funding. This inspector performs read-only RPC calls and does not authorize deployment or trading.
+
 `npm run contract:build` creates `artifacts/symbiochain_treasury.wasm` and its SHA-256. Deploy only this treasury WASM; **never deploy the MPC mock for live use**.
 
 The contract initializer takes `owner`, `brain`, `hand`, `accountant`, `mpc`, `derivation_path`, and `policy`. Example policy shape:

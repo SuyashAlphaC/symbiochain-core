@@ -1,0 +1,105 @@
+{
+  "version": 1,
+  "capturedAt": "2026-10-30T09:15:40.349Z",
+  "inspection": "READ_ONLY_MAINNET",
+  "transactionsPerformed": false,
+  "network": {
+    "chainId": "mainnet",
+    "protocolVersion": 86,
+    "observedAtBlock": 222252673,
+    "observedAtBlockHash": "9y2WAyJX5Zrd4AFw7c57NFQyeYAwRTkWnReVxY93fhtT"
+  },
+  "artifact": {
+    "bytes": 579388,
+    "sha256": "c87759fc9016f34c8dc89be3f5f8bd389421c9593fc6bd39b0d1241f44a31e6d",
+    "nearCodeHash": "EVY6VLzTu8s1vs5KS8eFmUzuRdZJQbyMLVstST45d1HE"
+  },
+  "storage": {
+    "pricePerByteYoctoNear": "10000000000000000000",
+    "codeOnlyLockLowerBoundYoctoNear": "5793880000000000000000000",
+    "excludes": [
+      "account and key storage",
+      "initialized and future contract state",
+      "native reserves",
+      "transaction gas",
+      "Intents service funds",
+      "external-chain gas and principal"
+    ],
+    "classification": "LOCKED_CAPITAL_NOT_TRANSACTION_FEE"
+  },
+  "accounts": [
+    {
+      "role": "OWNER",
+      "accountId": null,
+      "status": "NOT_SELECTED"
+    },
+    {
+      "role": "TREASURY",
+      "accountId": null,
+      "status": "NOT_SELECTED"
+    },
+    {
+      "role": "BRAIN",
+      "accountId": null,
+      "status": "NOT_SELECTED"
+    },
+    {
+      "role": "HAND",
+      "accountId": null,
+      "status": "NOT_SELECTED"
+    },
+    {
+      "role": "SCOUT",
+      "accountId": null,
+      "status": "NOT_SELECTED"
+    },
+    {
+      "role": "ACCOUNTANT",
+      "accountId": null,
+      "status": "NOT_SELECTED"
+    }
+  ],
+  "mpc": {
+    "accountId": "v1.signer",
+    "codeHash": "DAE5ng4ZFR2ctMx9SizQBqmGkVbKUutgZ4ZECD4R8Sm9",
+    "signatureRequested": false,
+    "signatureCompatibilityVerified": false
+  },
+  "releaseStatus": "OWNER_REVIEW_REQUIRED",
+  "fundingBudgetApproved": false,
+  "fundedRoundTripVerified": false,
+  "remaining": [
+    "Select owner and role accounts and approve an explicit funding budget",
+    "Review initializer, key scopes, asset metadata and both contract/backend policies",
+    "Deploy and verify contract identity before funding derived wallets",
+    "Register dedicated Intents keys and fund wNEAR service balances",
+    "Verify derived EVM/Solana custody, mainnet RPCs, native gas and principal",
+    "Complete approved TEE and compute-balance setup before enabling LIVE",
+    "Execute only a route that passes the existing profitability and spending checks"
+  ],
+  "sourceRevision": "96d20901962379077f75836e615e0822f884b2df",
+  "contractSourceTree": "5e48923409a207759d82e48835186137b6dd6754",
+  "verification": {
+    "backendCheck": "PASSED",
+    "unitTests": 39,
+    "rustUnitTests": 12,
+    "sandboxChecks": 10,
+    "sandboxDisclosure": "Local sandbox with invalid-signature MPC stub and synthetic P&L. No live signature or trade is established."
+  },
+  "marketPreview": {
+    "checkedAt": "2026-10-30T09:17:59.204Z",
+    "mode": "READ_ONLY_DRY_QUOTES",
+    "signaturesVerified": true,
+    "inputAtoms": "10000000",
+    "conservativeReturnAtoms": "9842440",
+    "grossPreviewAtoms": "-157560",
+    "acceptedForLiveExecution": false,
+    "reason": "Signed dry-quote round trip fails the profit floor; no funding or execution was attempted."
+  },
+  "deployment": {
+    "state": "NOT_STARTED",
+    "ownerDecision": "PENDING",
+    "fundingBudgetDecision": "PENDING",
+    "liveTradingArmed": false
+  }
+}
