@@ -26,6 +26,7 @@
     "probe:market": "tsx scripts/probe-market.ts",
     "probe:attestation": "tsx scripts/probe-attestation.ts",
     "live:preflight": "tsx scripts/live-preflight.ts",
+    "live:inspect": "tsx scripts/inspect-mainnet.ts",
     "check": "npm run db:generate && npm run typecheck && npm test && npm run build",
     "contract:build": "bash scripts/build-contract.sh",
     "contract:test": "cargo test --manifest-path contracts/treasury/Cargo.toml --lib",
