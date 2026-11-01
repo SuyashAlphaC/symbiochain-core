@@ -86,6 +86,8 @@ Intents service payments use NEP-413, the verifier's current salt, a durable non
 
 The hardware verifier uses patched `@phala/dcap-qvl`, not the vulnerable legacy Node binding. TLS connection binding and end-to-end encrypted inference transport are not implemented; proofs expose `tlsConnectionBinding: false`. Backend orchestration and function-call keys run in ordinary server processes. Chain Signatures keys remain with the MPC system.
 
+See the [private inference verification runbook](docs/PRIVATE_INFERENCE.md) for model privacy tiers, the NVIDIA verdict trust boundary, non-billable preparation, and remaining transport work.
+
 ## PAPER, LIVE and REPLAY
 
 | Mode   | Behavior                                                                 | Evidence                                        |
