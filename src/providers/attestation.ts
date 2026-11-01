@@ -4,6 +4,7 @@ import { recoverMessageAddress, type Hex } from 'viem';
 import { z } from 'zod';
 import { sha256, DomainError } from '../domain.js';
 import { httpJson, type Fetch } from './http.js';
+import { verifyNrasVerdict } from './nras.js';
 
 const hex = z
   .string()
@@ -123,7 +124,10 @@ export class HardwareVerifier {
       throw new DomainError('TEE_GPU_MISSING', 'Model GPU evidence is required');
     if (report.nvidia_payload) {
       const payload = z
-        .object({ nonce: z.string() })
+        .object({
+          nonce: z.string(),
+          evidence_list: z.array(z.unknown()).min(1).max(32),
+        })
         .passthrough()
         .parse(JSON.parse(report.nvidia_payload));
       if (payload.nonce.toLowerCase() !== nonce)
@@ -137,15 +141,7 @@ export class HardwareVerifier {
         },
         this.transport,
       );
-      const entries = z.array(z.tuple([z.string(), z.string()])).parse(result);
-      const jwt = entries.find((e) => e[0] === 'JWT')?.[1];
-      if (!jwt)
-        throw new DomainError('TEE_GPU_VERDICT', 'NRAS did not return an attestation verdict');
-      const claims = JSON.parse(
-        Buffer.from(jwt.split('.')[1] ?? '', 'base64url').toString('utf8'),
-      ) as Record<string, unknown>;
-      if (claims['x-nvidia-overall-att-result'] !== true)
-        throw new DomainError('TEE_GPU_VERDICT', 'GPU attestation failed');
+      verifyNrasVerdict(result, nonce, payload.evidence_list.length);
       gpuVerified = true;
     }
     return {
