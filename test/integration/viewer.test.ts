@@ -125,3 +125,83 @@ it('does not pass simulations off as verified inference and rejects unbounded lo
     await app.close();
   }
 });
+
+it('publishes cycle economics, budgets and replay cursors without private JSON', async () => {
+  const { cycle } = await store.createCycle(
+    {
+      strategy: 'round-trip',
+      originChain: 'near:paper',
+      destinationChain: 'eip155:31337',
+      originAsset: 'USDC',
+      intermediateAsset: 'WNEAR',
+      amountAtoms: '5000000',
+      recipient: 'paper.treasury',
+      refundTo: 'paper.treasury',
+      slippageBps: 50,
+      expiresAt: new Date(Date.now() + 600000).toISOString(),
+    },
+    randomUUID(),
+  );
+  const engine = new Engine(store, new PaperProviders());
+  for (let i = 0; i < 12; i++) await engine.tick();
+  await db.decision.updateMany({ data: { details: { prompt: 'PRIVATE_DETAIL_SENTINEL' } } });
+  await db.outboxEvent.updateMany({ data: { payload: { secret: 'PRIVATE_EVENT_SENTINEL' } } });
+  const app = await createApp(store);
+  try {
+    for (const path of [
+      '/api/viewer/status',
+      '/api/viewer/cycles',
+      `/api/viewer/cycles/${cycle.id}`,
+      '/api/viewer/events?after=0',
+    ]) {
+      expect((await app.inject(path)).statusCode).toBe(401);
+      const response = await app.inject({ url: path, headers });
+      expect(response.statusCode).toBe(200);
+      expect(response.headers['cache-control']).toBe('private, no-store');
+      for (const secret of [
+        'PRIVATE_DETAIL_SENTINEL',
+        'PRIVATE_EVENT_SENTINEL',
+        config.READ_TOKEN,
+        config.ADMIN_TOKEN,
+      ])
+        expect(response.body).not.toContain(secret);
+    }
+    const detail = (await app.inject({ url: `/api/viewer/cycles/${cycle.id}`, headers })).json();
+    expect(detail.cycle.state).toBe('CLOSED');
+    expect(detail.economics.grossTradingPnlAtoms).toBe('100000');
+    expect(detail.economics.netAfterApprovedCostsAtoms).toBeNull();
+    expect(detail.profitCheck.realized).toBe(false);
+    expect(detail.jobs.length).toBeGreaterThan(0);
+    expect(detail).not.toHaveProperty('settlement');
+    expect(detail).not.toHaveProperty('assessment');
+    const events = (await app.inject({ url: '/api/viewer/events?after=0', headers })).json();
+    expect(events.events.length).toBeGreaterThan(0);
+    const next = (
+      await app.inject({ url: `/api/viewer/events?after=${events.cursor}`, headers })
+    ).json();
+    expect(next.events).toEqual([]);
+    expect(next.cursor).toBe(events.cursor);
+    expect((await app.inject({ url: '/api/viewer/events?after=-1', headers })).statusCode).toBe(
+      400,
+    );
+    expect((await app.inject({ url: '/api/viewer/cycles/not-a-uuid', headers })).statusCode).toBe(
+      400,
+    );
+    for (const mode of ['LIVE', 'REPLAY'] as const) {
+      const other = await createApp(new Store(db, { ...config, EXECUTION_MODE: mode }));
+      try {
+        for (const path of [
+          '/api/viewer/status',
+          '/api/viewer/cycles',
+          `/api/viewer/cycles/${cycle.id}`,
+          '/api/viewer/events',
+        ])
+          expect((await other.inject({ url: path, headers })).statusCode).toBe(403);
+      } finally {
+        await other.close();
+      }
+    }
+  } finally {
+    await app.close();
+  }
+});
