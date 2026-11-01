@@ -170,6 +170,43 @@ describe('hardware policy over verified quote fields', () => {
       'GPU evidence is required',
     );
   });
+  it('binds a gateway quote to the observed peer SPKI and rejects substitutions', async () => {
+    const f = fixture(),
+      fingerprint = 'dd'.repeat(32);
+    const expected = Buffer.concat([
+      Buffer.from(
+        sha256(
+          Buffer.concat([Buffer.from(signer.slice(2), 'hex'), Buffer.from(fingerprint, 'hex')]),
+        ),
+        'hex',
+      ),
+      Buffer.from(nonce, 'hex'),
+    ]);
+    f.td.reportData = expected;
+    const report = {
+      ...f.report,
+      tls_cert_fingerprint: fingerprint,
+      report_data: expected.toString('hex'),
+    };
+    expect(
+      (await f.verifier.verify(report, nonce, [measurement], false, fingerprint)).tlsSpkiSha256,
+    ).toBe(fingerprint);
+    await expect(
+      f.verifier.verify(report, nonce, [measurement], false, 'ee'.repeat(32)),
+    ).rejects.toThrow('TLS peer');
+    await expect(f.verifier.verify(report, nonce, [measurement], false)).rejects.toThrow(
+      'same-connection',
+    );
+    await expect(
+      f.verifier.verify(
+        { ...report, report_data: undefined },
+        nonce,
+        [measurement],
+        false,
+        fingerprint,
+      ),
+    ).rejects.toThrow('TLS peer');
+  });
   it('accepts the documented NRAS platform tuple and per-GPU token map', async () => {
     const f = gpuFixture();
     const identity = await f.verifier.verify(f.report, nonce, [measurement], true);

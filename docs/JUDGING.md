@@ -19,7 +19,7 @@ SymbioChain explores whether a three-agent treasury can cover its operating cost
 | Autonomous business | Durable treasury workflow, reserve/compute-credit gates, metered inference             | Financial self-sufficiency and direct trade-profit credit purchases are not demonstrated   |
 | Swarms              | Separate Scout/Brain/Hand lanes, paid signal/assessment flow                           | Components execute a defined protocol; not an emergent negotiation market                  |
 | Agent economy       | Signed Intents service transfers, nonce-based timeout recovery                         | Internal payments are not external sales revenue                                           |
-| Privacy             | NEAR AI hardware/response verification, encrypted evidence                             | Backend host is not attested; no TLS connection binding/E2EE transport                     |
+| Privacy             | NEAR AI hardware/response verification, encrypted evidence                             | Backend host is not attested; client-to-model E2EE is not implemented                      |
 | DeFi                | Signed 1Click previews, guarded EVM/SOL deposits, settlement reconciliation            | Asynchronous return pricing; no guaranteed arbitrage                                       |
 | NFTs                | NEP-171 receipts, bounded fixed rights, explicit distributions, pull claims            | Accountant-reported reconciliation; automatic live rights wait for complete cost valuation |
 | Security            | Roles/revocation, independent token caps, one-use signing, pause/reserves, fenced jobs | Local tests are not a production security audit                                            |

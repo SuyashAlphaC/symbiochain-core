@@ -29,6 +29,7 @@ export interface VerifiedIdentity {
   nonce: string;
   tcbStatus: string;
   gpuVerified: boolean;
+  tlsSpkiSha256?: string;
 }
 const bytes = (s: string) => Buffer.from(s.replace(/^0x/, ''), 'hex');
 const h384 = (...parts: Uint8Array[]) => {
@@ -80,15 +81,23 @@ export class HardwareVerifier {
     nonce: string,
     allowedComposeHashes: string[],
     requireGpu: boolean,
+    peerSpkiSha256?: string,
   ): Promise<VerifiedIdentity> {
     const report = Report.parse(raw);
     if (!/^[a-f0-9]{64}$/.test(nonce) || report.request_nonce.toLowerCase() !== nonce)
       throw new DomainError('TEE_NONCE', 'Attestation nonce mismatch');
-    if (report.tls_cert_fingerprint)
+    if (report.tls_cert_fingerprint && (requireGpu || !peerSpkiSha256))
       throw new DomainError(
         'TEE_TLS_SCOPE',
         'Unexpected TLS binding; same-connection verification is required for that mode',
       );
+    if (
+      peerSpkiSha256 !== undefined &&
+      (!/^[a-f0-9]{64}$/.test(peerSpkiSha256) ||
+        report.tls_cert_fingerprint?.toLowerCase() !== peerSpkiSha256 ||
+        !report.report_data)
+    )
+      throw new DomainError('TEE_TLS_BINDING', 'Attestation does not match the observed TLS peer');
     const verified = await this.verifyQuote(bytes(report.intel_quote));
     if (verified.status !== 'UpToDate' || verified.advisory_ids.length !== 0)
       throw new DomainError('TEE_TCB', 'Unaccepted platform security status');
@@ -99,7 +108,10 @@ export class HardwareVerifier {
     if (!td) throw new DomainError('TEE_TYPE', 'Expected Intel TDX report');
     if ((td.tdAttributes[0] ?? 1) & 1)
       throw new DomainError('TEE_DEBUG', 'Debug enclaves are forbidden');
-    const expected = Buffer.concat([bytes(report.signing_address), Buffer.alloc(12), bytes(nonce)]);
+    const boundSigner = peerSpkiSha256
+      ? bytes(sha256(Buffer.concat([bytes(report.signing_address), bytes(peerSpkiSha256)])))
+      : Buffer.concat([bytes(report.signing_address), Buffer.alloc(12)]);
+    const expected = Buffer.concat([boundSigner, bytes(nonce)]);
     if (!Buffer.from(td.reportData).equals(expected))
       throw new DomainError('TEE_BINDING', 'Quote does not bind signer and nonce');
     if (report.report_data && !bytes(report.report_data).equals(expected))
@@ -151,6 +163,7 @@ export class HardwareVerifier {
       nonce,
       tcbStatus: verified.status,
       gpuVerified,
+      ...(peerSpkiSha256 ? { tlsSpkiSha256: peerSpkiSha256 } : {}),
     };
   }
 }

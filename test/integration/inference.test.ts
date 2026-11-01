@@ -8,6 +8,7 @@ import { PaperProviders } from '../../src/providers/paper.js';
 import { NearAiClient } from '../../src/providers/near-ai.js';
 import { Proposal, digest, sha256 } from '../../src/domain.js';
 import type { Fetch } from '../../src/providers/http.js';
+import type { GatewaySession } from '../../src/providers/tee-session.js';
 import {
   BUDGET_MODEL,
   localComputeBudget,
@@ -65,7 +66,13 @@ it('admits only one concurrent request at the budget boundary and retains unknow
     throw new Error('Unexpected transport request');
   };
   const results = await Promise.allSettled(
-    [a, b].map((x) => new NearAiClient(config, db, hardware, transport).assess(x.id, x.p, x.q)),
+    [a, b].map((x) =>
+      new NearAiClient(config, db, hardware, transport, () => fixtureSession(transport)).assess(
+        x.id,
+        x.p,
+        x.q,
+      ),
+    ),
   );
   expect(results.every((r) => r.status === 'rejected')).toBe(true);
   expect(posts).toBe(1);
@@ -79,7 +86,11 @@ it('admits only one concurrent request at the budget boundary and retains unknow
   });
   const third = await setup();
   await expect(
-    new NearAiClient(config, db, hardware, transport).assess(third.id, third.p, third.q),
+    new NearAiClient(config, db, hardware, transport, () => fixtureSession(transport)).assess(
+      third.id,
+      third.p,
+      third.q,
+    ),
   ).rejects.toThrow('budget cannot cover');
   expect(posts).toBe(1);
   expect((await new Store(db, config).snapshot()).computeCreditNanoUsd).toBeNull();
@@ -139,6 +150,12 @@ const hardware = {
     gpuVerified: true,
   }),
 }; // test double; never an execution-mode bypass
+const fixtureSession = (transport: Fetch): GatewaySession => ({
+  fetch: transport,
+  peerSpkiSha256: 'ff'.repeat(32),
+  approve() {},
+  close() {},
+});
 beforeEach(async () => {
   await db.$executeRawUnsafe(
     'TRUNCATE "Cycle", "Policy", "Journal", "WorkerControl", "OutboxEvent" RESTART IDENTITY CASCADE',
@@ -194,10 +211,16 @@ it.each(['PROVIDER_BALANCE', 'LOCAL_BUDGET'] as const)(
       posts++;
       throw new Error('paid request accepted but connection lost');
     };
-    const client = new NearAiClient(config, db, hardware, transport);
+    const client = new NearAiClient(config, db, hardware, transport, () =>
+      fixtureSession(transport),
+    );
     await expect(client.assess(id, p, q)).rejects.toThrow('connection lost');
     await expect(
-      new NearAiClient(config, db, hardware, transport).assess(id, p, q),
+      new NearAiClient(config, db, hardware, transport, () => fixtureSession(transport)).assess(
+        id,
+        p,
+        q,
+      ),
     ).rejects.toThrow('automatic resubmission');
     expect(posts).toBe(1);
     expect((await db.inferenceAttempt.findUniqueOrThrow({ where: { cycleId: id } })).status).toBe(
@@ -291,11 +314,15 @@ it.each(['PROVIDER_BALANCE', 'LOCAL_BUDGET'] as const)(
       }
       throw new Error('Unexpected fixture request');
     };
-    const client = new NearAiClient(config, db, hardware, transport);
+    const client = new NearAiClient(config, db, hardware, transport, () =>
+      fixtureSession(transport),
+    );
     await expect(client.assess(id, p, q)).rejects.toThrow('reliable request cost');
     if (policy === 'LOCAL_BUDGET')
       expect((await localComputeBudget(db, config)).committedUsdMicros).toBe('84219');
-    const result = await new NearAiClient(config, db, hardware, transport).assess(id, p, q);
+    const result = await new NearAiClient(config, db, hardware, transport, () =>
+      fixtureSession(transport),
+    ).assess(id, p, q);
     expect(result.proof.status).toBe('VERIFIED');
     expect(result.usage.costUsdMicros).toBe('101');
     expect(posts).toBe(1);
