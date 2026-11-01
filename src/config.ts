@@ -44,6 +44,10 @@ const Schema = z.object({
   NEAR_AI_MODEL: z.string().default(''),
   NEAR_AI_ORG_ID: z.string().default(''),
   NEAR_AI_SESSION_TOKEN: z.string().default(''),
+  COMPUTE_CREDIT_POLICY: z.enum(['PROVIDER_BALANCE', 'LOCAL_BUDGET']).default('PROVIDER_BALANCE'),
+  AI_BUDGET_ID: z.string().max(100).default(''),
+  AI_TOTAL_BUDGET_USD_MICROS: atoms.default('1000000'),
+  AI_MAX_REQUEST_USD_MICROS: atoms.default('100000'),
   MIN_COMPUTE_CREDIT_USD_MICROS: atoms.default('100000'),
   SYNC_STAKING_CREDITS: bool.prefault('false'),
   NEAR_AI_BASE_URL: z.url().default('https://cloud-api.near.ai'),
@@ -103,13 +107,14 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
       'NEAR_ACCOUNTANT_PRIVATE_KEY',
       'NEAR_AI_API_KEY',
       'NEAR_AI_MODEL',
-      'NEAR_AI_ORG_ID',
-      'NEAR_AI_SESSION_TOKEN',
       'EVM_RPC_URL',
       'NFT_RECEIVER_ID',
     ] as const) {
       if (!c[key]) throw new Error(`LIVE requires ${key}`);
     }
+    if (c.COMPUTE_CREDIT_POLICY === 'PROVIDER_BALANCE')
+      for (const key of ['NEAR_AI_ORG_ID', 'NEAR_AI_SESSION_TOKEN'] as const)
+        if (!c[key]) throw new Error(`LIVE provider balance policy requires ${key}`);
     if (c.ADMIN_TOKEN.startsWith('local-demo') || c.READ_TOKEN.startsWith('local-demo'))
       throw new Error('LIVE refuses demo authentication tokens');
     if (c.ENABLE_CHAOS_DEMO) throw new Error('Chaos controls cannot run in LIVE');
@@ -121,6 +126,16 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
       throw new Error(
         '1Click has no testnet; LIVE requires NEAR mainnet and funded target-chain wallets',
       );
+  }
+  if (c.COMPUTE_CREDIT_POLICY === 'LOCAL_BUDGET') {
+    if (!c.AI_BUDGET_ID.trim()) throw new Error('Local compute budget requires AI_BUDGET_ID');
+    if (
+      BigInt(c.AI_TOTAL_BUDGET_USD_MICROS) <= 0n ||
+      BigInt(c.AI_MAX_REQUEST_USD_MICROS) <= 0n ||
+      BigInt(c.AI_MAX_REQUEST_USD_MICROS) > BigInt(c.AI_TOTAL_BUDGET_USD_MICROS)
+    )
+      throw new Error('Local compute budget requires positive bounded spending limits');
+    if (c.SYNC_STAKING_CREDITS) throw new Error('Local compute budget does not use staking sync');
   }
   if (
     c.EXECUTION_MODE === 'LIVE' &&

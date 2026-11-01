@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import type { Database } from './db.js';
 import { Prisma, type Cycle, type Job, type CycleState } from './generated/prisma/client.js';
 import type { Config } from './config.js';
+import { localComputeBudget } from './providers/compute-budget.js';
 import {
   Proposal,
   DomainError,
@@ -362,6 +363,10 @@ export class Store {
   }
 
   async snapshot(): Promise<Record<string, unknown>> {
+    const localBudget =
+      this.config.COMPUTE_CREDIT_POLICY === 'LOCAL_BUDGET'
+        ? await localComputeBudget(this.db, this.config)
+        : null;
     const [balance, reserved, policy, pnl, usage, workers, counts, compute] = await Promise.all([
       this.balance(),
       this.db.reservation.aggregate({
@@ -385,7 +390,7 @@ export class Store {
     const available = balance - reservedAtoms;
     const costs = usage.reduce((a, b) => a + BigInt(b.costUsdMicros), 0n);
     const freshCompute =
-      compute && Date.now() - compute.updatedAt.getTime() < 120000 ? compute : null;
+      !localBudget && compute && Date.now() - compute.updatedAt.getTime() < 120000 ? compute : null;
     return {
       mode: this.mode,
       baseAsset: this.config.BASE_ASSET,
@@ -401,15 +406,23 @@ export class Store {
         ? 'PAUSED'
         : available < BigInt(policy.minReserveAtoms.toFixed(0))
           ? 'LOW_RESERVE'
-          : this.mode === 'LIVE' && !freshCompute
-            ? 'COMPUTE_CREDIT_UNKNOWN'
-            : this.mode === 'LIVE' &&
-                BigInt(freshCompute!.remainingNanoUsd) <
-                  BigInt(this.config.MIN_COMPUTE_CREDIT_USD_MICROS) * 1000n
-              ? 'LOW_COMPUTE_CREDIT'
-              : 'ACTIVE',
+          : this.mode === 'LIVE' && localBudget
+            ? localBudget.halted
+              ? 'COMPUTE_BUDGET_EXHAUSTED'
+              : 'ACTIVE_WITH_LOCAL_COMPUTE_BUDGET'
+            : this.mode === 'LIVE' && !freshCompute
+              ? 'COMPUTE_CREDIT_UNKNOWN'
+              : this.mode === 'LIVE' &&
+                  BigInt(freshCompute!.remainingNanoUsd) <
+                    BigInt(this.config.MIN_COMPUTE_CREDIT_USD_MICROS) * 1000n
+                ? 'LOW_COMPUTE_CREDIT'
+                : 'ACTIVE',
       computeCreditNanoUsd: freshCompute?.remainingNanoUsd ?? null,
-      computeCreditObservedAt: compute?.updatedAt ?? null,
+      computeCreditObservedAt: localBudget ? null : (compute?.updatedAt ?? null),
+      computeControl: localBudget ?? {
+        source: 'PROVIDER_BALANCE',
+        providerBalanceVerified: !!freshCompute,
+      },
       survivalHours: null,
       runwayReason:
         'Compute credits, provider funding and hosting costs must be measured before claiming runway',

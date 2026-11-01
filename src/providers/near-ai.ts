@@ -18,6 +18,15 @@ import { seal, unseal } from '../crypto.js';
 import type { VerifiedIdentity } from './attestation.js';
 import { refreshComputeCredits } from './compute-credits.js';
 import { Store } from '../store.js';
+import {
+  BUDGET_MODEL,
+  MAX_OUTPUT_TOKENS,
+  MAX_THINKING_TOKENS,
+  priceComputeReservation,
+  reserveComputeBudget,
+  settleComputeBudget,
+  type ComputeBudgetReservation,
+} from './compute-budget.js';
 
 interface CapturedInference {
   nonce: string;
@@ -27,6 +36,7 @@ interface CapturedInference {
   requestBase64: string;
   responseBase64?: string;
   inferenceId?: string;
+  budget?: ComputeBudgetReservation;
 }
 
 export class NearAiClient {
@@ -68,6 +78,7 @@ export class NearAiClient {
     } else {
       if (
         c.EXECUTION_MODE === 'LIVE' &&
+        c.COMPUTE_CREDIT_POLICY === 'PROVIDER_BALANCE' &&
         (await refreshComputeCredits(c, this.db, this.transport)) <
           BigInt(c.MIN_COMPUTE_CREDIT_USD_MICROS) * 1000n
       )
@@ -108,7 +119,14 @@ export class NearAiClient {
           model: c.NEAR_AI_MODEL,
           stream: false,
           temperature: 0,
-          max_tokens: 600,
+          max_tokens: MAX_OUTPUT_TOKENS,
+          ...(c.NEAR_AI_MODEL === BUDGET_MODEL
+            ? {
+                thinking_token_budget: MAX_THINKING_TOKENS,
+                reasoning_effort: 'low',
+                response_format: { type: 'json_object' },
+              }
+            : {}),
           messages: [
             {
               role: 'system',
@@ -133,15 +151,30 @@ export class NearAiClient {
         gateway,
         models,
         requestBase64: request.toString('base64'),
+        ...(c.COMPUTE_CREDIT_POLICY === 'LOCAL_BUDGET'
+          ? {
+              budget: await priceComputeReservation(c, this.transport),
+            }
+          : {}),
       };
       // Persist before the paid POST. A crash in this window is treated as an unknown outcome.
-      await this.db.inferenceAttempt.create({
-        data: {
-          cycleId,
-          proposalDigest: bindingDigest,
-          status: 'STARTED',
-          evidenceCiphertext: seal(captured, c.EVIDENCE_ENCRYPTION_KEY, cycleId),
-        },
+      const inferenceStore = new Store(this.db, c);
+      await inferenceStore.atomic(async (tx) => {
+        if (await tx.inferenceAttempt.findUnique({ where: { cycleId } }))
+          throw new DomainError(
+            'INFERENCE_OUTCOME_UNKNOWN',
+            'A concurrent inference already owns this cycle',
+          );
+        if (captured.budget)
+          await reserveComputeBudget(tx, inferenceStore, cycleId, captured.budget);
+        await tx.inferenceAttempt.create({
+          data: {
+            cycleId,
+            proposalDigest: bindingDigest,
+            status: 'STARTED',
+            evidenceCiphertext: seal(captured, c.EVIDENCE_ENCRYPTION_KEY, cycleId),
+          },
+        });
       });
       const { response, bytes } = await boundedFetch(
         new URL('/v1/chat/completions', c.NEAR_AI_BASE_URL),
@@ -189,16 +222,24 @@ export class NearAiClient {
       );
     const cost = await this.getRequestCost(requestId, headers);
     const usageStore = new Store(this.db, c);
-    await usageStore.atomic((tx) =>
-      usageStore.recordUsage(tx, cycleId, {
+    const budgetExceeded = await usageStore.atomic(async (tx) => {
+      await usageStore.recordUsage(tx, cycleId, {
         requestId,
         model: c.NEAR_AI_MODEL,
         inputTokens: completion.usage.prompt_tokens,
         outputTokens: completion.usage.completion_tokens,
         costUsdMicros: cost,
         billingSource: 'NEAR_AI_REQUEST_BILLING',
-      }),
-    );
+      });
+      return captured.budget
+        ? settleComputeBudget(tx, usageStore, cycleId, captured.budget, cost)
+        : false;
+    });
+    if (budgetExceeded)
+      throw new DomainError(
+        'COMPUTE_BUDGET_BREACH',
+        'Provider charge exceeded the reservation; further paid inference is halted',
+      );
     const signatureUrl = new URL(
       `/v1/signature/${encodeURIComponent(completion.id)}`,
       c.NEAR_AI_BASE_URL,

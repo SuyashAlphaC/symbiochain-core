@@ -89,6 +89,22 @@ describe('money and authorization boundaries', () => {
       ONECLICK_JWT: '',
     };
     expect(loadConfig(env).ONECLICK_JWT).toBe('');
+    const builders = {
+      ...env,
+      COMPUTE_CREDIT_POLICY: 'LOCAL_BUDGET',
+      AI_BUDGET_ID: 'builders-fixture',
+      NEAR_AI_MODEL: 'z-ai/glm-5.3-flash',
+      NEAR_AI_ORG_ID: '',
+      NEAR_AI_SESSION_TOKEN: '',
+    };
+    expect(loadConfig(builders).COMPUTE_CREDIT_POLICY).toBe('LOCAL_BUDGET');
+    expect(() => loadConfig({ ...builders, LIVE_TRADING_ENABLED: 'false' })).toThrow(
+      'LIVE_TRADING_ENABLED',
+    );
+    expect(() => loadConfig({ ...builders, TEE_MODEL_COMPOSE_HASHES: '' })).toThrow(
+      'independently approved',
+    );
+    expect(() => loadConfig({ ...env, NEAR_AI_ORG_ID: '' })).toThrow('NEAR_AI_ORG_ID');
     expect(() => loadConfig({ ...env, LIVE_TRADING_ENABLED: 'false' })).toThrow(
       'LIVE_TRADING_ENABLED',
     );
