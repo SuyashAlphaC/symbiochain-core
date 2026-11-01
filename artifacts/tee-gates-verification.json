@@ -68,5 +68,181 @@
     "file": "prod/GLM-5.3-Flash-SGL-TP2x4-W4AFP8-V12Q8.yaml",
     "sha256": "904054f502ccdb2f913d6b80f156ea658b8bc5cb6f8af06082723581d62a45c0",
     "imageProvenanceComplete": false
+  },
+  "publisherProvenanceAudit": {
+    "checkedAt": "2026-11-01T09:12:50.253Z",
+    "deploymentApproved": false,
+    "scope": "Known NEAR publisher identities for images in the measured bootstrap and the recorded candidate runtime compose file. Build signatures authenticate publisher/source claims; they do not constitute a full source audit or current-container inventory. Third-party base-image provenance is outside this audit.",
+    "results": [
+      {
+        "image": "nearaidev/dstack-vpc-client@sha256:dd570dee92901c6d9cf96909404bb5177294437e3642541225a85b06cefa3d9d",
+        "roles": [
+          "gateway"
+        ],
+        "verified": true,
+        "provenance": {
+          "digest": "sha256:dd570dee92901c6d9cf96909404bb5177294437e3642541225a85b06cefa3d9d",
+          "repository": "nearai/dstack-vpc-client",
+          "workflow": ".github/workflows/build.yml",
+          "ref": "refs/heads/main",
+          "commit": "e0b365cea0af0943cda7b0456e00108c8d768be7",
+          "certificateIdentity": "https://github.com/nearai/dstack-vpc-client/.github/workflows/build.yml@refs/heads/main",
+          "issuer": "https://token.actions.githubusercontent.com",
+          "predicateType": "https://slsa.dev/provenance/v1"
+        }
+      },
+      {
+        "image": "nearaidev/dstack-vpc@sha256:45f859504c7a66ea562e3230b7a3b482912bdd93f3930d1bb1c2f46e8d84f8f0",
+        "roles": [
+          "gateway"
+        ],
+        "verified": true,
+        "provenance": {
+          "digest": "sha256:45f859504c7a66ea562e3230b7a3b482912bdd93f3930d1bb1c2f46e8d84f8f0",
+          "repository": "nearai/dstack-vpc",
+          "workflow": ".github/workflows/build.yml",
+          "ref": "refs/heads/main",
+          "commit": "12a5f4e1ebe87d31dba42cc246bb8761e6fcdfa6",
+          "certificateIdentity": "https://github.com/nearai/dstack-vpc/.github/workflows/build.yml@refs/heads/main",
+          "issuer": "https://token.actions.githubusercontent.com",
+          "predicateType": "https://slsa.dev/provenance/v1"
+        }
+      },
+      {
+        "image": "nearaidev/cloud-api@sha256:d38e6d816454de5c93690ef46f8297fd5e57c6b8c4b5dfe984b7e1229aa6b790",
+        "roles": [
+          "gateway"
+        ],
+        "verified": true,
+        "provenance": {
+          "digest": "sha256:d38e6d816454de5c93690ef46f8297fd5e57c6b8c4b5dfe984b7e1229aa6b790",
+          "repository": "nearai/cloud-api",
+          "workflow": ".github/workflows/build.yml",
+          "ref": "refs/heads/main",
+          "commit": "9d82712cba8919bbc8cf6b69422751d8e69ab203",
+          "certificateIdentity": "https://github.com/nearai/cloud-api/.github/workflows/build.yml@refs/heads/main",
+          "issuer": "https://token.actions.githubusercontent.com",
+          "predicateType": "https://slsa.dev/provenance/v1"
+        }
+      },
+      {
+        "image": "nearaidev/cvm-ingress@sha256:1653c23200298a823c08c66d829c633fc36919bca1e09cf577b83b01353e0891",
+        "roles": [
+          "gateway"
+        ],
+        "verified": true,
+        "provenance": {
+          "digest": "sha256:1653c23200298a823c08c66d829c633fc36919bca1e09cf577b83b01353e0891",
+          "repository": "nearai/cvm-ingress",
+          "workflow": ".github/workflows/build-push.yml",
+          "ref": "refs/heads/main",
+          "commit": "6b1b58c9cf63ada80cb3be7456fbedcae9cf0173",
+          "certificateIdentity": "https://github.com/nearai/cvm-ingress/.github/workflows/build-push.yml@refs/heads/main",
+          "issuer": "https://token.actions.githubusercontent.com",
+          "predicateType": "https://slsa.dev/provenance/v1"
+        }
+      },
+      {
+        "image": "nearaidev/compose-manager@sha256:6e035c8fb99c1d31f41760d25af178683a658cca4afd73cd0d366fbb5bf884be",
+        "roles": [
+          "model-bootstrap"
+        ],
+        "verified": true,
+        "provenance": {
+          "digest": "sha256:6e035c8fb99c1d31f41760d25af178683a658cca4afd73cd0d366fbb5bf884be",
+          "repository": "nearai/compose-manager",
+          "workflow": ".github/workflows/build.yml",
+          "ref": "refs/heads/master",
+          "commit": "f91a204549b64218a92c9bada84f8129de3c1f45",
+          "certificateIdentity": "https://github.com/nearai/compose-manager/.github/workflows/build.yml@refs/heads/master",
+          "issuer": "https://token.actions.githubusercontent.com",
+          "predicateType": "https://slsa.dev/provenance/v1"
+        }
+      },
+      {
+        "image": "nearaidev/compose-manager-launcher@sha256:079a14b41deb11e0e27f9b69648e8b3d89bd6fb9ccf6071643b8f447fa415085",
+        "roles": [
+          "model-bootstrap"
+        ],
+        "verified": false,
+        "reason": "PROVENANCE_UNAVAILABLE"
+      },
+      {
+        "image": "nearaidev/vllm-proxy-rs@sha256:e4a42b327523e304c0fc389f656ba7a02fd7b3d4a38cdc822f9288fd193a525a",
+        "roles": [
+          "model-runtime"
+        ],
+        "verified": true,
+        "provenance": {
+          "digest": "sha256:e4a42b327523e304c0fc389f656ba7a02fd7b3d4a38cdc822f9288fd193a525a",
+          "repository": "nearai/inference-proxy",
+          "workflow": ".github/workflows/build.yml",
+          "ref": "refs/heads/main",
+          "commit": "f18298f4974686cfa173f27bb764c1e3af2ff4b8",
+          "certificateIdentity": "https://github.com/nearai/inference-proxy/.github/workflows/build.yml@refs/heads/main",
+          "issuer": "https://token.actions.githubusercontent.com",
+          "predicateType": "https://slsa.dev/provenance/v1"
+        }
+      },
+      {
+        "image": "docker.io/nearaidev/sglang@sha256:da8d4e4b5ec667499b58a21e56050aae9bcfc4df9669b3ac27e2e20af033d681",
+        "roles": [
+          "model-runtime"
+        ],
+        "verified": true,
+        "provenance": {
+          "digest": "sha256:da8d4e4b5ec667499b58a21e56050aae9bcfc4df9669b3ac27e2e20af033d681",
+          "repository": "nearai/cvm-compose-files",
+          "workflow": ".github/workflows/publish-glm53-admission-reserve.yaml",
+          "ref": "refs/heads/main",
+          "commit": "79de066bbdce973b442242d44d3046791a059f2e",
+          "certificateIdentity": "https://github.com/nearai/cvm-compose-files/.github/workflows/publish-glm53-admission-reserve.yaml@refs/heads/main",
+          "issuer": "https://token.actions.githubusercontent.com",
+          "predicateType": "https://slsa.dev/provenance/v1"
+        }
+      },
+      {
+        "image": "docker.io/nearaidev/sglang@sha256:e9d29a1cb1cd65284392c4d62d5f2a36669628057e15c60fe93ea40cfe4fc7e7",
+        "roles": [
+          "model-runtime"
+        ],
+        "verified": true,
+        "provenance": {
+          "digest": "sha256:e9d29a1cb1cd65284392c4d62d5f2a36669628057e15c60fe93ea40cfe4fc7e7",
+          "repository": "nearai/cvm-compose-files",
+          "workflow": ".github/workflows/publish-glm53-admission-reserve.yaml",
+          "ref": "refs/heads/main",
+          "commit": "0244bab81cc0ec42f0aa24d5de57b804650c9cfa",
+          "certificateIdentity": "https://github.com/nearai/cvm-compose-files/.github/workflows/publish-glm53-admission-reserve.yaml@refs/heads/main",
+          "issuer": "https://token.actions.githubusercontent.com",
+          "predicateType": "https://slsa.dev/provenance/v1"
+        }
+      },
+      {
+        "image": "nearaidev/compose-manager@sha256:a320bb4882341c8e19ef1944436f6591ed73303732009ed5db9f6db6c9da756a",
+        "roles": [
+          "model-manager-latest"
+        ],
+        "verified": true,
+        "provenance": {
+          "digest": "sha256:a320bb4882341c8e19ef1944436f6591ed73303732009ed5db9f6db6c9da756a",
+          "repository": "nearai/compose-manager",
+          "workflow": ".github/workflows/build.yml",
+          "ref": "refs/heads/master",
+          "commit": "be649f8808429317c9a3006115c6d2d7cf001317",
+          "certificateIdentity": "https://github.com/nearai/compose-manager/.github/workflows/build.yml@refs/heads/master",
+          "issuer": "https://token.actions.githubusercontent.com",
+          "predicateType": "https://slsa.dev/provenance/v1"
+        }
+      }
+    ]
+  },
+  "blockingImage": {
+    "image": "nearaidev/compose-manager-launcher@sha256:079a14b41deb11e0e27f9b69648e8b3d89bd6fb9ccf6071643b8f447fa415085",
+    "checkedAt": "2026-11-01T09:14:21.585427+00:00",
+    "githubOrganizationAttestationsStatus": 404,
+    "ociLegacyAttestationStatus": 404,
+    "ociLegacySignatureStatus": 404,
+    "meaning": "No verifiable build record located at these public locations. This is not proof that the image is unsafe, and is not an API-key or credit-balance failure."
   }
 }
