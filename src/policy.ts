@@ -1,6 +1,32 @@
 import type { Policy } from './generated/prisma/client.js';
 import { digest, netProfit, type Proposal, type Quote, type Assessment } from './domain.js';
 
+/** Indicative admission arithmetic, never a realized P&L or complete cost basis. */
+export function quoteProfitCheck(quote: Quote, minimumNetProfitAtoms: string) {
+  const input = BigInt(quote.inputAtoms),
+    quoted = BigInt(quote.expectedOutputAtoms),
+    minimum = BigInt(quote.minimumOutputAtoms),
+    costs = BigInt(quote.costsAtoms),
+    floor = BigInt(minimumNetProfitAtoms),
+    required = input + costs + floor,
+    shortfall = required > minimum ? required - minimum : 0n;
+  return {
+    inputAtoms: input.toString(),
+    quotedOutputAtoms: quoted.toString(),
+    minimumOutputAtoms: minimum.toString(),
+    quotedGrossPnlAtoms: (quoted - input).toString(),
+    minimumGrossPnlAtoms: (minimum - input).toString(),
+    previewCostAllowanceAtoms: costs.toString(),
+    minimumNetAfterAllowanceAtoms: netProfit(quote).toString(),
+    profitFloorAtoms: floor.toString(),
+    requiredMinimumOutputAtoms: required.toString(),
+    shortfallAtoms: shortfall.toString(),
+    passesProfitFloor: shortfall === 0n,
+    realized: false,
+    completeCostBasis: false,
+  };
+}
+
 export function evaluatePolicy(
   policy: Policy,
   proposal: Proposal,

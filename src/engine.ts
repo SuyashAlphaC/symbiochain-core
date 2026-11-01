@@ -12,7 +12,7 @@ import {
   terminalStates,
   type PreparedExecution,
 } from './domain.js';
-import { evaluatePolicy } from './policy.js';
+import { evaluatePolicy, quoteProfitCheck } from './policy.js';
 import { seal } from './crypto.js';
 import { z } from 'zod';
 import { cycleEconomics } from './economics.js';
@@ -88,13 +88,19 @@ export class Engine {
     cycle: Cycle,
     reasons: string[],
     expired = false,
+    preview?: { quote: Quote; minimumNetProfitAtoms: string },
   ): Promise<void> {
     await this.store.advance(
       job,
       cycle.state,
       expired ? 'EXPIRED' : 'REJECTED',
-      { rejection: reasons.join(',') },
-      { reasons },
+      { rejection: reasons.join(','), ...(preview ? { quote: json(preview.quote) } : {}) },
+      {
+        reasons,
+        ...(preview
+          ? { profitCheck: quoteProfitCheck(preview.quote, preview.minimumNetProfitAtoms) }
+          : {}),
+      },
       null,
       async (tx) => {
         await tx.reservation.updateMany({
@@ -130,7 +136,10 @@ export class Engine {
       const q = Quote.parse(await this.providers.quote(cycle.id, p));
       const reasons = evaluatePolicy(policy, p, q, null);
       if (reasons.length) {
-        await this.reject(job, cycle, reasons);
+        await this.reject(job, cycle, reasons, false, {
+          quote: q,
+          minimumNetProfitAtoms: policy.minNetProfitAtoms.toFixed(0),
+        });
         return;
       }
       await this.store.advance(

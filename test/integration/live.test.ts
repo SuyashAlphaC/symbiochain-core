@@ -76,6 +76,7 @@ function fixture(
     neverAccept?: 'EVM' | 'SOLANA';
     wrongRecipient?: boolean;
     firstLegRefund?: boolean;
+    losingPreview?: boolean;
   } = {},
 ) {
   let evmHead = 1000n,
@@ -278,8 +279,8 @@ function fixture(
         minAmountIn: request.amount,
         amountInFormatted: 'fixture',
         amountInUsd: 'fixture',
-        amountOut: first ? '31000000' : '5200000',
-        minAmountOut: first ? '30000000' : '5150000',
+        amountOut: first ? '31000000' : options.losingPreview ? '9890000' : '5200000',
+        minAmountOut: first ? '30000000' : options.losingPreview ? '9840294' : '5150000',
         amountOutFormatted: 'fixture',
         amountOutUsd: 'fixture',
         timeEstimate: 1,
@@ -466,7 +467,7 @@ function fixture(
     records,
   };
 }
-async function start(f: ReturnType<typeof fixture>) {
+async function start(f: ReturnType<typeof fixture>, amountAtoms = '5000000') {
   await f.providers.reconcileIdleBalance();
   const p = Proposal.parse({
     strategy: 'round-trip',
@@ -474,7 +475,7 @@ async function start(f: ReturnType<typeof fixture>) {
     destinationChain: 'solana:mainnet',
     originAsset: base,
     intermediateAsset: middle,
-    amountAtoms: '5000000',
+    amountAtoms,
     recipient: evmSigner.address,
     refundTo: evmSigner.address,
     slippageBps: 50,
@@ -493,6 +494,33 @@ async function run(f: ReturnType<typeof fixture>, count = 18) {
     await engine.tick();
   }
 }
+it('rejects the observed losing preview before inference, payments, reservations or signing and preserves its arithmetic', async () => {
+  const f = fixture({ losingPreview: true });
+  const assess = vi.spyOn(f.ports.ai!, 'assess');
+  await db.policy.update({ where: { mode: 'LIVE' }, data: { maxTradeAtoms: '10000000' } });
+  const cycle = await start(f, '10000000');
+  await new Engine(store, f.providers).tick();
+  const result = await store.getCycle(cycle.id);
+  expect(result.state).toBe('REJECTED');
+  expect(result.rejection).toContain('INSUFFICIENT_NET_PROFIT');
+  expect(result.quote).toMatchObject({ inputAtoms: '10000000', minimumOutputAtoms: '9840294' });
+  const decision = await db.decision.findFirstOrThrow({
+    where: { cycleId: cycle.id, action: 'REJECTED' },
+  });
+  expect(decision.details).toMatchObject({
+    profitCheck: {
+      minimumGrossPnlAtoms: '-159706',
+      passesProfitFloor: false,
+      completeCostBasis: false,
+    },
+  });
+  expect(assess).not.toHaveBeenCalled();
+  expect(f.prepares()).toBe(0);
+  expect(f.signedCalls).toHaveLength(0);
+  expect(f.payments).toHaveLength(0);
+  expect(f.broadcasts).toHaveLength(0);
+  expect(await db.reservation.count()).toBe(0);
+});
 it('runs both live-provider legs with real local signatures, signed quote verification and native fee accounting', async () => {
   const f = fixture(),
     cycle = await start(f);
