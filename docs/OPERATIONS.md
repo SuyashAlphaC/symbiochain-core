@@ -14,24 +14,25 @@ The supplied runtime composes the agents on one host. Separate processes/roles a
 
 Start from `.env.example`. Required live values include:
 
-| Setting                                                       | Purpose                                                                       |
-| ------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| `EXECUTION_MODE=LIVE`, `LIVE_TRADING_ENABLED=true`            | Explicit live arming                                                          |
-| `NEAR_NETWORK=mainnet`, `NEAR_RPC_URL`                        | Actual mainnet; 1Click has no testnet                                         |
-| `NEAR_CONTRACT_ID`                                            | Deployed guarded treasury                                                     |
-| `NEAR_BRAIN_ACCOUNT_ID`, `NEAR_BRAIN_PRIVATE_KEY`             | Brain authorization signer                                                    |
-| `NEAR_WORKER_ACCOUNT_ID`, `NEAR_WORKER_PRIVATE_KEY`           | Hand signer                                                                   |
-| `NEAR_ACCOUNTANT_ACCOUNT_ID`, `NEAR_ACCOUNTANT_PRIVATE_KEY`   | Reconciliation signer                                                         |
-| `NEAR_SCOUT_ACCOUNT_ID`                                       | Signal seller recipient                                                       |
-| `CHAIN_SIGNATURES_CONTRACT`, `CHAIN_DERIVATION_PATH`          | MPC service and immutable derivation identity                                 |
-| `NEAR_AI_API_KEY`, `NEAR_AI_MODEL`                            | Paid inference; use a canonical NEAR-served model                             |
-| `NEAR_AI_ORG_ID`, `NEAR_AI_SESSION_TOKEN`                     | Provider credit balance; session access is distinct from an inference API key |
-| `TEE_GATEWAY_COMPOSE_HASHES`, `TEE_MODEL_COMPOSE_HASHES`      | Independently reviewed deployment measurements                                |
-| `ONECLICK_JWT`, `ONECLICK_MANAGER_PUBLIC_KEY`                 | Optional partner JWT; approved signed-quote manager remains required          |
-| `EVM_RPC_URL`, `EVM_CHAIN_ID`, `SOLANA_RPC_URL`               | Correct mainnet endpoints                                                     |
-| `BASE_ASSET`, `BASE_DECIMALS`, `ALLOWED_*`                    | Registry asset IDs, chain IDs and derived recipients                          |
-| `NFT_RECEIVER_ID`, `NFT_SHARE_BPS=0`                          | Receipt holder; automatic rights require completed cost valuation             |
-| Random `ADMIN_TOKEN`, `READ_TOKEN`, `EVIDENCE_ENCRYPTION_KEY` | Application access and evidence storage                                       |
+| Setting                                                                                            | Purpose                                                                                    |
+| -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `EXECUTION_MODE=LIVE`, `LIVE_TRADING_ENABLED=true`                                                 | Explicit live arming                                                                       |
+| `NEAR_NETWORK=mainnet`, `NEAR_RPC_URL`                                                             | Actual mainnet; 1Click has no testnet                                                      |
+| `NEAR_CONTRACT_ID`                                                                                 | Deployed guarded treasury                                                                  |
+| `NEAR_BRAIN_ACCOUNT_ID`, `NEAR_BRAIN_PRIVATE_KEY`                                                  | Brain authorization signer                                                                 |
+| `NEAR_WORKER_ACCOUNT_ID`, `NEAR_WORKER_PRIVATE_KEY`                                                | Hand signer                                                                                |
+| `NEAR_ACCOUNTANT_ACCOUNT_ID`, `NEAR_ACCOUNTANT_PRIVATE_KEY`                                        | Reconciliation signer                                                                      |
+| `NEAR_SCOUT_ACCOUNT_ID`                                                                            | Signal seller recipient                                                                    |
+| `CHAIN_SIGNATURES_CONTRACT`, `CHAIN_DERIVATION_PATH`                                               | MPC service and immutable derivation identity                                              |
+| `NEAR_AI_API_KEY`, `NEAR_AI_MODEL`                                                                 | Paid inference; use a canonical NEAR-served model                                          |
+| `NEAR_AI_ORG_ID`, `NEAR_AI_SESSION_TOKEN`                                                          | Required only for the `PROVIDER_BALANCE` compute policy; must match the key's organization |
+| `COMPUTE_CREDIT_POLICY`, `AI_BUDGET_ID`, `AI_TOTAL_BUDGET_USD_MICROS`, `AI_MAX_REQUEST_USD_MICROS` | Optional `LOCAL_BUDGET` policy for grant keys with no organization access                  |
+| `TEE_GATEWAY_COMPOSE_HASHES`, `TEE_MODEL_COMPOSE_HASHES`                                           | Independently reviewed deployment measurements                                             |
+| `ONECLICK_JWT`, `ONECLICK_MANAGER_PUBLIC_KEY`                                                      | Optional partner JWT; approved signed-quote manager remains required                       |
+| `EVM_RPC_URL`, `EVM_CHAIN_ID`, `SOLANA_RPC_URL`                                                    | Correct mainnet endpoints                                                                  |
+| `BASE_ASSET`, `BASE_DECIMALS`, `ALLOWED_*`                                                         | Registry asset IDs, chain IDs and derived recipients                                       |
+| `NFT_RECEIVER_ID`, `NFT_SHARE_BPS=0`                                                               | Receipt holder; automatic rights require completed cost valuation                          |
+| Random `ADMIN_TOKEN`, `READ_TOKEN`, `EVIDENCE_ENCRYPTION_KEY`                                      | Application access and evidence storage                                                    |
 
 `ONECLICK_JWT` is optional. Without it, the provider applies its unauthenticated fee schedule; the backend still verifies signed quotes and evaluates the actual quoted minimum return. It never assumes zero platform fees. The preflight reports `oneclickAuthentication` separately from required credentials. See the official [API key guide](https://docs.near-intents.org/integration/distribution-channels/1click-api/authentication) and [fee schedule](https://docs.near-intents.org/resources/fees).
 
@@ -81,7 +82,9 @@ Profitability uses a conservative return minimum, configured gas estimate and co
 
 ## Metabolism and funding
 
-The backend stops purchasing inference when measured compute credit is below its floor or unknown. Credit observations expire after two minutes. `SYNC_STAKING_CREDITS=true` invokes the documented sync endpoint for a source already linked to the NEAR-authenticated organization. It does not create a stake, spend principal, or prove a trading-funded compute purchase. Session-token expiration also stops this path until credentials are renewed.
+The default `PROVIDER_BALANCE` policy stops purchasing inference when measured compute credit is below its floor or unknown. Credit observations expire after two minutes. `SYNC_STAKING_CREDITS=true` invokes the documented sync endpoint for a source already linked to the NEAR-authenticated organization. It does not create a stake, spend principal, or prove a trading-funded compute purchase. Session-token expiration also stops this path until credentials are renewed.
+
+Builders-issued keys can select `COMPUTE_CREDIT_POLICY=LOCAL_BUDGET` with a persistent budget ID and explicit cumulative/per-request limits. This path reserves worst-case charges before the paid request and reconciles actual per-request billing. Unknown costs retain their allowance; provider overruns halt further spending. It uses the inference key only and reports provider balance as unknown. See the [private-inference budget runbook](PRIVATE_INFERENCE.md#builders-keys-and-application-budgets).
 
 Actual request billing, grants/staking credits, service transfers and wallet capital are distinct evidence. Wallet balance divided by an assumed inference price is not a measured survival time. Hosting costs, native gas valuation and automatic conversion of trading profit into paid credits remain outside the demonstrated closed loop.
 

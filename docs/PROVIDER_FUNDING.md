@@ -31,8 +31,8 @@ Once supplied, the existing guarded-transfer, durable signed-material and journa
 
 ## Current behavior
 
-- The worker measures actual inference charges and provider credit balance.
-- Low/unknown credit stops further paid inference.
+- The worker measures actual inference charges. The default policy also reads a matching organization's provider credit balance.
+- Low/unknown credit stops inference under `PROVIDER_BALANCE`. An explicit `LOCAL_BUDGET` policy supports Builders keys through durable reservations and per-request billing, while leaving the provider balance unknown.
 - Optional staking sync supports a source already configured and linked through NEAR AI.
 - No automatic purchase, principal staking, direct trading-profit funding, or already self-sustaining business is claimed.
 - Live end-to-end validation also requires the dedicated funded accounts, keys and approved measurements listed by `npm run live:preflight`.

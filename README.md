@@ -1,6 +1,6 @@
 # SymbioChain Core
 
-**Three agents, one treasury, measurable operating costs.** Scout searches approved cross-chain routes. Brain evaluates committed proposals using NEAR AI confidential inference. Hand requests constrained Chain Signatures, broadcasts deposits, and reconciles settlement. Agents buy each other's services through NEAR Intents. An operational reserve and a separate provider-credit check govern whether the swarm may continue.
+**Three agents, one treasury, measurable operating costs.** Scout searches approved cross-chain routes. Brain evaluates committed proposals using NEAR AI confidential inference. Hand requests constrained Chain Signatures, broadcasts deposits, and reconciles settlement. Agents buy each other's services through NEAR Intents. An operational reserve and a separate inference-spending policy govern whether the swarm may continue.
 
 The backend includes TypeScript/Fastify, PostgreSQL/Prisma, durable workers, a Rust NEAR treasury/NFT contract, EVM and native Solana transfer adapters, encrypted evidence, replayable WebSocket events, and Docker/CI configuration.
 
@@ -170,7 +170,7 @@ Persist the last sequence and reconnect with it. Events replay from PostgreSQL; 
 
 Journals balance each asset independently and distinguish external capital, internal transfers, trading results, compute expense and chain costs. Deposits and intra-swarm payments are never business revenue.
 
-Wallet reserves and provider credits are separate resources. Live inference requires a measured NEAR AI organization balance above the compute floor. Optional staking-credit sync refreshes an **already configured** credit source; it does not stake funds or convert trade proceeds into credits. The [provider-funding decision](docs/PROVIDER_FUNDING.md) records the published API evidence and missing purchase protocol. Full-business `survivalHours` stays `null` until hosting/funding costs and all native fees are measured and valued.
+Wallet reserves and provider credits are separate resources. Live inference uses either the default organization-balance guard or an explicit [durable application budget](docs/PRIVATE_INFERENCE.md#builders-keys-and-application-budgets) for Builders-issued keys without organization access. A local budget caps this backend's admitted spending and reconciles per-request billing; it does not verify the remaining provider balance. Optional staking-credit sync refreshes an **already configured** credit source; it does not stake funds or convert trade proceeds into credits. The [provider-funding decision](docs/PROVIDER_FUNDING.md) records the published API evidence and missing purchase protocol. Full-business `survivalHours` stays `null` until hosting/funding costs and all native fees are measured and valued.
 
 Native EVM/Solana fees remain in settlement evidence. Gross trading P&L is separate from the receipt's net basis. With `NFT_SHARE_BPS=0`, receipts can use disclosed conservative cost buffers. With nonzero shares, minting waits for an immutable accountant-approved cost basis matching the exact settlement, native fee evidence and metered inference. The approval includes native/NEAR gas valuation, hosting, other costs and a receipt-gas budget. It is labeled `ACCOUNTANT_APPROVED`, not independently verified market truth. See the operations guide for the cost-approval endpoint.
 
