@@ -2,6 +2,12 @@
 
 Use the NEAR AI Cloud gateway at `https://cloud-api.near.ai`. Model privacy is a separate choice: NEAR-operated Confidential TEE models support the NEAR model-evidence flow, while Incognito models run on upstream providers outside that model TEE. Third-party confidential providers have different evidence formats. See the current [model catalog documentation](https://docs.near.ai/cloud/models).
 
+## Selected model
+
+SymbioChain selects `z-ai/glm-5.3-flash` (GLM 5.3 Flash) for the Brain. Its canonical ID, NEAR-operated model evidence, structured-output support, and bounded output fit the existing risk-assessment client. The [official model page](https://near.ai/models/z-ai/glm-5.3-flash) publishes current pricing; inference consumes provider credits.
+
+Set `NEAR_AI_MODEL=z-ai/glm-5.3-flash` in both the local backend environment and the existing Render service. This selects the model without enabling paid inference or LIVE trading. Hardware verification, independent deployment approval, balance access, and explicit LIVE arming remain separate checks. Keep `max_tokens: 600` and the operator's configured minimum-credit reserve.
+
 ## Implemented scope
 
 | Check                       | Implementation and limit                                                                                                                                                                                                                                                            |
