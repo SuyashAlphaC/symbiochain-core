@@ -14,6 +14,7 @@ Set `NEAR_AI_MODEL=z-ai/glm-5.3-flash` in both the local backend environment and
 | --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Gateway and model preflight | Requests a fresh nonce, a canonical model ID, `provider=near`, and `x-no-aliasing: true`; verifies the gateway and every returned model candidate before purchasing inference.                                                                                                      |
 | Intel TDX                   | Verifies DCAP evidence, accepted platform status, non-debug mode, signer/nonce binding, exact compose-string hash, and replayed RTMR3. Deployment hashes must already be independently approved.                                                                                    |
+| Dynamic deployment          | Authenticates Compose Manager actions with a separate DCAP quote, nonce, action hash, matching compose measurement and replayed RTMR3. Requires a separately reviewed `TEE_MODEL_ACTIONS_HASHES` entry; a bootstrap hash alone cannot approve a changed workload.                   |
 | NVIDIA GPU verdict          | Sends the original GPU payload to the pinned HTTPS NRAS endpoint. Accepts its detached platform JWT plus GPU-token map; checks nonce, issuer, validity, all submitted GPUs, token digests, secure boot, disabled debugging, measurements, warnings, and required security verdicts. |
 | Response integrity          | Retains exact request/response bytes and requires a model-serving signature matching exactly one previously verified model identity. Gateway-only signatures do not authorize trading.                                                                                              |
 | Spending controls           | Selects either provider-balance checks or a durable application budget. Limits response/reasoning tokens and prevents automatic resubmission after an uncertain paid request. Organization access is not required for the explicit local-budget policy.                             |
@@ -31,6 +32,16 @@ Backend orchestration and its function-call keys remain outside a TEE. A verifie
 3. Review image provenance and approve gateway/model compose measurements through an independent source/build review. Never copy an observed hash directly into the allowlist as an approval shortcut.
 4. Select the spending policy below. Organization balance reporting requires `NEAR_AI_ORG_ID` and `NEAR_AI_SESSION_TOKEN` for the organization actually owning the key. A Builders-issued grant key can instead use a durable local budget without those credentials.
 5. After those checks, run one bounded completion and reconcile its `inference-id` against provider billing. Do not start a continuous paid loop merely to validate credentials.
+
+## Free hardware audit and deployment policy
+
+Run `npm run probe:tee` to retrieve and verify fresh gateway/model hardware evidence without purchasing a completion. It records raw evidence under ignored `.data/tee-gates/` and prints a safe summary. `hardwareVerified` authenticates the evidence; `deploymentApproved` separately checks configured measurements and deployment actions. A nonzero exit means the inference gates are not all satisfied. The probe never approves a hash or enables LIVE.
+
+For Compose Manager deployments, review the authenticated actions and immutable image provenance before configuring `TEE_MODEL_ACTIONS_HASHES`. The canonical action hash retains unknown fields and uses UTF-8 lexical key order. Missing deployment evidence, changed actions, stale nonces, mismatched configuration, unaccepted TCB status and altered runtime measurements stop verification. Action logs prove deployment requests, not successful execution or the current state of every container. They bind a measured configuration, not a unique model instance.
+
+The current audit authenticates both gateway and model hardware, including GPU evidence, but leaves deployment approval false. Selected image build provenance has been verified separately; this does not approve all images or a complete deployment. No paid inference has been purchased by this audit. A signed completion remains a separate required check.
+
+Previously completed inference caches also recheck deployment policy. Removing an approved measurement or action hash stops reuse. Legacy GLM evidence without authenticated deployment actions or gateway connection binding cannot authorize LIVE. Such evidence is not silently upgraded.
 
 ## Builders keys and application budgets
 

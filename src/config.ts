@@ -53,6 +53,7 @@ const Schema = z.object({
   NEAR_AI_BASE_URL: z.url().default('https://cloud-api.near.ai'),
   TEE_GATEWAY_COMPOSE_HASHES: list.prefault(''),
   TEE_MODEL_COMPOSE_HASHES: list.prefault(''),
+  TEE_MODEL_ACTIONS_HASHES: list.prefault(''),
   ONECLICK_API_BASE_URL: z.url().default('https://1click.chaindefuser.com'),
   ONECLICK_JWT: z.string().default(''),
   ONECLICK_MANAGER_PUBLIC_KEY: z

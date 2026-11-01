@@ -19,8 +19,21 @@ const Report = z.object({
   event_log: z.unknown(),
   info: z.object({ tcb_info: z.unknown() }),
   nvidia_payload: z.string().optional(),
-  tls_cert_fingerprint: z.string().optional(),
+  tls_cert_fingerprint: z
+    .string()
+    .regex(/^[a-fA-F0-9]{64}$/)
+    .optional(),
+  compose_manager_attestation: z.unknown().optional(),
 });
+const ManagerReport = z.object({
+  actions: z.array(z.record(z.string(), z.union([z.string(), z.array(z.string())]))).max(10000),
+  actions_hash: z.string().regex(/^[a-fA-F0-9]{64}$/),
+  nonce: z.string(),
+  quote: hex,
+  event_log: z.unknown(),
+  report_data: hex.optional(),
+});
+export type DeploymentActions = z.infer<typeof ManagerReport>['actions'];
 export type NearReport = z.infer<typeof Report>;
 export interface VerifiedIdentity {
   signer: string;
@@ -30,6 +43,27 @@ export interface VerifiedIdentity {
   tcbStatus: string;
   gpuVerified: boolean;
   tlsSpkiSha256?: string;
+  composeManagerActionsHash?: string;
+}
+export interface AttestationInspection {
+  identity: VerifiedIdentity;
+  appCompose: string;
+  composeManagerActions?: DeploymentActions;
+  deploymentApproved: false;
+}
+/** Compose Manager's UTF-8 lexical field order; retain unknown action fields. */
+export function deploymentActionsHash(actions: DeploymentActions): string {
+  return sha256(
+    `[${actions
+      .map(
+        (action) =>
+          `{${Object.entries(action)
+            .sort(([a], [b]) => Buffer.compare(Buffer.from(a), Buffer.from(b)))
+            .map(([key, value]) => `${JSON.stringify(key)}:${JSON.stringify(value)}`)
+            .join(',')}}`,
+      )
+      .join(',')}]`,
+  );
 }
 const bytes = (s: string) => Buffer.from(s.replace(/^0x/, ''), 'hex');
 const h384 = (...parts: Uint8Array[]) => {
@@ -82,11 +116,35 @@ export class HardwareVerifier {
     allowedComposeHashes: string[],
     requireGpu: boolean,
     peerSpkiSha256?: string,
+    allowedActionsHashes: string[] = [],
   ): Promise<VerifiedIdentity> {
+    const inspected = await this.inspect(raw, nonce, requireGpu, peerSpkiSha256);
+    if (!allowedComposeHashes.includes(inspected.identity.composeHash))
+      throw new DomainError('TEE_MEASUREMENT', 'Configuration is not independently approved');
+    if (
+      inspected.identity.composeManagerActionsHash &&
+      !allowedActionsHashes.includes(inspected.identity.composeManagerActionsHash)
+    )
+      throw new DomainError(
+        'TEE_DEPLOYMENT_ACTIONS',
+        'Deployment action log is not independently approved',
+      );
+    return inspected.identity;
+  }
+  /** Hardware authentication only. This deliberately cannot approve deployment policy. */
+  async inspect(
+    raw: unknown,
+    nonce: string,
+    requireGpu: boolean,
+    peerSpkiSha256?: string,
+  ): Promise<AttestationInspection> {
     const report = Report.parse(raw);
     if (!/^[a-f0-9]{64}$/.test(nonce) || report.request_nonce.toLowerCase() !== nonce)
       throw new DomainError('TEE_NONCE', 'Attestation nonce mismatch');
-    if (report.tls_cert_fingerprint && (requireGpu || !peerSpkiSha256))
+    if (
+      (report.tls_cert_fingerprint && !requireGpu && !peerSpkiSha256) ||
+      (requireGpu && peerSpkiSha256)
+    )
       throw new DomainError(
         'TEE_TLS_SCOPE',
         'Unexpected TLS binding; same-connection verification is required for that mode',
@@ -108,8 +166,11 @@ export class HardwareVerifier {
     if (!td) throw new DomainError('TEE_TYPE', 'Expected Intel TDX report');
     if ((td.tdAttributes[0] ?? 1) & 1)
       throw new DomainError('TEE_DEBUG', 'Debug enclaves are forbidden');
-    const boundSigner = peerSpkiSha256
-      ? bytes(sha256(Buffer.concat([bytes(report.signing_address), bytes(peerSpkiSha256)])))
+    // Models may bind their upstream SPKI too. Check the quote commitment,
+    // without claiming that SPKI was observed on the client connection.
+    const reportedSpki = report.tls_cert_fingerprint?.toLowerCase();
+    const boundSigner = reportedSpki
+      ? bytes(sha256(Buffer.concat([bytes(report.signing_address), bytes(reportedSpki)])))
       : Buffer.concat([bytes(report.signing_address), Buffer.alloc(12)]);
     const expected = Buffer.concat([boundSigner, bytes(nonce)]);
     if (!Buffer.from(td.reportData).equals(expected))
@@ -127,10 +188,57 @@ export class HardwareVerifier {
     const mrConfig = Buffer.concat([Buffer.from([1]), bytes(composeHash), Buffer.alloc(15)]);
     if (!Buffer.from(td.mrConfigId).equals(mrConfig))
       throw new DomainError('TEE_COMPOSE', 'Configuration does not match the verified quote');
-    if (!allowedComposeHashes.includes(composeHash))
-      throw new DomainError('TEE_MEASUREMENT', 'Configuration is not independently approved');
     if (!replayRtmr3(report.event_log).equals(Buffer.from(td.rtMr3)))
       throw new DomainError('TEE_RTMR', 'Event log does not reproduce RTMR3');
+    // This measured bootstrap can launch new workloads. A stripped action report
+    // must not turn a dynamic deployment back into a static compose-only policy.
+    if (
+      info.app_compose.includes('nearaidev/compose-manager') &&
+      !report.compose_manager_attestation
+    )
+      throw new DomainError(
+        'TEE_DEPLOYMENT_MISSING',
+        'Compose Manager deployment evidence is required',
+      );
+    let manager: z.infer<typeof ManagerReport> | undefined;
+    if (report.compose_manager_attestation !== undefined) {
+      manager = ManagerReport.parse(report.compose_manager_attestation);
+      if (manager.nonce.toLowerCase() !== nonce)
+        throw new DomainError('TEE_DEPLOYMENT_NONCE', 'Deployment log nonce mismatch');
+      const verifiedManager = await this.verifyQuote(bytes(manager.quote));
+      if (verifiedManager.status !== 'UpToDate' || verifiedManager.advisory_ids.length)
+        throw new DomainError(
+          'TEE_DEPLOYMENT_TCB',
+          'Unaccepted deployment platform security status',
+        );
+      const managerTd =
+        verifiedManager.report.asTd10() ??
+        verifiedManager.report.asTd15()?.base ??
+        verifiedManager.report.asTd15Ex()?.base.base;
+      if (!managerTd || (managerTd.tdAttributes[0] ?? 1) & 1)
+        throw new DomainError('TEE_DEPLOYMENT_DEBUG', 'Expected a non-debug deployment TDX report');
+      const actionsHash = deploymentActionsHash(manager.actions);
+      const managerExpected = Buffer.concat([bytes(actionsHash), bytes(nonce)]);
+      if (
+        actionsHash !== manager.actions_hash.toLowerCase() ||
+        !Buffer.from(managerTd.reportData).equals(managerExpected) ||
+        (manager.report_data !== undefined && !bytes(manager.report_data).equals(managerExpected))
+      )
+        throw new DomainError(
+          'TEE_DEPLOYMENT_BINDING',
+          'Quote does not bind the deployment actions and nonce',
+        );
+      if (!Buffer.from(managerTd.mrConfigId).equals(mrConfig))
+        throw new DomainError(
+          'TEE_DEPLOYMENT_COMPOSE',
+          'Deployment log configuration does not match model configuration',
+        );
+      if (!replayRtmr3(manager.event_log).equals(Buffer.from(managerTd.rtMr3)))
+        throw new DomainError(
+          'TEE_DEPLOYMENT_RTMR',
+          'Deployment event log does not reproduce RTMR3',
+        );
+    }
     let gpuVerified = false;
     if (requireGpu && !report.nvidia_payload)
       throw new DomainError('TEE_GPU_MISSING', 'Model GPU evidence is required');
@@ -157,13 +265,19 @@ export class HardwareVerifier {
       gpuVerified = true;
     }
     return {
-      signer: report.signing_address.toLowerCase(),
-      algorithm: 'ecdsa',
-      composeHash,
-      nonce,
-      tcbStatus: verified.status,
-      gpuVerified,
-      ...(peerSpkiSha256 ? { tlsSpkiSha256: peerSpkiSha256 } : {}),
+      identity: {
+        signer: report.signing_address.toLowerCase(),
+        algorithm: 'ecdsa',
+        composeHash,
+        nonce,
+        tcbStatus: verified.status,
+        gpuVerified,
+        ...(peerSpkiSha256 ? { tlsSpkiSha256: peerSpkiSha256 } : {}),
+        ...(manager ? { composeManagerActionsHash: manager.actions_hash.toLowerCase() } : {}),
+      },
+      appCompose: info.app_compose,
+      ...(manager ? { composeManagerActions: manager.actions } : {}),
+      deploymentApproved: false,
     };
   }
 }

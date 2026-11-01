@@ -328,6 +328,11 @@ it.each(['PROVIDER_BALANCE', 'LOCAL_BUDGET'] as const)(
     expect(posts).toBe(1);
     expect(await db.computeUsage.count()).toBe(1);
     expect((await client.assess(id, p, q)).proof.requestHash).toBe(result.proof.requestHash);
+    await expect(
+      new NearAiClient({ ...config, TEE_MODEL_COMPOSE_HASHES: [] }, db, hardware, transport, () =>
+        fixtureSession(transport),
+      ).assess(id, p, q),
+    ).rejects.toThrow('no longer approved');
     expect(posts).toBe(1);
     if (policy === 'LOCAL_BUDGET')
       expect((await localComputeBudget(db, config)).committedUsdMicros).toBe('101');

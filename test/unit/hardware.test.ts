@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import type { VerifiedReport } from '@phala/dcap-qvl';
-import { HardwareVerifier } from '../../src/providers/attestation.js';
+import { HardwareVerifier, deploymentActionsHash } from '../../src/providers/attestation.js';
 import { sha256 } from '../../src/domain.js';
 import type { Fetch } from '../../src/providers/http.js';
 const nonce = 'bb'.repeat(32),
@@ -38,6 +38,100 @@ function fixture() {
   const verifier = new HardwareVerifier(async () => verified as unknown as VerifiedReport);
   return { td, verified, report, verifier };
 }
+
+function managerFixture() {
+  const root = fixture(),
+    manager = fixture();
+  const appCompose = '{"image":"nearaidev/compose-manager@sha256:reviewed"}';
+  const composeHash = sha256(appCompose);
+  root.report.info.tcb_info.app_compose = appCompose;
+  const mrConfig = Buffer.concat([
+    Buffer.from([1]),
+    Buffer.from(composeHash, 'hex'),
+    Buffer.alloc(15),
+  ]);
+  root.td.mrConfigId = mrConfig;
+  manager.td.mrConfigId = mrConfig;
+  const actions = [
+    { action: 'compose_up', commit: 'reviewed', '10': 'ten', '2': 'two', services: ['model'] },
+  ];
+  const actionsHash = deploymentActionsHash(actions);
+  manager.td.reportData = Buffer.concat([
+    Buffer.from(actionsHash, 'hex'),
+    Buffer.from(nonce, 'hex'),
+  ]);
+  const report = {
+    ...root.report,
+    compose_manager_attestation: {
+      actions,
+      actions_hash: actionsHash,
+      nonce,
+      quote: '040506',
+      event_log: [],
+      report_data: manager.td.reportData.toString('hex'),
+    },
+  };
+  const verifier = new HardwareVerifier(
+    async (quote) =>
+      (quote.toString('hex') === '040506'
+        ? manager.verified
+        : root.verified) as unknown as VerifiedReport,
+  );
+  return { root, manager, report, verifier, composeHash, actionsHash };
+}
+
+describe('dynamic model deployment evidence', () => {
+  it('authenticates the log independently of deployment approval and requires an approved action hash', async () => {
+    const f = managerFixture();
+    const result = await f.verifier.inspect(f.report, nonce, false);
+    expect(result.deploymentApproved).toBe(false);
+    expect(result.identity.composeManagerActionsHash).toBe(f.actionsHash);
+    await expect(f.verifier.verify(f.report, nonce, [f.composeHash], false)).rejects.toThrow(
+      'action log is not independently approved',
+    );
+    expect(
+      (await f.verifier.verify(f.report, nonce, [f.composeHash], false, undefined, [f.actionsHash]))
+        .composeManagerActionsHash,
+    ).toBe(f.actionsHash);
+    const withoutReport = { ...f.report, compose_manager_attestation: undefined };
+    await expect(f.verifier.inspect(withoutReport, nonce, false)).rejects.toThrow(
+      'deployment evidence is required',
+    );
+  });
+  it('uses lexical field ordering, retaining unknown fields and numeric-looking keys', () => {
+    const actions = [{ '2': 'two', '10': 'ten', action: 'compose_up', extra: 'bound' }];
+    expect(deploymentActionsHash(actions)).toBe(
+      sha256('[{"10":"ten","2":"two","action":"compose_up","extra":"bound"}]'),
+    );
+    expect(deploymentActionsHash(actions)).not.toBe(
+      deploymentActionsHash([{ '2': 'two', '10': 'ten', action: 'compose_up' }]),
+    );
+  });
+  it.each([
+    'nonce',
+    'actions',
+    'quote data',
+    'echo',
+    'configuration',
+    'runtime',
+    'debug',
+    'tcb',
+    'advisory',
+  ])('rejects altered deployment %s', async (kind) => {
+    const f = managerFixture();
+    const r = f.report.compose_manager_attestation;
+    if (kind === 'nonce') r.nonce = 'cc'.repeat(32);
+    if (kind === 'actions') r.actions[0]!.commit = 'substituted';
+    if (kind === 'quote data') f.manager.td.reportData[0] = f.manager.td.reportData[0]! ^ 1;
+    if (kind === 'echo') r.report_data = '00'.repeat(64);
+    if (kind === 'configuration') f.manager.td.mrConfigId[0] = 0;
+    if (kind === 'runtime') f.manager.td.rtMr3[0] = 1;
+    if (kind === 'debug') f.manager.td.tdAttributes[0] = 1;
+    if (kind === 'tcb') f.manager.verified.status = 'OutOfDate';
+    if (kind === 'advisory') (f.manager.verified.advisory_ids as string[]).push('unaccepted');
+    await expect(f.verifier.inspect(f.report, nonce, false)).rejects.toThrow();
+  });
+});
 
 // NRAS replies over authenticated HTTPS with a detached EAT: a platform JWT
 // followed by a map of GPU JWTs. These unsigned tokens are transport fixtures.
@@ -215,6 +309,31 @@ describe('hardware policy over verified quote fields', () => {
     const [url, init] = f.transport.mock.calls[0]!;
     expect(url).toBe('https://nras.attestation.nvidia.com/v3/attest/gpu');
     expect(JSON.parse(String(init!.body))).toEqual(f.payload);
+  });
+  it('checks a model upstream SPKI commitment without claiming client TLS binding', async () => {
+    const f = gpuFixture(),
+      fingerprint = 'ee'.repeat(32);
+    f.td.reportData = Buffer.concat([
+      Buffer.from(
+        sha256(
+          Buffer.concat([Buffer.from(signer.slice(2), 'hex'), Buffer.from(fingerprint, 'hex')]),
+        ),
+        'hex',
+      ),
+      Buffer.from(nonce, 'hex'),
+    ]);
+    const report = { ...f.report, tls_cert_fingerprint: fingerprint };
+    const result = await f.verifier.verify(report, nonce, [measurement], true);
+    expect(result.gpuVerified).toBe(true);
+    expect(result.tlsSpkiSha256).toBeUndefined();
+    await expect(
+      f.verifier.verify(
+        { ...report, tls_cert_fingerprint: 'ff'.repeat(32) },
+        nonce,
+        [measurement],
+        true,
+      ),
+    ).rejects.toThrow('signer and nonce');
   });
   it.each([
     ['overall nonce', 'platform', { eat_nonce: 'cc'.repeat(32) }],

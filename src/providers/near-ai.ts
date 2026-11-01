@@ -59,8 +59,13 @@ export class NearAiClient {
         'INFERENCE_CONFLICT',
         'Inference already identifies different trade terms',
       );
-    if (attempt?.status === 'COMPLETE' && attempt.resultCiphertext)
+    if (attempt?.status === 'COMPLETE' && attempt.resultCiphertext) {
+      this.assertCurrentPolicy(
+        unseal(attempt.evidenceCiphertext, c.EVIDENCE_ENCRYPTION_KEY, cycleId) as CapturedInference,
+        true,
+      );
       return unseal(attempt.resultCiphertext, c.EVIDENCE_ENCRYPTION_KEY, cycleId) as BrainResult;
+    }
     if (attempt?.status === 'STARTED')
       throw new DomainError(
         'INFERENCE_OUTCOME_UNKNOWN',
@@ -118,7 +123,14 @@ export class NearAiClient {
         );
         const models = await Promise.all(
           preflight.model_attestations.map((r) =>
-            this.hardware.verify(r, nonce, c.TEE_MODEL_COMPOSE_HASHES, true),
+            this.hardware.verify(
+              r,
+              nonce,
+              c.TEE_MODEL_COMPOSE_HASHES,
+              true,
+              undefined,
+              c.TEE_MODEL_ACTIONS_HASHES,
+            ),
           ),
         );
         session.approve();
@@ -206,14 +218,7 @@ export class NearAiClient {
       }
     }
     const { nonce, preflight: raw, gateway, models } = captured;
-    if (
-      !c.TEE_GATEWAY_COMPOSE_HASHES.includes(gateway.composeHash) ||
-      models.some((m) => !c.TEE_MODEL_COMPOSE_HASHES.includes(m.composeHash))
-    )
-      throw new DomainError(
-        'TEE_POLICY_CHANGED',
-        'Previously checked deployment is no longer approved',
-      );
+    this.assertCurrentPolicy(captured);
     const request = Buffer.from(captured.requestBase64, 'base64'),
       bytes = Buffer.from(captured.responseBase64 ?? '', 'base64');
     const completion = z
@@ -252,11 +257,7 @@ export class NearAiClient {
         'COMPUTE_BUDGET_BREACH',
         'Provider charge exceeded the reservation; further paid inference is halted',
       );
-    if (c.EXECUTION_MODE === 'LIVE' && !captured.tlsSpkiSha256)
-      throw new DomainError(
-        'TEE_TLS_REQUIRED',
-        'Legacy inference lacks gateway connection binding',
-      );
+    this.assertCurrentPolicy(captured, true);
     const signatureUrl = new URL(
       `/v1/signature/${encodeURIComponent(completion.id)}`,
       c.NEAR_AI_BASE_URL,
@@ -314,6 +315,7 @@ export class NearAiClient {
           tcbStatus: binding.identity.tcbStatus,
           modelInstancesShareSigningKey: true,
           tlsConnectionBinding: !!captured.tlsSpkiSha256,
+          composeManagerActionsHash: binding.identity.composeManagerActionsHash ?? null,
         },
       },
       usage: {
@@ -333,6 +335,37 @@ export class NearAiClient {
       },
     });
     return result;
+  }
+  private assertCurrentPolicy(captured: CapturedInference, checkLegacy = false) {
+    const c = this.config;
+    if (
+      !c.TEE_GATEWAY_COMPOSE_HASHES.includes(captured.gateway.composeHash) ||
+      captured.models.some(
+        (m) =>
+          !c.TEE_MODEL_COMPOSE_HASHES.includes(m.composeHash) ||
+          (m.composeManagerActionsHash &&
+            !c.TEE_MODEL_ACTIONS_HASHES.includes(m.composeManagerActionsHash)),
+      )
+    )
+      throw new DomainError(
+        'TEE_POLICY_CHANGED',
+        'Previously checked deployment is no longer approved',
+      );
+    if (checkLegacy && c.EXECUTION_MODE === 'LIVE') {
+      if (!captured.tlsSpkiSha256)
+        throw new DomainError(
+          'TEE_TLS_REQUIRED',
+          'Legacy inference lacks gateway connection binding',
+        );
+      if (
+        c.NEAR_AI_MODEL === BUDGET_MODEL &&
+        captured.models.some((m) => !m.composeManagerActionsHash)
+      )
+        throw new DomainError(
+          'TEE_DEPLOYMENT_REQUIRED',
+          'Legacy GLM inference lacks authenticated deployment actions',
+        );
+    }
   }
   private async getRequestCost(
     requestId: string,

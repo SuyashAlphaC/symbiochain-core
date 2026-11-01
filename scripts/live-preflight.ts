@@ -22,6 +22,8 @@ if (c.SERVICE_PAYMENT_RAIL === 'INTENTS' && BigInt(c.SERVICE_PAYMENT_YOCTO) > 0n
   for (const key of ['INTENTS_BRAIN_PRIVATE_KEY', 'INTENTS_HAND_PRIVATE_KEY'] as const)
     if (!c[key]) missing.push(key);
 const concerns = [];
+if (c.NEAR_AI_MODEL === 'z-ai/glm-5.3-flash' && !c.TEE_MODEL_ACTIONS_HASHES.length)
+  concerns.push('Reviewed GLM deployment action hashes are missing');
 if (c.NEAR_NETWORK !== 'mainnet') concerns.push('NEAR mainnet is not selected');
 if (!c.TEE_GATEWAY_COMPOSE_HASHES.length || !c.TEE_MODEL_COMPOSE_HASHES.length)
   concerns.push('Independently approved TEE measurements are missing');

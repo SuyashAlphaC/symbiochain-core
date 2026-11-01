@@ -1,0 +1,72 @@
+{
+  "checkedAt": "2026-11-01T09:01:37.699Z",
+  "model": "z-ai/glm-5.3-flash",
+  "paidInferenceRequests": 0,
+  "transactionsPerformed": false,
+  "inferenceResponseVerified": false,
+  "results": [
+    {
+      "role": "gateway",
+      "hardwareVerified": true,
+      "identity": {
+        "signer": "0xb98a789cdc4817275f5155593ba73ef2a957e779",
+        "algorithm": "ecdsa",
+        "composeHash": "f571e5dafe8f96baf116a271b4be9cba228b447dd6ebe502bbda81ede7bcc7ce",
+        "nonce": "28c14a1f56debac1f8e18ba1b9208bfe4be3093a86fb0a0f608df89c09c48eb2",
+        "tcbStatus": "UpToDate",
+        "gpuVerified": false,
+        "tlsSpkiSha256": "73862c254372091cc6895b900111503860694f8916ebf0c63b18d245ba8ba5ad"
+      },
+      "deploymentApproved": false,
+      "composeApproved": false,
+      "actionsApproved": true
+    },
+    {
+      "role": "model",
+      "hardwareVerified": true,
+      "identity": {
+        "signer": "0x3b753b4406613c5e70ae640508632b600424fa0c",
+        "algorithm": "ecdsa",
+        "composeHash": "a0e3c6f4f21a60ea3f5c96bc7ef319b03a184ca2049605399275fbcea74e8c5f",
+        "nonce": "28c14a1f56debac1f8e18ba1b9208bfe4be3093a86fb0a0f608df89c09c48eb2",
+        "tcbStatus": "UpToDate",
+        "gpuVerified": true,
+        "composeManagerActionsHash": "669b972ed93200b409becbe38c9df7bd6dd7d4e8aab50037f15b7e672984e1e6"
+      },
+      "deploymentApproved": false,
+      "composeApproved": false,
+      "actionsApproved": false
+    }
+  ],
+  "readyForBoundedInference": false,
+  "scope": "Fresh hardware evidence only. Deployment policy remains unapproved; no completion or trade.",
+  "selectedBuildProvenance": [
+    {
+      "digest": "sha256:d38e6d816454de5c93690ef46f8297fd5e57c6b8c4b5dfe984b7e1229aa6b790",
+      "repository": "nearai/cloud-api",
+      "workflow": ".github/workflows/build.yml",
+      "ref": "refs/heads/main",
+      "commit": "9d82712cba8919bbc8cf6b69422751d8e69ab203",
+      "certificateIdentity": "https://github.com/nearai/cloud-api/.github/workflows/build.yml@refs/heads/main",
+      "issuer": "https://token.actions.githubusercontent.com",
+      "predicateType": "https://slsa.dev/provenance/v1"
+    },
+    {
+      "digest": "sha256:a320bb4882341c8e19ef1944436f6591ed73303732009ed5db9f6db6c9da756a",
+      "repository": "nearai/compose-manager",
+      "workflow": ".github/workflows/build.yml",
+      "ref": "refs/heads/master",
+      "commit": "be649f8808429317c9a3006115c6d2d7cf001317",
+      "certificateIdentity": "https://github.com/nearai/compose-manager/.github/workflows/build.yml@refs/heads/master",
+      "issuer": "https://token.actions.githubusercontent.com",
+      "predicateType": "https://slsa.dev/provenance/v1"
+    }
+  ],
+  "verifiedComposeFile": {
+    "repository": "nearai/cvm-compose-files",
+    "commit": "7ee4a4c741259d0c69a81e5cda22c3dfce21cbc2",
+    "file": "prod/GLM-5.3-Flash-SGL-TP2x4-W4AFP8-V12Q8.yaml",
+    "sha256": "904054f502ccdb2f913d6b80f156ea658b8bc5cb6f8af06082723581d62a45c0",
+    "imageProvenanceComplete": false
+  }
+}
