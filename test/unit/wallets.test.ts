@@ -19,6 +19,32 @@ const config = loadConfig({
   EXECUTION_MODE: 'PAPER',
   EVM_RPC_URL: 'http://127.0.0.1:1',
 });
+it('accepts the full mainnet genesis hash and rejects devnet or shortened chain references', async () => {
+  const wallets = new ChainWallets(config);
+  const sender = Keypair.generate().publicKey.toBase58();
+  const recipient = Keypair.generate().publicKey.toBase58();
+  vi.spyOn(wallets, 'address').mockResolvedValue(sender);
+  vi.spyOn(wallets, 'balance').mockResolvedValue(1000000000n);
+  const genesis = vi
+    .spyOn(wallets.solana, 'getGenesisHash')
+    .mockResolvedValue('5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKuc147dw2N9d');
+  vi.spyOn(wallets.solana, 'getLatestBlockhash').mockResolvedValue({
+    blockhash: Keypair.generate().publicKey.toBase58(),
+    lastValidBlockHeight: 100,
+  });
+  const tx = await wallets.prepare('solana:mainnet', 'sol:native', recipient, '42');
+  expect(tx.chainId).toBe('solana:mainnet');
+  expect(tx.amountAtoms).toBe('42');
+  for (const hash of [
+    'EtWTRABZaYq6iMfeYKouRu166VU2xqa1wcaWoxPkrZBG',
+    '5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp',
+  ]) {
+    genesis.mockResolvedValue(hash);
+    await expect(wallets.prepare('solana:mainnet', 'sol:native', recipient, '42')).rejects.toThrow(
+      'Expected Solana mainnet',
+    );
+  }
+});
 it('does not report a finalized Solana send as complete while fee metadata is unavailable', async () => {
   const wallets = new ChainWallets(config);
   vi.spyOn(wallets.solana, 'getSignatureStatuses').mockResolvedValue({

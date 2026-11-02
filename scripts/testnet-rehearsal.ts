@@ -508,7 +508,10 @@ try {
     'solana_signature',
     async () => {
       const connection = new Connection('https://api.devnet.solana.com');
-      assert.equal(await connection.getGenesisHash(), 'EtWTRABZaYq6iMfeYKouRu166VU2xqa1');
+      assert.equal(
+        await connection.getGenesisHash(),
+        'EtWTRABZaYq6iMfeYKouRu166VU2xqa1wcaWoxPkrZBG',
+      );
       const contract = new contracts.ChainSignatureContract({
         contractId: TESTNET_MPC,
         networkId: 'testnet',

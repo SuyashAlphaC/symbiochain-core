@@ -191,7 +191,7 @@ export class ChainWallets {
     if (token !== 'sol:native')
       throw new DomainError('TOKEN_UNSUPPORTED', 'Solana signing supports native SOL only');
     const genesis = await this.solana.getGenesisHash();
-    if (genesis !== '5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp')
+    if (genesis !== '5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKuc147dw2N9d')
       throw new DomainError('RPC_CHAIN', 'Expected Solana mainnet');
     if ((await this.balance(chainId, token)) < amount + BigInt(c.SOLANA_FEE_RESERVE_LAMPORTS))
       throw new DomainError('GAS_BALANCE', 'Keep the configured native SOL fee reserve');

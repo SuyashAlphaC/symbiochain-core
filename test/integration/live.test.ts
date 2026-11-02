@@ -105,7 +105,9 @@ function fixture(
   });
   vi.spyOn(wallets.evm, 'estimateGas').mockResolvedValue(50000n);
   vi.spyOn(wallets.evm, 'getTransactionCount').mockResolvedValue(0);
-  vi.spyOn(wallets.solana, 'getGenesisHash').mockResolvedValue('5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp');
+  vi.spyOn(wallets.solana, 'getGenesisHash').mockResolvedValue(
+    '5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKuc147dw2N9d',
+  );
   vi.spyOn(wallets.solana, 'getSlot').mockImplementation(async () => solHead);
   vi.spyOn(wallets.solana, 'getBalance').mockResolvedValue(10_000_000_000);
   vi.spyOn(wallets.solana, 'getLatestBlockhash').mockResolvedValue({

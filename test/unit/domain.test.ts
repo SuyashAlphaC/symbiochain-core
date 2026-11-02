@@ -98,6 +98,9 @@ describe('money and authorization boundaries', () => {
       NEAR_AI_SESSION_TOKEN: '',
     };
     expect(loadConfig(builders).COMPUTE_CREDIT_POLICY).toBe('LOCAL_BUDGET');
+    expect(() => loadConfig({ ...builders, NEAR_NETWORK: 'testnet' })).toThrow(
+      'LIVE requires NEAR mainnet',
+    );
     expect(() => loadConfig({ ...builders, LIVE_TRADING_ENABLED: 'false' })).toThrow(
       'LIVE_TRADING_ENABLED',
     );
