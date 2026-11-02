@@ -205,3 +205,41 @@ it('publishes cycle economics, budgets and replay cursors without private JSON',
     await app.close();
   }
 });
+
+it('checks an operator mode binding before any administrative mutation', async () => {
+  const app = await createApp(store);
+  try {
+    const before = await db.policy.findUniqueOrThrow({ where: { mode: 'PAPER' } });
+    const response = await app.inject({
+      url: '/api/admin/pause',
+      method: 'POST',
+      headers: { authorization: `Bearer ${config.ADMIN_TOKEN}`, 'x-symbio-expected-mode': 'LIVE' },
+      payload: {},
+    });
+    expect(response.statusCode).toBe(403);
+    expect(response.json().error).toBe('MODE_CHANGED');
+    const after = await db.policy.findUniqueOrThrow({ where: { mode: 'PAPER' } });
+    expect(after.revision).toBe(before.revision);
+    expect(after.paused).toBe(before.paused);
+    const live = await createApp(new Store(db, { ...config, EXECUTION_MODE: 'LIVE' }));
+    try {
+      expect(
+        (
+          await live.inject({
+            url: '/api/admin/pause',
+            method: 'POST',
+            headers: {
+              authorization: `Bearer ${config.ADMIN_TOKEN}`,
+              'x-symbio-expected-mode': 'PAPER',
+            },
+            payload: {},
+          })
+        ).statusCode,
+      ).toBe(403);
+    } finally {
+      await live.close();
+    }
+  } finally {
+    await app.close();
+  }
+});

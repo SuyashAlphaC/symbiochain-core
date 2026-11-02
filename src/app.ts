@@ -92,6 +92,13 @@ export async function createApp(
   const admin = async (req: FastifyRequest) => {
     if (!tokenEquals(req.headers.authorization?.replace(/^Bearer /, ''), c.ADMIN_TOKEN))
       throw new DomainError('UNAUTHORIZED', 'Admin token required', 401);
+    const expected = req.headers['x-symbio-expected-mode'];
+    if (expected !== undefined && expected !== store.mode)
+      throw new DomainError(
+        'MODE_CHANGED',
+        'The requested execution mode does not match this backend',
+        403,
+      );
   };
   const secured = { preHandler: read, schema: { security: [{ bearerAuth: [] }] } };
   const privileged = { preHandler: admin, schema: { security: [{ bearerAuth: [] }] } };
