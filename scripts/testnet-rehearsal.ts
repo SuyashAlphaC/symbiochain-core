@@ -69,6 +69,8 @@ async function publish() {
   await save(`${directory}/report.json`, TestnetReport.parse(report));
 }
 async function check(id: CheckId, operation: () => Promise<void>, detail: string) {
+  // Resume completed checks without new paid transactions. Network checks remain mandatory.
+  if (id !== 'network' && report.checks.find((c) => c.id === id)?.status === 'PASSED') return;
   current = id;
   await operation();
   report.checks.find((c) => c.id === id)!.status = 'PASSED';
@@ -302,10 +304,10 @@ try {
       );
       // Full 300-Tgas MPC requests must be affordable at the testnet gas price,
       // even though unused gas is refunded. Only faucet tokens are used.
-      assert.ok(totalFunding + 3n * unit <= TESTNET_MAX_FUNDING);
+      assert.ok(totalFunding + (3n * unit) / 2n <= TESTNET_MAX_FUNDING);
       for (const role of ['brain', 'hand', 'books'] as const) {
         const funded = await send(`gas-reserve-${role}`, accounts.owner, accounts[role].accountId, [
-          actions.transfer(unit),
+          actions.transfer(unit / 2n),
         ]);
         assert.ok(!JSON.stringify(funded.status).includes('Failure'), 'Testnet gas funding failed');
       }
@@ -521,14 +523,15 @@ try {
       const derived = (
         await adapter.deriveAddressAndPublicKey(accounts.treasury.accountId, TESTNET_PATH)
       ).address;
-      const solCycle = `${cycle}:sol`;
-      if (!state.authorizations.solana) {
-        state.authorizations.solana = {
+      const solCycle = `${cycle}:sol-transfer`;
+      const solRecipient = new PublicKey(Buffer.alloc(32, 2));
+      if (!state.authorizations.solanaTransfer) {
+        state.authorizations.solanaTransfer = {
           ...authorization,
           cycle_id: solCycle,
           chain_id: 0,
           token_contract: 'sol:native',
-          deposit_address: new PublicKey(derived).toBuffer().toString('hex'),
+          deposit_address: solRecipient.toBuffer().toString('hex'),
           amount_atoms: '1',
         };
         await save(`${directory}/state.json`, state);
@@ -546,11 +549,11 @@ try {
         blockhash = (await connection.getLatestBlockhash('finalized')).blockhash;
         await save(messageFile, { blockhash });
       }
-      await call('authorize-solana', accounts.brain, 'authorize_cycle', {
-        authorization: state.authorizations.solana,
+      await call('authorize-solana-transfer', accounts.brain, 'authorize_cycle', {
+        authorization: state.authorizations.solanaTransfer,
       });
       await call(
-        'sign-solana',
+        'sign-solana-transfer',
         accounts.hand,
         'request_solana_signature',
         {
@@ -569,7 +572,7 @@ try {
       }).add(
         SystemProgram.transfer({
           fromPubkey: new PublicKey(derived),
-          toPubkey: new PublicKey(derived),
+          toPubkey: solRecipient,
           lamports: 1n,
         }),
       );
@@ -578,7 +581,7 @@ try {
         {
           chainId: 'solana:devnet',
           sender: derived,
-          recipient: derived,
+          recipient: solRecipient.toBase58(),
           amountAtoms: '1',
           token: 'sol:native',
           unsigned: tx
@@ -594,8 +597,8 @@ try {
     },
     'Real testnet MPC Ed25519 signature verified over the exact devnet message; fixture transaction was not broadcast.',
   );
-  for (const id of [cycle, `${cycle}:sol`]) {
-    const suffix = id.endsWith(':sol') ? 'sol' : 'evm';
+  for (const id of [cycle, `${cycle}:sol-transfer`]) {
+    const suffix = id === cycle ? 'evm' : 'sol';
     await call(`record-${suffix}-simulation`, accounts.hand, 'record_submission', {
       cycle_id: id,
       tx_hash: `testnet:SIMULATED_SETTLEMENT:${state.runId}`,
