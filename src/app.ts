@@ -15,7 +15,8 @@ import { cycleEconomics } from './economics.js';
 import type { PaperFaultController } from './paper-faults.js';
 import { dashboardHtml, dashboardCss } from './dashboard-page.js';
 import { readFile } from 'node:fs/promises';
-import { viewerSnapshot, viewerProof } from './viewer.js';
+import { viewerSnapshot, viewerProof, requirePaperViewer } from './viewer.js';
+import { readTestnetReport } from './testnet-report.js';
 import { viewerStatus, viewerCycles, viewerCycle, viewerEvents } from './viewer-details.js';
 
 export function tokenEquals(actual: string | undefined, expected: string): boolean {
@@ -109,6 +110,11 @@ export async function createApp(
   app.get('/api/viewer/status', secured, async (_req, reply) => {
     reply.header('cache-control', 'private, no-store');
     return viewerStatus(store);
+  });
+  app.get('/api/viewer/testnet', secured, async (_req, reply) => {
+    requirePaperViewer(store);
+    reply.header('cache-control', 'private, no-store');
+    return readTestnetReport();
   });
   app.get('/api/viewer/cycles', secured, async (req, reply) => {
     const { cursor } = z.object({ cursor: idSchema.optional() }).strict().parse(req.query);
