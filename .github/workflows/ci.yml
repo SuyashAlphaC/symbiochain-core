@@ -30,6 +30,19 @@ jobs:
       - run: npm run infra:check
       - run: npm run db:migrate
       - run: npm run check
+      - name: Build release image
+        run: docker build -t symbiochain-core:ci .
+      - name: Verify packaged rehearsal evidence
+        run: |
+          docker run --rm --entrypoint node symbiochain-core:ci --input-type=module -e '
+            import assert from "node:assert/strict";
+            import { readdir } from "node:fs/promises";
+            import { readTestnetReport } from "./dist/testnet-report.js";
+            const report = await readTestnetReport();
+            assert.ok(report.runId);
+            assert.equal(report.profile, "TESTNET_REHEARSAL");
+            assert.deepEqual(await readdir("artifacts"), ["testnet-rehearsal.json"]);
+          '
       - run: npm run db:harden
       # Integration fixtures deliberately leave pending recovery jobs in this isolated database.
       - run: npm run demo

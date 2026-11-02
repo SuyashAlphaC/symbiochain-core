@@ -17,6 +17,7 @@ COPY --from=build --chown=node:node /app/prisma.config.ts /app/package.json /app
 COPY --from=build --chown=node:node /app/scripts/start-render.sh ./scripts/start-render.sh
 COPY --from=build --chown=node:node /app/src/database-connection.ts ./src/database-connection.ts
 COPY --from=build --chown=node:node /app/certs ./certs
+COPY --from=build --chown=node:node /app/artifacts/testnet-rehearsal.json ./artifacts/testnet-rehearsal.json
 USER node
 EXPOSE 3001
 CMD ["node","dist/main.js"]
