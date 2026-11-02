@@ -1,5 +1,26 @@
 # Verification record
 
+## Testnet rehearsal on 2026-11-02
+
+The [separate report](../artifacts/testnet-rehearsal.json) records the actual
+testnet treasury deployment, role/policy rejection checks, pause/resume, funded
+NEAR_LEDGER service payments, real testnet MPC ECDSA and Ed25519 signatures,
+testnet NFT mint and test-token distribution/claim. The signed target-chain
+fixtures were not broadcast. Settlement and positive reported P&L are synthetic;
+faucet funding and distributions are not business revenue.
+
+The free authenticated gateway/model hardware audit passes. Final deployment
+approval and signed inference remain blocked by the documented provenance policy.
+No paid inference request or mainnet transaction was made. The run left the
+treasury paused. See [reproduction and scope](TESTNET_REHEARSAL.md).
+
+Local validation passes 96 backend unit tests, 50 PostgreSQL integration tests,
+TypeScript and the production build. The frontend has 20 regression tests plus a
+Chromium check of `/testnet` on desktop and at 390px. This is an isolated rehearsal,
+not evidence of a live autonomous trading business or of funded mainnet settlement.
+
+## Earlier verification
+
 Local and hosted verification performed on 2026-10-27. Evidence categories are kept separate. The Render/Supabase PAPER backend is publicly hosted and verified. No funded mainnet transaction, authenticated real model completion or external financial self-sufficiency is asserted.
 
 | Gate                   | Result                                                                                                                                                                                                                                                                                          |

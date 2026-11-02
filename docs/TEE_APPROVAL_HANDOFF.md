@@ -1,5 +1,13 @@
 # Remaining deployment approval
 
+The 2026-11-02 [testnet rehearsal report](../artifacts/testnet-rehearsal.json)
+records a fresh authenticated gateway/model hardware audit with zero purchased
+completions. The same launcher digest below was observed again; its GitHub build
+evidence remained unavailable when rechecked. Moving contract tests to testnet
+does not approve this deployment. A one-second NRAS/client clock difference is
+handled by waiting at most three seconds before applying the unchanged strict
+validity checks; expiry and distant-future verdicts remain rejected.
+
 The [live evidence summary](../artifacts/tee-gates-verification.json) records authenticated gateway and GLM model hardware: Intel DCAP/TCB, nonce/signer binding, measured configuration, replayed RTMR3, gateway peer SPKI and NVIDIA GPU verdicts. Compose Manager's separate deployment-action quote also verifies. This establishes hardware evidence, not an approved application deployment or a signed inference response.
 
 An offline discovery audit verified build-provenance signatures for nine NEAR-published image digests, including the gateway, VPC components, ingress, both referenced SGLang images, model proxy and Compose Manager. It used the official `@nearai/inference-sdk` verification implementation in an ignored tooling directory; no production dependency changed. Expected repository identity was restricted to the known NEAR publisher for each image. The retained results identify signed workflow, ref, source commit and immutable digest. Discovery of signed source claims does not automatically approve those sources, the whole action history or every third-party base image.

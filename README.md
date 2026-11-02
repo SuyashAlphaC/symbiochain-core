@@ -148,6 +148,11 @@ broadcast. The free TEE probe preserves approval gates and purchases no inferenc
 See [scope, recovery and publication](docs/TESTNET_REHEARSAL.md). The frontend's
 `/testnet` page reads the separate historical report while agent operations remain PAPER.
 
+The [captured report](artifacts/testnet-rehearsal.json) includes real testnet
+deployment, EVM/Solana MPC signatures, NFT mint and test-token distribution/claim.
+Hardware verification passes; deployment approval and signed inference remain
+blocked. No mainnet funds or inference credits were spent in this rehearsal.
+
 ### Real market probe
 
 ```bash

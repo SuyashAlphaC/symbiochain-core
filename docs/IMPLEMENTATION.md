@@ -1,5 +1,13 @@
 # Implementation and acceptance ledger
 
+The isolated [testnet rehearsal](TESTNET_REHEARSAL.md) now supplements the local
+suites with a real testnet deployment, MPC signatures and NFT/distribution calls.
+Its [published report](../artifacts/testnet-rehearsal.json) keeps those observations
+separate from simulated settlement and economics, TEE hardware evidence,
+deployment approval and signed inference. The existing agent runtime remains PAPER
+or explicitly armed mainnet LIVE; no testnet market solver or paid inference bypass
+has been introduced.
+
 This is a fresh local repository for the requested SymbioChain backend. The trading swarm remains the product: Scout, Brain, Hand, NEAR treasury, Chain Signatures, 1Click, confidential inference, agent payments, accounting, frontend APIs and deployment artifacts.
 
 ## Implemented and exercised

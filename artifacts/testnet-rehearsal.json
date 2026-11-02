@@ -1,0 +1,291 @@
+{
+  "contractVersion": 1,
+  "profile": "TESTNET_REHEARSAL",
+  "runId": "010389f3-a004-49d1-b7c7-fa0607bdfffc",
+  "capturedAt": "2026-11-02T09:43:55.112Z",
+  "network": "testnet",
+  "contractId": "treasury.sc-rehearsal-1bb69cb2.testnet",
+  "artifactHash": "c87759fc9016f34c8dc89be3f5f8bd389421c9593fc6bd39b0d1241f44a31e6d",
+  "settlement": "SIMULATED",
+  "economics": "SIMULATED",
+  "mainnetTransactions": 0,
+  "paidInferenceRequests": 0,
+  "checks": [
+    {
+      "id": "network",
+      "status": "PASSED",
+      "detail": "NEAR testnet identity and real MPC contract checked before signing."
+    },
+    {
+      "id": "deployment",
+      "status": "PASSED",
+      "detail": "Built treasury deployed and initialized atomically; on-chain code hash matches the artifact."
+    },
+    {
+      "id": "roles",
+      "status": "PASSED",
+      "detail": "Wrong agent rejected; identical Brain authorization is idempotent."
+    },
+    {
+      "id": "policy",
+      "status": "PASSED",
+      "detail": "Spending cap and unapproved destination chain rejected on testnet."
+    },
+    {
+      "id": "pause",
+      "status": "PASSED",
+      "detail": "Owner pause blocks authorization; owner resume restores execution."
+    },
+    {
+      "id": "services",
+      "status": "PASSED",
+      "detail": "Funded NEAR_LEDGER service payment settled once across duplicate requests; no Intents payment claimed."
+    },
+    {
+      "id": "evm_signature",
+      "status": "PASSED",
+      "detail": "Real testnet MPC ECDSA signature recovered to the derived treasury address; fixture transaction was not broadcast."
+    },
+    {
+      "id": "solana_signature",
+      "status": "PASSED",
+      "detail": "Real testnet MPC Ed25519 signature verified over the exact devnet message; fixture transaction was not broadcast."
+    },
+    {
+      "id": "settlement",
+      "status": "SIMULATED",
+      "detail": "Synthetic accountant reconciliation exercises receipt logic. No 1Click deposit, external execution or real profit."
+    },
+    {
+      "id": "receipt",
+      "status": "PASSED",
+      "detail": "Real testnet NFT minted for an explicitly synthetic cycle; no mainnet asset or proven profit."
+    },
+    {
+      "id": "dividends",
+      "status": "PASSED",
+      "detail": "Test-token distribution and holder claim checked; distribution is faucet capital, not business revenue."
+    },
+    {
+      "id": "tee_hardware",
+      "status": "PASSED",
+      "detail": "Free gateway/model hardware audit at 2026-11-02T09:43:42.630Z; no completion was requested."
+    },
+    {
+      "id": "tee_deployment",
+      "status": "BLOCKED",
+      "detail": "Deployment allowlists or provenance review remain unapproved; testnet does not bypass this gate."
+    },
+    {
+      "id": "inference",
+      "status": "BLOCKED",
+      "detail": "No paid completion attempted while deployment approval is blocked."
+    }
+  ],
+  "transactions": [
+    {
+      "operation": "create-brain",
+      "hash": "4weSiREhbDcf33niCtCMPEMDXrgxTo72MTMmTsECjC4W",
+      "receiver": "brain.sc-rehearsal-1bb69cb2.testnet",
+      "success": true
+    },
+    {
+      "operation": "create-hand",
+      "hash": "6G9Y2Ge1Q5asbd36NvmRpFbPEG5h5o2Z6KzVAEhi9ynU",
+      "receiver": "hand.sc-rehearsal-1bb69cb2.testnet",
+      "success": true
+    },
+    {
+      "operation": "create-books",
+      "hash": "EQfDM9YckyJmZ9opviQymagrzieDx2Z58RMZYDJDrRdF",
+      "receiver": "books.sc-rehearsal-1bb69cb2.testnet",
+      "success": true
+    },
+    {
+      "operation": "create-treasury",
+      "hash": "GpFKVqbtuJ8jaN4zP2HiuNQBmBdw8Y2s5A8hHD21eFeZ",
+      "receiver": "treasury.sc-rehearsal-1bb69cb2.testnet",
+      "success": true
+    },
+    {
+      "operation": "deploy",
+      "hash": "G9ncESbrJiZkr4FsyHsHUuvu8LGmXgRDLQpnRMxLLoq2",
+      "receiver": "treasury.sc-rehearsal-1bb69cb2.testnet",
+      "success": true
+    },
+    {
+      "operation": "reject-wrong-brain",
+      "hash": "4hseFmfThjaa8FruNjXnGR3riKd72MBompHYvPskuyvR",
+      "receiver": "treasury.sc-rehearsal-1bb69cb2.testnet",
+      "success": false
+    },
+    {
+      "operation": "authorize",
+      "hash": "A6g5VhBm2mMKe5fANtFp8hcJuarteQgWCyHxzDp8wey2",
+      "receiver": "treasury.sc-rehearsal-1bb69cb2.testnet",
+      "success": true
+    },
+    {
+      "operation": "authorize-repeat",
+      "hash": "GZBqDJGhXPd63pRbUHuSCLNEAEW5dqwJBfJKgNKNstUb",
+      "receiver": "treasury.sc-rehearsal-1bb69cb2.testnet",
+      "success": true
+    },
+    {
+      "operation": "reject-over-limit",
+      "hash": "Up718pt5cZv9uf8ErfLMaczWLHdxjehdNFbbXtNAVDC",
+      "receiver": "treasury.sc-rehearsal-1bb69cb2.testnet",
+      "success": false
+    },
+    {
+      "operation": "reject-mainnet-chain",
+      "hash": "E7GNBcuQzWahsRZNdJcKbf2oMuhUpGCixGFuiQnq1uBc",
+      "receiver": "treasury.sc-rehearsal-1bb69cb2.testnet",
+      "success": false
+    },
+    {
+      "operation": "pause",
+      "hash": "7v3uU8VEkGg52jMtU7t2YmvKfb9F2yCZeYjEfY6Nbm1J",
+      "receiver": "treasury.sc-rehearsal-1bb69cb2.testnet",
+      "success": true
+    },
+    {
+      "operation": "reject-paused",
+      "hash": "GrJACxfWFDJErdP9rXj8i9RKRVX3NKZEJKfHmqc7pBW1",
+      "receiver": "treasury.sc-rehearsal-1bb69cb2.testnet",
+      "success": false
+    },
+    {
+      "operation": "resume",
+      "hash": "7aS3AK56nFXLSji95BmPec74iYbotxJ4Bd9s97ZeLzAr",
+      "receiver": "treasury.sc-rehearsal-1bb69cb2.testnet",
+      "success": true
+    },
+    {
+      "operation": "fund-services",
+      "hash": "5GXyDnaXxzqbGNcc93bLHjNs2zj6sy9Pq1ztByAAKUBw",
+      "receiver": "treasury.sc-rehearsal-1bb69cb2.testnet",
+      "success": true
+    },
+    {
+      "operation": "pay-brain",
+      "hash": "4dqRwiT9VtLtPXyjjaC8hBpEoUvc8o1aaWwH7bLtPxap",
+      "receiver": "treasury.sc-rehearsal-1bb69cb2.testnet",
+      "success": true
+    },
+    {
+      "operation": "pay-brain-repeat",
+      "hash": "2AUS5Y9p6sMQq1Mi6uM5xqJat4UtqH8ayDKJC83qBkag",
+      "receiver": "treasury.sc-rehearsal-1bb69cb2.testnet",
+      "success": true
+    },
+    {
+      "operation": "gas-reserve-brain",
+      "hash": "5j1e9R8cjV7HkineM9975PVJZsC2SjRVDsTaxpc6Ea2w",
+      "receiver": "brain.sc-rehearsal-1bb69cb2.testnet",
+      "success": true
+    },
+    {
+      "operation": "gas-reserve-hand",
+      "hash": "GLvQpT97fe2fqfuG5gXThyfNR2bjTXtAR7v2NrML8L33",
+      "receiver": "hand.sc-rehearsal-1bb69cb2.testnet",
+      "success": true
+    },
+    {
+      "operation": "rebalance-testnet-gas",
+      "hash": "CAnUAmtqdi5mYmfqopCwwpBfZ32j3DitjWmCbuPtqnhV",
+      "receiver": "sc-rehearsal-1bb69cb2.testnet",
+      "success": true
+    },
+    {
+      "operation": "gas-reserve-books",
+      "hash": "Bq6i7KUxPrU9ZtB7gYimPawjWNhiVZxgVGk6dXHCGUZm",
+      "receiver": "books.sc-rehearsal-1bb69cb2.testnet",
+      "success": true
+    },
+    {
+      "operation": "sign-evm",
+      "hash": "8ZdAUFLQQu5ZYGxG6MdSLGQDkykghEZgqw16ThUGw1Gh",
+      "receiver": "treasury.sc-rehearsal-1bb69cb2.testnet",
+      "success": true
+    },
+    {
+      "operation": "reject-second-signature",
+      "hash": "9fnYGwRsPy8rXEsBbfQnb6JftzYCpSiP8Ht9ub2XmcHX",
+      "receiver": "treasury.sc-rehearsal-1bb69cb2.testnet",
+      "success": false
+    },
+    {
+      "operation": "authorize-solana",
+      "hash": "3hw4Fiu6hLwJ2cuN54Xv5kz9vipFGDKCrDzqqrCY9vHU",
+      "receiver": "treasury.sc-rehearsal-1bb69cb2.testnet",
+      "success": true
+    },
+    {
+      "operation": "sign-solana",
+      "hash": "8nutF286GuCdD4mWs9bQUi85FwjZLYEznWNiA6NqHUYj",
+      "receiver": "treasury.sc-rehearsal-1bb69cb2.testnet",
+      "success": false
+    },
+    {
+      "operation": "authorize-solana-transfer",
+      "hash": "BEHNXUijoy5EfgTabidigpGvgAFimqhR7PKpfcikv7PZ",
+      "receiver": "treasury.sc-rehearsal-1bb69cb2.testnet",
+      "success": true
+    },
+    {
+      "operation": "sign-solana-transfer",
+      "hash": "HVPMU6jC7AUHRqBJ9ggm6omMpvN5RXJ17sUg8Fmqt6KP",
+      "receiver": "treasury.sc-rehearsal-1bb69cb2.testnet",
+      "success": true
+    },
+    {
+      "operation": "record-evm-simulation",
+      "hash": "4EURUt4rLT2Ry2dPfPLtrcDygLykrGJYVMNUe86CRyEh",
+      "receiver": "treasury.sc-rehearsal-1bb69cb2.testnet",
+      "success": true
+    },
+    {
+      "operation": "finalize-evm-simulation",
+      "hash": "12JrHFjR81JMEKbjRgUKZzGnK9411z2maL7wFfyCYyAQ",
+      "receiver": "treasury.sc-rehearsal-1bb69cb2.testnet",
+      "success": true
+    },
+    {
+      "operation": "record-sol-simulation",
+      "hash": "5STJUdR2bcKBvzFfNiA6hMF3Pkizdz8GJWXjnKUYUFRa",
+      "receiver": "treasury.sc-rehearsal-1bb69cb2.testnet",
+      "success": true
+    },
+    {
+      "operation": "finalize-sol-simulation",
+      "hash": "6bKcTzbLpFdKYQG7n59eCuC7uzCrkAzpMEeW2eqmERA5",
+      "receiver": "treasury.sc-rehearsal-1bb69cb2.testnet",
+      "success": true
+    },
+    {
+      "operation": "mint-fixture-receipt",
+      "hash": "J3MmJzSTpVPbqFJ5Pv5jVQMuYbSkyHMEMkJ99w5G7UQ2",
+      "receiver": "treasury.sc-rehearsal-1bb69cb2.testnet",
+      "success": true
+    },
+    {
+      "operation": "fixture-distribution",
+      "hash": "2Asero1kxG7xfM633fuahR4Xuk3izeRvWnrTLevkLR4c",
+      "receiver": "treasury.sc-rehearsal-1bb69cb2.testnet",
+      "success": true
+    },
+    {
+      "operation": "claim-fixture-dividend",
+      "hash": "98bpz1Bt5GnMBEa1bW2b1VHANqKda2sNWTnPNN6ihbZT",
+      "receiver": "treasury.sc-rehearsal-1bb69cb2.testnet",
+      "success": true
+    },
+    {
+      "operation": "finish-paused",
+      "hash": "DJ3zikA7JmX4RZJHjEo4rtkFbeivsGeZzLGx5kKxD4GW",
+      "receiver": "treasury.sc-rehearsal-1bb69cb2.testnet",
+      "success": true
+    }
+  ]
+}
