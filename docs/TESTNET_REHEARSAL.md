@@ -19,6 +19,10 @@ signing keys from `.env`. Funding is capped at 12 test NEAR, including code stor
 and role gas reserves; storage is calculated from the testnet protocol config.
 The public faucet must be available and sufficiently funded.
 
+The profile uses `https://test.rpc.fastnear.com`, listed in the
+[NEAR RPC provider documentation](https://docs.near.org/api/rpc/providers).
+It still verifies the returned network identity before every write.
+
 Keys are saved before faucet registration in ignored
 `.data/testnet-rehearsal/credentials.json` with private file permissions. Preserve
 that directory to retain control of the accounts. Never commit its files.

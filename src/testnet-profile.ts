@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { DomainError } from './domain.js';
 
 // This profile is a separate rehearsal, never an alternative way to arm LIVE.
-export const TESTNET_RPC = 'https://rpc.testnet.near.org';
+export const TESTNET_RPC = 'https://test.rpc.fastnear.com';
 export const TESTNET_HELPER = 'https://helper.testnet.near.org/account';
 export const TESTNET_MPC = 'v1.signer-prod.testnet';
 export const TESTNET_CHAIN_ID = 11155111;
