@@ -7,6 +7,7 @@ import { createApp } from '../../src/app.js';
 import { Engine } from '../../src/engine.js';
 import { PaperProviders } from '../../src/providers/paper.js';
 import { ViewerSnapshot } from '../../src/viewer-contract.js';
+import { TestnetReport } from '../../src/testnet-contract.js';
 
 const url =
   process.env.TEST_DATABASE_URL ??
@@ -100,6 +101,34 @@ it('fails closed for LIVE and REPLAY even with valid read credentials', async ()
         expect((await app.inject({ url: path, headers })).statusCode).toBe(403);
     } finally {
       await app.close();
+    }
+  }
+});
+it('requires read authorization for separate testnet evidence and refuses other runtime modes', async () => {
+  const app = await createApp(store);
+  try {
+    expect((await app.inject('/api/viewer/testnet')).statusCode).toBe(401);
+    const response = await app.inject({ url: '/api/viewer/testnet', headers });
+    expect(response.statusCode).toBe(200);
+    expect(response.headers['cache-control']).toBe('private, no-store');
+    expect(TestnetReport.parse(response.json())).toMatchObject({
+      profile: 'TESTNET_REHEARSAL',
+      network: 'testnet',
+      mainnetTransactions: 0,
+      paidInferenceRequests: 0,
+      settlement: 'SIMULATED',
+    });
+    expect(response.body).not.toContain(config.READ_TOKEN);
+    expect(response.body).not.toContain(config.ADMIN_TOKEN);
+  } finally {
+    await app.close();
+  }
+  for (const mode of ['LIVE', 'REPLAY'] as const) {
+    const other = await createApp(new Store(db, { ...config, EXECUTION_MODE: mode }));
+    try {
+      expect((await other.inject({ url: '/api/viewer/testnet', headers })).statusCode).toBe(403);
+    } finally {
+      await other.close();
     }
   }
 });

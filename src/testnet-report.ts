@@ -32,6 +32,10 @@ export function applyTeeProbe(
             role: z.enum(['gateway', 'model']),
             hardwareVerified: z.boolean(),
             deploymentApproved: z.boolean(),
+            code: z
+              .string()
+              .regex(/^[A-Z0-9_]{1,80}$/)
+              .optional(),
           }),
         )
         .min(2)
@@ -52,7 +56,12 @@ export function applyTeeProbe(
   for (const check of updated.checks) {
     if (check.id === 'tee_hardware') {
       check.status = hardware ? 'PASSED' : 'BLOCKED';
-      check.detail = `Free gateway/model hardware audit at ${probe.checkedAt}; no completion was requested.`;
+      check.detail = hardware
+        ? `Free gateway/model hardware audit at ${probe.checkedAt}; no completion was requested.`
+        : `Free hardware audit rejected: ${probe.results
+            .filter((r) => !r.hardwareVerified)
+            .map((r) => r.code ?? 'VERIFICATION_FAILED')
+            .join(', ')}. No completion was requested.`;
     }
     if (check.id === 'tee_deployment') {
       check.status = approved ? 'PASSED' : 'BLOCKED';

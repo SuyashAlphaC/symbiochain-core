@@ -4,7 +4,7 @@
 
 The backend includes TypeScript/Fastify, PostgreSQL/Prisma, durable workers, a Rust NEAR treasury/NFT contract, EVM and native Solana transfer adapters, encrypted evidence, replayable WebSocket events, and Docker/CI configuration.
 
-**Evidence status:** the [hosted PAPER backend](https://symbiochain-core.onrender.com/docs), PostgreSQL recovery tests, real local NEAR contract calls, public signed quotes, and a public gateway Intel Trust Authority token check have run. A funded mainnet round trip and an authenticated NEAR AI model hardware verification have **not** been performed. This repository does not claim that an arbitrage opportunity exists or that the swarm has achieved financial self-sufficiency. See [implementation status](docs/IMPLEMENTATION.md).
+**Evidence status:** the [hosted PAPER backend](https://symbiochain-core.onrender.com/docs), PostgreSQL recovery tests, real local NEAR contract calls, public signed quotes, and authenticated TEE hardware audits have run. Hardware evidence, deployment approval and signed inference remain separate gates; no funded mainnet round trip or verified paid completion is claimed. The [testnet rehearsal](docs/TESTNET_REHEARSAL.md) records its own actual checks and explicit simulations. This repository does not claim that an arbitrage opportunity exists or that the swarm has achieved financial self-sufficiency. See [implementation status](docs/IMPLEMENTATION.md).
 
 ## Run locally
 
@@ -133,6 +133,20 @@ npm run contract:integration
 The sandbox checks real contract calls: role isolation, immutable authorization, payload equality against viem/web3.js, one signing request per authorization, NFT minting, revenue distribution/claim, and conserved service payments. Its MPC stub deliberately returns an invalid signature. Synthetic reported P&L is not external revenue.
 
 The build script sets `--cfg near` for near-sdk 5.27 and emits a WASM SHA-256. The sandbox is pinned to NEAR 2.13.4 with a checked download hash. Cargo pins `near-sdk-core` 4.1.0 because floating 4.1.3 introduces an incompatible native testing type version.
+
+### Public testnet rehearsal
+
+```bash
+npm run testnet:rehearse
+npm run testnet:tee
+```
+
+This separate profile uses fresh faucet-funded accounts and the real testnet MPC.
+It checks deployment, roles, policy, payments, signatures and receipt mechanics.
+Settlement and P&L are explicitly synthetic; signed target-chain fixtures are not
+broadcast. The free TEE probe preserves approval gates and purchases no inference.
+See [scope, recovery and publication](docs/TESTNET_REHEARSAL.md). The frontend's
+`/testnet` page reads the separate historical report while agent operations remain PAPER.
 
 ### Real market probe
 

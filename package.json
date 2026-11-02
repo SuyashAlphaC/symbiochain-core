@@ -35,7 +35,9 @@
     "evidence:replay": "tsx scripts/evidence.ts replay",
     "format": "prettier --write src scripts test docs README.md HACKATHON.md '.railway/*.{ts,md,json}' '*.json' '*.ts' && cargo fmt --manifest-path contracts/treasury/Cargo.toml",
     "format:check": "prettier --check src scripts test docs README.md HACKATHON.md '.railway/*.{ts,md,json}' '*.json' '*.ts'",
-    "probe:tee": "tsx scripts/probe-tee.ts"
+    "probe:tee": "tsx scripts/probe-tee.ts",
+    "testnet:rehearse": "tsx scripts/testnet-rehearsal.ts",
+    "testnet:tee": "tsx scripts/testnet-tee.ts"
   },
   "dependencies": {
     "@defuse-protocol/one-click-sdk-typescript": "0.1.26",
