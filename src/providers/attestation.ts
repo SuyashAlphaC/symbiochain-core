@@ -4,7 +4,7 @@ import { recoverMessageAddress, type Hex } from 'viem';
 import { z } from 'zod';
 import { sha256, DomainError } from '../domain.js';
 import { httpJson, type Fetch } from './http.js';
-import { verifyNrasVerdict } from './nras.js';
+import { verifyFreshNrasVerdict } from './nras.js';
 
 const hex = z
   .string()
@@ -261,7 +261,7 @@ export class HardwareVerifier {
         },
         this.transport,
       );
-      verifyNrasVerdict(result, nonce, payload.evidence_list.length);
+      await verifyFreshNrasVerdict(result, nonce, payload.evidence_list.length);
       gpuVerified = true;
     }
     return {

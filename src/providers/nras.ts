@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { DomainError, sha256 } from '../domain.js';
+import { setTimeout as sleep } from 'node:timers/promises';
 
 const jwt = z.string().regex(/^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/);
 const gpuTokens = z.record(z.string().regex(/^GPU-\d+$/), jwt);
@@ -89,5 +90,32 @@ export function verifyNrasVerdict(raw: unknown, nonce: string, expectedGpuCount:
   } catch (error) {
     if (error instanceof DomainError) throw error;
     throw new DomainError('TEE_GPU_VERDICT', 'Malformed or unacceptable NRAS GPU verdict');
+  }
+}
+
+/** Wait briefly for a near-future authenticated verdict to become valid.
+ * Strict time checks stay unchanged; expired and distant-future evidence fails.
+ * No additional NRAS request or inference purchase is made.
+ */
+export async function verifyFreshNrasVerdict(
+  raw: unknown,
+  nonce: string,
+  expectedGpuCount: number,
+  wait: (ms: number) => Promise<unknown> = sleep,
+): Promise<void> {
+  try {
+    verifyNrasVerdict(raw, nonce, expectedGpuCount);
+    return;
+  } catch (error) {
+    if (!(error instanceof DomainError) || error.code !== 'TEE_GPU_TIME') throw error;
+    const [[, overall], tokens] = reply.parse(raw);
+    const times = [overall, ...Object.values(tokens)].map((token) =>
+      claims.parse(JSON.parse(Buffer.from(token.split('.')[1]!, 'base64url').toString('utf8'))),
+    );
+    const validAt = Math.max(...times.map((c) => Math.max(c.iat, c.nbf ?? 0))) * 1000;
+    const delay = validAt - Date.now() + 25;
+    if (delay <= 0 || delay > 3000 || times.some((c) => c.exp * 1000 <= validAt)) throw error;
+    await wait(delay);
+    verifyNrasVerdict(raw, nonce, expectedGpuCount);
   }
 }

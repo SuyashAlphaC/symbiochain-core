@@ -3,10 +3,44 @@ import type { VerifiedReport } from '@phala/dcap-qvl';
 import { HardwareVerifier, deploymentActionsHash } from '../../src/providers/attestation.js';
 import { sha256 } from '../../src/domain.js';
 import type { Fetch } from '../../src/providers/http.js';
+import { verifyNrasVerdict, verifyFreshNrasVerdict } from '../../src/providers/nras.js';
 const nonce = 'bb'.repeat(32),
   signer = `0x${'11'.repeat(20)}`,
   compose = '{"services":{"model":"reviewed-image"}}',
   measurement = sha256(compose);
+it('waits for a near-future NRAS timestamp without accepting future or expired verdicts', async () => {
+  let now = Date.now();
+  const clock = vi.spyOn(Date, 'now').mockImplementation(() => now);
+  try {
+    const f = gpuFixture();
+    f.platform.iat = Math.floor(now / 1000) + 1;
+    f.platform.nbf = f.platform.iat;
+    const raw = f.response();
+    expect(() => verifyNrasVerdict(raw, nonce, 2)).toThrow('not yet valid');
+    let waited = 0;
+    await verifyFreshNrasVerdict(raw, nonce, 2, async (ms) => {
+      waited = ms;
+      now += ms;
+    });
+    expect(waited).toBeGreaterThan(0);
+    expect(waited).toBeLessThanOrEqual(3000);
+    verifyNrasVerdict(raw, nonce, 2);
+    const wait = vi.fn(async () => {});
+    f.platform.iat = Math.floor(now / 1000) + 10;
+    f.platform.nbf = f.platform.iat;
+    await expect(verifyFreshNrasVerdict(f.response(), nonce, 2, wait)).rejects.toThrow(
+      'not yet valid',
+    );
+    expect(wait).not.toHaveBeenCalled();
+    f.platform.iat = Math.floor(now / 1000) - 10;
+    f.platform.nbf = f.platform.iat;
+    f.platform.exp = Math.floor(now / 1000) - 1;
+    await expect(verifyFreshNrasVerdict(f.response(), nonce, 2, wait)).rejects.toThrow('expired');
+    expect(wait).not.toHaveBeenCalled();
+  } finally {
+    clock.mockRestore();
+  }
+});
 function fixture() {
   const td = {
     tdAttributes: Buffer.alloc(8),
