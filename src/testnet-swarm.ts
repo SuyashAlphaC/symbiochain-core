@@ -78,8 +78,8 @@ export async function stepTestnetSwarm(
   afterClaim?: (stage: SwarmStage) => Promise<void>,
 ): Promise<void> {
   if (state.status === 'CLOSED' || state.status === 'REJECTED') return;
-  const event = (code: string) => {
-    state.events.push({ stage: state.stage, at: new Date().toISOString(), code });
+  const event = (code: string, stage: SwarmStage = state.stage) => {
+    state.events.push({ stage, at: new Date().toISOString(), code });
     state.events = state.events.slice(-64);
   };
   const save = () => ports.save(state, publicSwarmReport(state));
@@ -144,7 +144,7 @@ export async function stepTestnetSwarm(
     }
     state.status =
       state.stage === 'CLOSED' ? 'CLOSED' : state.stage === 'REJECTED' ? 'REJECTED' : 'PENDING';
-    event('COMPLETED');
+    event('COMPLETED', stage);
   } catch (error) {
     state.status = 'BLOCKED';
     event(

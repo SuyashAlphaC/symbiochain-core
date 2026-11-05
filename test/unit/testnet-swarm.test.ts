@@ -132,6 +132,7 @@ it('stops before signing or paying when deployment approval is unavailable', asy
   await stepTestnetSwarm(f.state, f.ports);
   await stepTestnetSwarm(f.state, f.ports);
   expect(f.state).toMatchObject({ stage: 'BRAIN', status: 'BLOCKED', paidInferenceRequests: 0 });
+  expect(f.state.events.find((event) => event.code === 'COMPLETED')?.stage).toBe('SCOUT');
   expect(f.counters()).toEqual({ paid: 0, broadcasts: 0, receipts: 0 });
   expect(f.state.events.at(-1)?.code).toBe('TEE_DEPLOYMENT_UNAPPROVED');
 });

@@ -13,7 +13,11 @@ import {
   testnetLock,
   recoverTestnetLock,
 } from '../src/testnet-ledger.js';
-import { TestnetExecutor } from '../src/testnet-execution.js';
+import {
+  TestnetExecutor,
+  TESTNET_SOL_RECIPIENT,
+  requireTestnetTransfer,
+} from '../src/testnet-execution.js';
 import {
   newSwarmState,
   stepTestnetSwarm,
@@ -71,6 +75,20 @@ try {
         slippageBps: 50,
         expiresAt: expiry,
       };
+      const route = {
+        settlement: 'SIMULATED',
+        economics: 'SIMULATED',
+        destinationExecution: 'solana:devnet',
+        destinationTransfer: {
+          chain: 'solana:devnet',
+          sender: await executor.address('solana:devnet'),
+          recipient: TESTNET_SOL_RECIPIENT,
+          token: 'sol:native',
+          amountAtoms: '1000000',
+        },
+        purpose:
+          'Faucet-funded bounded transfer demonstration; not an executable arbitrage opportunity. Reject if insufficient evidence.',
+      };
       const quote: Quote = {
         id: `testnet-fixture:${runId}`,
         inputAtoms: '1000000',
@@ -78,14 +96,8 @@ try {
         minimumOutputAtoms: '1090000',
         costsAtoms: '10000',
         expiresAt: expiry,
-        routeDigest: digest({ runId, settlement: 'SIMULATED' }),
-        route: {
-          settlement: 'SIMULATED',
-          economics: 'SIMULATED',
-          destinationExecution: 'solana:devnet',
-          purpose:
-            'Faucet-funded bounded transfer demonstration; not an executable arbitrage opportunity. Reject if insufficient evidence.',
-        },
+        routeDigest: digest(route),
+        route,
       };
       const opportunity = { proposal, quote };
       await privateJson(`${directory}/opportunity.json`, opportunity);
@@ -107,6 +119,7 @@ try {
           'TESTNET_OPPORTUNITY_EXPIRED',
           'Original terms expired; no automatic replacement',
         );
+      requireTestnetTransfer(quote, await executor.address('solana:devnet'));
       const databaseClient = database();
       await databaseClient.cycle.upsert({
         where: { id: runId },
@@ -138,6 +151,7 @@ try {
       return result;
     },
     async execute(runId, proposal, quote, brain) {
+      requireTestnetTransfer(quote, await executor.address('solana:devnet'));
       const execution = await executor.execute(
         runId,
         'solana:devnet',

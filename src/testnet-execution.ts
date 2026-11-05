@@ -3,7 +3,7 @@ import { PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
 import { erc20Abi, parseEventLogs, type Address, type Hex } from 'viem';
 import bs58 from 'bs58';
 import { loadConfig } from './config.js';
-import { digest, DomainError } from './domain.js';
+import { digest, DomainError, type Quote } from './domain.js';
 import { TestnetLedger, optionalJson, privateJson } from './testnet-ledger.js';
 import { TESTNET_CHAIN_ID, TESTNET_MPC, TESTNET_PATH, TESTNET_RPC } from './testnet-profile.js';
 import { TestnetExecutionReport } from './testnet-swarm.js';
@@ -12,6 +12,24 @@ import type { Authorization, ContractCycle } from './providers/near-contract.js'
 
 export const SEPOLIA_USDC = '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238';
 export const DEVNET_GENESIS = 'EtWTRABZaYq6iMfeYKouRu166VU2xqa1wcaWoxPkrZBG';
+export const TESTNET_SOL_RECIPIENT = new PublicKey(Buffer.alloc(32, 2)).toBase58();
+export function requireTestnetTransfer(quote: Quote, sender: string): void {
+  const expected = {
+    chain: 'solana:devnet',
+    sender,
+    recipient: TESTNET_SOL_RECIPIENT,
+    token: 'sol:native',
+    amountAtoms: '1000000',
+  };
+  if (
+    quote.routeDigest !== digest(quote.route) ||
+    digest(quote.route.destinationTransfer) !== digest(expected)
+  )
+    throw new DomainError(
+      'TESTNET_ROUTE_BINDING',
+      'Approved route must commit the exact fixed testnet transfer',
+    );
+}
 export type TestChain = 'eip155:11155111' | 'solana:devnet';
 type Plan = {
   binding: string;
@@ -130,7 +148,7 @@ export class TestnetExecutor {
         if ((await this.wallets.solana.getBalance(new PublicKey(sender), 'finalized')) < 1_010_000)
           throw new DomainError('TESTNET_SOL_REQUIRED', 'Faucet devnet SOL required');
         const block = await this.wallets.solana.getLatestBlockhash('finalized');
-        const recipient = new PublicKey(Buffer.alloc(32, 2));
+        const recipient = new PublicKey(TESTNET_SOL_RECIPIENT);
         const tx = new Transaction({
           feePayer: new PublicKey(sender),
           recentBlockhash: block.blockhash,
