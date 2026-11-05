@@ -1,0 +1,46 @@
+{
+  "checkedAt": "2026-11-05T04:27:39.627Z",
+  "scope": "Testnet release preparation; publication and TEE approval are still gated.",
+  "provenance": {
+    "checkedAt": "2026-11-05T04:18:59.195Z",
+    "image": "nearaidev/compose-manager-launcher@sha256:079a14b41deb11e0e27f9b69648e8b3d89bd6fb9ccf6071643b8f447fa415085",
+    "deploymentApproved": false,
+    "paidInferenceRequests": 0,
+    "checks": [
+      {
+        "source": "https://api.github.com/orgs/nearai/attestations/sha256:079a14b41deb11e0e27f9b69648e8b3d89bd6fb9ccf6071643b8f447fa415085",
+        "status": 404
+      },
+      {
+        "source": "https://api.github.com/repos/nearai/compose-manager/attestations/sha256:079a14b41deb11e0e27f9b69648e8b3d89bd6fb9ccf6071643b8f447fa415085",
+        "status": 404
+      },
+      {
+        "source": "https://registry-1.docker.io/v2/nearaidev/compose-manager-launcher/manifests/sha256-079a14b41deb11e0e27f9b69648e8b3d89bd6fb9ccf6071643b8f447fa415085.att",
+        "status": 404
+      },
+      {
+        "source": "https://registry-1.docker.io/v2/nearaidev/compose-manager-launcher/manifests/sha256-079a14b41deb11e0e27f9b69648e8b3d89bd6fb9ccf6071643b8f447fa415085.sig",
+        "status": 404
+      }
+    ]
+  },
+  "credentials": {
+    "checkedAt": "2026-11-05T04:18:07.927Z",
+    "scope": "All reachable Git history, known current credentials and private-key patterns. This is a bounded credential check, not a proof that every possible secret is absent.",
+    "reports": [
+      {
+        "repository": "SuyashAlphaC/symbiochain-core",
+        "scannedBlobs": 254,
+        "knownCredentialsChecked": 11,
+        "findings": []
+      },
+      {
+        "repository": "AviraL0013/SymbioChain",
+        "scannedBlobs": 238,
+        "knownCredentialsChecked": 11,
+        "findings": []
+      }
+    ]
+  }
+}

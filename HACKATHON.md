@@ -1,12 +1,12 @@
-# SymbioChain — An Autonomous Agent Swarm That Pays Its Own Way
+# SymbioChain — Policy-controlled agents on NEAR
 
 ## Submission status
 
-Backend implementation with a [verified hosted PAPER demonstration](artifacts/hosted-paper-verification.json), local contract execution, real signed market previews, and a public gateway attestation diagnostic. Funded mainnet trading, authenticated model inference and automatic purchases of compute credits remain unverified or incomplete. This submission does not claim financial self-sufficiency.
+Testnet prototype with a [verified hosted PAPER demonstration](artifacts/hosted-paper-verification.json), a real NEAR testnet treasury, MPC-authorized Sepolia and Solana devnet transfers, contract safeguards and testnet NFT mechanics. The integrated runner currently stops at the private-inference deployment gate. See the [testnet judge walkthrough](docs/TESTNET_SUBMISSION.md) for reproducible steps, transaction links and exact boundaries. Funded mainnet trading, verified model inference and automatic compute purchases remain incomplete; financial self-sufficiency is not claimed.
 
 ## Idea-field pitch
 
-SymbioChain is a three-agent treasury backend on NEAR. Scout searches signed cross-chain quotes, Brain assesses committed proposals through confidential inference, and Hand requests constrained Chain Signatures and reconciles two-leg settlement. Agents purchase signals and assessments through NEAR Intents. Separate wallet reserves and measured provider credits govern operation. Execution receipts can carry bounded rights to future explicit distributions. The prototype demonstrates durable coordination and accounting in PAPER and a local NEAR sandbox, with real public quote and gateway-attestation evidence; funded live autonomy remains a validation milestone.
+SymbioChain coordinates Scout, Brain and Hand behind treasury spending limits and durable execution records on NEAR. Its testnet prototype demonstrates contract safeguards, agent service payments, real MPC-authorized Sepolia and Solana devnet transfers, and NFT distribution mechanics. A resumable workflow links scouting, verified private inference, constrained execution and receipts; its real run currently stops at the documented deployment-provenance gate. Market settlement and positive testnet P&L are explicit simulations. The project demonstrates safeguards and recovery, not a proven self-funding trading business.
 
 ## Entry point and startup
 

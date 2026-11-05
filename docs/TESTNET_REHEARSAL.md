@@ -6,6 +6,13 @@ The public report is separate from the existing cycle, accounting and proof APIs
 
 ## Run
 
+The newer [submission walkthrough](TESTNET_SUBMISSION.md) adds a separate durable
+agent runner and confirmed destination-chain transfers. This document describes
+the original contract rehearsal; its original signature fixtures were not
+broadcast. New execution results appear separately under `executions` in the
+published report. The integrated runner's recorded run remains blocked at TEE
+deployment approval.
+
 ```bash
 npm run contract:build
 npm run testnet:rehearse

@@ -1,5 +1,11 @@
 # Remaining deployment approval
 
+Rechecked November 5, 2026: gateway/model hardware verification passes, but the
+same launcher digest is still present. Both GitHub organization/repository
+attestation endpoints and the legacy OCI `.att`/`.sig` tags returned 404. The
+integrated testnet runner stops at `TEE_DEPLOYMENT_UNAPPROVED`; zero paid
+completions have been attempted. See [testnet submission](TESTNET_SUBMISSION.md).
+
 The 2026-11-02 [testnet rehearsal report](../artifacts/testnet-rehearsal.json)
 records a fresh authenticated gateway/model hardware audit with zero purchased
 completions. The same launcher digest below was observed again; its GitHub build

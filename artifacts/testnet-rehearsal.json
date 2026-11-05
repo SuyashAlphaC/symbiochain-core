@@ -2,7 +2,7 @@
   "contractVersion": 1,
   "profile": "TESTNET_REHEARSAL",
   "runId": "010389f3-a004-49d1-b7c7-fa0607bdfffc",
-  "capturedAt": "2026-11-02T09:43:55.112Z",
+  "capturedAt": "2026-11-05T04:20:28.851Z",
   "network": "testnet",
   "contractId": "treasury.sc-rehearsal-1bb69cb2.testnet",
   "artifactHash": "c87759fc9016f34c8dc89be3f5f8bd389421c9593fc6bd39b0d1241f44a31e6d",
@@ -10,6 +10,105 @@
   "economics": "SIMULATED",
   "mainnetTransactions": 0,
   "paidInferenceRequests": 0,
+  "swarm": {
+    "profile": "TESTNET_SWARM",
+    "runId": "058c4f9b-3d75-4938-84d6-1c48e04dd706",
+    "updatedAt": "2026-11-05T04:31:33.310Z",
+    "stage": "BRAIN",
+    "status": "BLOCKED",
+    "settlement": "SIMULATED",
+    "economics": "SIMULATED",
+    "paidInferenceRequests": 0,
+    "billedUsdMicros": null,
+    "inference": null,
+    "execution": null,
+    "receiptTokenId": null,
+    "events": [
+      {
+        "stage": "SCOUT",
+        "at": "2026-11-05T04:27:43.872Z",
+        "code": "CLAIMED"
+      },
+      {
+        "stage": "SCOUT",
+        "at": "2026-11-05T04:27:44.634Z",
+        "code": "COMPLETED"
+      },
+      {
+        "stage": "BRAIN",
+        "at": "2026-11-05T04:27:45.641Z",
+        "code": "CLAIMED"
+      },
+      {
+        "stage": "BRAIN",
+        "at": "2026-11-05T04:27:45.651Z",
+        "code": "TEE_DEPLOYMENT_UNAPPROVED"
+      },
+      {
+        "stage": "BRAIN",
+        "at": "2026-11-05T04:30:42.460Z",
+        "code": "CLAIMED"
+      },
+      {
+        "stage": "BRAIN",
+        "at": "2026-11-05T04:31:33.288Z",
+        "code": "CLAIMED"
+      },
+      {
+        "stage": "BRAIN",
+        "at": "2026-11-05T04:31:33.310Z",
+        "code": "TEE_DEPLOYMENT_UNAPPROVED"
+      }
+    ]
+  },
+  "executions": [
+    {
+      "chain": "eip155:11155111",
+      "source": "AUTHORIZATION_FIXTURE",
+      "sender": "0x5C5890Cf4B4B79982F201b18CAAa43419179290D",
+      "status": "CONFIRMED",
+      "code": "CONFIRMED",
+      "txHash": "0xd47cc9a925ca1bd0f0232181736894a744ed9ba41284e920cd14cb5029ca81e3",
+      "nativeFeeAtoms": "54613026",
+      "nearTransactions": [
+        {
+          "operation": "630ac5e3-fd71-4c8b-8ad9-4362a9fc6487:evm:authorize",
+          "hash": "HFVyLEVhs2kuno4CYAkwSiC6ZJ4fuCooxHeSmF8Bm3Yw"
+        },
+        {
+          "operation": "630ac5e3-fd71-4c8b-8ad9-4362a9fc6487:evm:sign",
+          "hash": "65ABq2sVWQdCk2xKZvYup3SFdZ8pd6Kdm1Wo2DdP2HJc"
+        },
+        {
+          "operation": "630ac5e3-fd71-4c8b-8ad9-4362a9fc6487:evm:submission",
+          "hash": "HDceUhsFF5X3DxkFPYowf9A9QWmUgRX3wUHi93A84uYJ"
+        }
+      ]
+    },
+    {
+      "chain": "solana:devnet",
+      "source": "AUTHORIZATION_FIXTURE",
+      "sender": "2QqkogoRzLx1Tr55osURq8DSNzKRG2J1NFfRCEN9b7NW",
+      "status": "CONFIRMED",
+      "code": "CONFIRMED",
+      "txHash": "2hMmyjDc1bYdyoi4QdfhpRLUb4bFYAWeDcJnjGQgGkTGPRmFuuMKeHdrYmrqaBmbV3QjSet2ZXeXzUYnbfBVvRkb",
+      "nativeFeeAtoms": "5000",
+      "nearTransactions": [
+        {
+          "operation": "630ac5e3-fd71-4c8b-8ad9-4362a9fc6487:solana:authorize",
+          "hash": "Hvhke5RQVcmfYbJ9eZGogzbpARmVxT75JqfMnywyK6ef"
+        },
+        {
+          "operation": "630ac5e3-fd71-4c8b-8ad9-4362a9fc6487:solana:sign",
+          "hash": "3fRorBtMLKE1yo5aNYcLt341sHrfh6dfzJwbPjy9Cg3G"
+        },
+        {
+          "operation": "630ac5e3-fd71-4c8b-8ad9-4362a9fc6487:solana:submission",
+          "hash": "9cyEPS6WmercUSKE5wLbXxHgNwfVQ5zBCa5H3eem6cJT"
+        }
+      ]
+    }
+  ],
   "checks": [
     {
       "id": "network",
@@ -69,7 +168,7 @@
     {
       "id": "tee_hardware",
       "status": "PASSED",
-      "detail": "Free gateway/model hardware audit at 2026-11-02T09:43:42.630Z; no completion was requested."
+      "detail": "Free gateway/model hardware audit at 2026-11-05T04:20:21.494Z; no completion was requested."
     },
     {
       "id": "tee_deployment",

@@ -6,6 +6,10 @@ The backend includes TypeScript/Fastify, PostgreSQL/Prisma, durable workers, a R
 
 **Evidence status:** the [hosted PAPER backend](https://symbiochain-core.onrender.com/docs), PostgreSQL recovery tests, real local NEAR contract calls, public signed quotes, and authenticated TEE hardware audits have run. Hardware evidence, deployment approval and signed inference remain separate gates; no funded mainnet round trip or verified paid completion is claimed. The [testnet rehearsal](docs/TESTNET_REHEARSAL.md) records its own actual checks and explicit simulations. This repository does not claim that an arbitrage opportunity exists or that the swarm has achieved financial self-sufficiency. See [implementation status](docs/IMPLEMENTATION.md).
 
+For the testnet entry, start with the [judge walkthrough](docs/TESTNET_SUBMISSION.md).
+It includes real Sepolia/Solana transaction links, the resumable agent runner,
+worker recovery, budget limits and the remaining TEE approval gate.
+
 ## Run locally
 
 Requires Node 24, npm and Docker. Rust is needed only for contract checks. PAPER requires no wallet, paid model key, or real funds.
