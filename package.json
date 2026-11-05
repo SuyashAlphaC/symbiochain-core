@@ -36,6 +36,7 @@
     "format": "prettier --write src scripts test docs README.md HACKATHON.md '.railway/*.{ts,md,json}' '*.json' '*.ts' && cargo fmt --manifest-path contracts/treasury/Cargo.toml",
     "format:check": "prettier --check src scripts test docs README.md HACKATHON.md '.railway/*.{ts,md,json}' '*.json' '*.ts'",
     "probe:tee": "tsx scripts/probe-tee.ts",
+    "probe:launcher": "tsx scripts/probe-launcher.ts",
     "testnet:rehearse": "tsx scripts/testnet-rehearsal.ts",
     "testnet:tee": "tsx scripts/testnet-tee.ts",
     "testnet:swarm": "tsx scripts/testnet-swarm.ts",
