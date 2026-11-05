@@ -147,8 +147,12 @@ npm run testnet:tee
 
 This separate profile uses fresh faucet-funded accounts and the real testnet MPC.
 It checks deployment, roles, policy, payments, signatures and receipt mechanics.
-Settlement and P&L are explicitly synthetic; signed target-chain fixtures are not
-broadcast. The free TEE probe preserves approval gates and purchases no inference.
+Settlement and P&L are explicitly synthetic. This original rehearsal does not
+broadcast its signing fixtures. A separate `npm run testnet:execute` has now
+confirmed real MPC-authorized Sepolia test-USDC and Solana devnet transfers; their
+records appear under `executions`. `npm run testnet:swarm -- --watch` runs the
+integrated guarded workflow and currently stops at TEE deployment approval.
+The free TEE probe preserves approval gates and purchases no inference.
 See [scope, recovery and publication](docs/TESTNET_REHEARSAL.md). The frontend's
 `/testnet` page reads the separate historical report while agent operations remain PAPER.
 

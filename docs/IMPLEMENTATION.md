@@ -1,5 +1,11 @@
 # Implementation and acceptance ledger
 
+November 5 testnet additions are detailed in the [submission walkthrough](TESTNET_SUBMISSION.md):
+confirmed Sepolia and Solana devnet execution fixtures, their NEAR MPC request
+links, a durable integrated runner and actual worker-stop/recovery evidence.
+The runner remains blocked before paid inference at the deployment-provenance
+gate. These additions do not establish live market settlement or real profit.
+
 The isolated [testnet rehearsal](TESTNET_REHEARSAL.md) now supplements the local
 suites with a real testnet deployment, MPC signatures and NFT/distribution calls.
 Its [published report](../artifacts/testnet-rehearsal.json) keeps those observations
