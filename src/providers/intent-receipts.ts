@@ -31,8 +31,11 @@ export interface IntentReceipt {
   amountAtoms: string;
   evidenceDigest: string;
 }
-const success = (s: unknown) =>
-  !!s && typeof s === 'object' && ('SuccessValue' in s || 'SuccessReceiptId' in s);
+const success = (s: unknown) => {
+  if (!s || typeof s !== 'object' || Object.keys(s).length !== 1) return false;
+  if ('SuccessValue' in s) return typeof s.SuccessValue === 'string';
+  return 'SuccessReceiptId' in s && nearHash.safeParse(s.SuccessReceiptId).success;
+};
 const hash = nearHash;
 const outcome = z.object({
   id: hash,
