@@ -92,7 +92,7 @@ function fixture() {
         return {
           chain: 'solana:devnet' as const,
           source: 'VERIFIED_AI' as const,
-          sender: 'fixtureSender',
+          sender: '2'.repeat(44),
           status: 'CONFIRMED' as const,
           code: 'CONFIRMED',
           txHash: '1'.repeat(88),
@@ -193,4 +193,19 @@ it('refuses a closed status without matching verified execution and rejects expa
       nativeFeeAtoms: null,
     }).success,
   ).toBe(false);
+});
+it('checkpoints a claim before a worker stops and safely resumes the same run', async () => {
+  const f = fixture();
+  await stepTestnetSwarm(f.state, f.ports);
+  await expect(
+    stepTestnetSwarm(f.state, f.ports, undefined, async () => {
+      throw new Error('process stopped');
+    }),
+  ).rejects.toThrow('process stopped');
+  expect(f.saved.at(-1)).toMatchObject({ stage: 'BRAIN', status: 'RUNNING' });
+  expect(f.counters().paid).toBe(0);
+  const runId = f.state.runId;
+  await stepTestnetSwarm(f.state, f.ports);
+  expect(f.state).toMatchObject({ stage: 'HAND', runId });
+  expect(f.counters().paid).toBe(1);
 });

@@ -16,6 +16,16 @@ export const TestnetExecutionReport = z
   })
   .strict()
   .superRefine((value, ctx) => {
+    const evm = value.chain === 'eip155:11155111';
+    if (
+      !(evm ? /^0x[a-fA-F0-9]{40}$/ : /^[1-9A-HJ-NP-Za-km-z]{32,44}$/).test(value.sender) ||
+      (value.txHash &&
+        !(evm ? /^0x[a-fA-F0-9]{64}$/ : /^[1-9A-HJ-NP-Za-km-z]{64,88}$/).test(value.txHash))
+    )
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Address and transaction must match the test network',
+      });
     if (value.status === 'CONFIRMED' && (!value.txHash || value.nativeFeeAtoms === null))
       ctx.addIssue({
         code: 'custom',

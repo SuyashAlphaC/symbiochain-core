@@ -159,12 +159,48 @@ export class TestnetLedger {
 }
 
 /** Shared with the rehearsal so two commands never sign from the same role concurrently. */
-export async function testnetLock(): Promise<() => Promise<void>> {
-  const path = '.data/testnet-rehearsal/runner.lock';
-  const lock = await open(path, 'wx', 0o600);
+export async function testnetLock(
+  directory = '.data/testnet-rehearsal',
+): Promise<() => Promise<void>> {
+  const path = `${directory}/runner.lock`;
+  const lock = await open(path, 'wx', 0o600).catch((error) => {
+    if (error.code === 'EEXIST')
+      throw new DomainError(
+        'TESTNET_RUNNER_LOCKED',
+        'Another runner or an unreconciled stale lock exists',
+      );
+    throw error;
+  });
   await lock.writeFile(JSON.stringify({ pid: process.pid, startedAt: new Date().toISOString() }));
   return async () => {
     await lock.close();
     await unlink(path);
   };
+}
+
+/** Explicit recovery only; never remove a live or unidentifiable runner's lock. */
+export async function recoverTestnetLock(directory = '.data/testnet-rehearsal'): Promise<void> {
+  const path = `${directory}/runner.lock`;
+  const value = (await optionalJson(path)) as { pid?: number; startedAt?: string } | null;
+  if (!value) return;
+  if (!Number.isSafeInteger(value.pid) || value.pid! <= 1 || typeof value.startedAt !== 'string')
+    throw new DomainError('TESTNET_LOCK_MANUAL_REVIEW', 'Lock owner cannot be identified');
+  try {
+    process.kill(value.pid!, 0);
+  } catch (error) {
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'ESRCH') {
+      await privateJson(`${directory}/last-lock-recovery.json`, {
+        pid: value.pid,
+        recoveredAt: new Date().toISOString(),
+        note: 'Removed a dead runner lock only. Signed transactions and inference reservations remain unchanged.',
+      });
+      await unlink(path);
+      return;
+    }
+    throw new DomainError(
+      'TESTNET_LOCK_MANUAL_REVIEW',
+      'Cannot establish whether the lock owner is alive',
+    );
+  }
+  throw new DomainError('TESTNET_RUNNER_ACTIVE', 'Refuse recovery while the lock owner exists');
 }
