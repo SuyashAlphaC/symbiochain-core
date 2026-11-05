@@ -1,0 +1,58 @@
+{
+  "checkedAt": "2026-11-05T10:30:39.085Z",
+  "scope": "Independent anonymous read-only production and repository checks; owner login/logout was reported separately.",
+  "frontendUrl": "https://symbiochain.vercel.app",
+  "repository": "https://github.com/AviraL0013/SymbioChain",
+  "repositoryPublic": true,
+  "license": "MIT",
+  "mergedPr": "https://github.com/AviraL0013/SymbioChain/pull/3",
+  "githubMergeCommit": "83d46d8eb5db2257989bf1c831694da20617635e",
+  "statuses": [
+    {
+      "url": "https://symbiochain.vercel.app/testnet",
+      "status": 200
+    },
+    {
+      "url": "https://symbiochain.vercel.app/api/swarm/testnet",
+      "status": 200
+    },
+    {
+      "url": "https://symbiochain.vercel.app/api/swarm/snapshot",
+      "status": 200
+    },
+    {
+      "url": "https://symbiochain.vercel.app/api/operator/session",
+      "status": 200
+    },
+    {
+      "url": "https://symbiochain.vercel.app/api/operator/state",
+      "status": 401
+    },
+    {
+      "url": "https://api.github.com/repos/AviraL0013/SymbioChain",
+      "status": 200
+    }
+  ],
+  "operator": {
+    "configured": true,
+    "anonymousSessionAuthenticated": false,
+    "anonymousStateStatus": 401
+  },
+  "reportMatchesReviewedArtifact": true,
+  "reportDigest": "3371c93e49f074f9c3abe3f7d8e79c8b70e6c9d7f3d29ffc8feadcdc4be78d97",
+  "mode": "PAPER",
+  "survivalHours": null,
+  "swarmStage": "BRAIN",
+  "swarmStatus": "BLOCKED",
+  "paidInferenceRequests": 0,
+  "confirmedDestinationFixtures": 2,
+  "economics": "SIMULATED",
+  "ownerReported": {
+    "existingVercelProject": "avirals-projects-27965510/symbiochain",
+    "deploymentReady": true,
+    "operatorLoginAndLogoutPassed": true,
+    "browserCredentialExposureDetected": false,
+    "reachableCommitsScanned": 45
+  },
+  "mutationsPerformedByThisCheck": 0
+}

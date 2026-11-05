@@ -139,12 +139,16 @@ Start this backend with `npm run dev`, then follow the frontend README.
 polls stored evidence without requesting inference or signing. The overview and
 protected operator remain PAPER.
 
-The existing Vercel project owner releases PR #3 and publishes the frontend repo
-using `docs/teammate-release-prompt.md` there. No new Vercel project or provider,
-wallet or database credentials belong in that deployment. Both repositories
-include MIT application-code licences; third-party assets retain their notices.
-Before submission, record release commits, check credentials, publish source,
-verify the hosted pages and record exactly what the prototype demonstrates.
+The existing Vercel project now serves [the testnet page](https://symbiochain.vercel.app/testnet).
+PR #3 merged at `83d46d8eb5db2257989bf1c831694da20617635e`, and the frontend
+repository is public. Operator access is configured; owner login/logout checks
+passed and anonymous operator-state access is rejected. The
+[production release record](../artifacts/frontend-production-release.json)
+separates independent read-only checks from owner-reported browser verification.
+The teammate release prompt remains a historical runbook; these release steps
+are complete. Both repositories include MIT application-code licences, while
+third-party assets retain their notices. The TEE approval gate remains open;
+release does not establish a completed authenticated AI cycle or real profit.
 
 ## Start another bounded run
 
