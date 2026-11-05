@@ -61,11 +61,16 @@ To demonstrate loss of Scout activity, use the authenticated `POST /api/admin/ag
 
 Track names are the proposed submission mapping; confirm eligibility against the event's applicable rules.
 
-## Remaining acceptance work
+## Released evidence and unfinished business claims
 
-- Provision and fund dedicated accounts, target-chain gas, Intents service balances and provider credits; supply access credentials and independently approved gateway/model measurements.
-- Deploy the actual treasury and demonstrate real MPC signing, authenticated inference, two-leg funded settlement and complete realized cost valuation.
-- Establish a provider-approved compute purchase protocol, then implement and demonstrate payment-to-credit recovery using trading proceeds.
-- Use the included same-origin operator dashboard for pause/resume, real PAPER worker-crash recovery, cost approval and receipt demonstrations. Configure an exact CORS origin only for a separately hosted frontend. The PAPER backend and five-minute readiness monitor are deployed. The alternative Railway [infrastructure plan](artifacts/infrastructure-plan.json) remains unapplied.
+The frontend repository is public. PR #3 is merged, `/testnet` is live in the existing Vercel project, and operator configuration/login/logout checks are complete. The PAPER backend and readiness monitor are deployed. See [release revisions](docs/RELEASE_REVISIONS.md) for exact verified application commits; later feature commits are not silently called deployed or submitted. No hackathon form receipt has been recorded.
 
-See the [acceptance ledger](docs/IMPLEMENTATION.md), [deployment record](docs/DEPLOYMENT.md) and [judge walkthrough](docs/JUDGING.md). Submission evidence should include the actual revision, contract hash, network, model, approved measurements and transaction links for any funded live claim.
+The NEAR testnet treasury, real MPC signatures and Sepolia/Solana devnet transfers are complete as authorization fixtures. The integrated runner remains blocked at TEE deployment approval. Its market data, quotes, settlement economics and positive NFT accounting fixture remain simulated. Testnet NFT deposits prove distribution mechanics, not business revenue.
+
+The new [business accounting source](docs/BUSINESS_ACCOUNTING.md) separates invoices from finalized external receipts, records accountant-reported operating costs and reserves proceeds only after recorded loss recovery. Fixture tests validate those rules. No customer revenue or realized business profitability is proven.
+
+Mainnet deployment and funded 1Click/Intents settlement still need a dedicated funded account, signing configuration, hard spending limits and a viable route. The owner currently has no mainnet funds. The existing losing preview remains rejected. The contract is already deployed on testnet; this is not a pending testnet deployment.
+
+Automatic NEAR AI purchases remain unimplemented pending a provider-approved payment-to-credit protocol. Proceeds-funded NFT conversion, distribution and recovery also remain unimplemented. No reservation, balance sync, faucet token or internal payment is presented as either completed cash flow.
+
+See the [acceptance ledger](docs/IMPLEMENTATION.md), [deployment record](docs/DEPLOYMENT.md) and [judge walkthrough](docs/JUDGING.md). Submit evidence with its actual revision, network, contract hash, approved model measurements and transaction links; keep real execution, simulations, implementation tests and unfinished work distinct.

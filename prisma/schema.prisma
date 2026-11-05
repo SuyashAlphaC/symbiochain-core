@@ -270,3 +270,19 @@ model OutboxEvent {
   createdAt DateTime      @default(now())
   @@index([mode, seq])
 }
+
+// Immutable business events. Separate from capital/trading journals and PAPER telemetry.
+model BusinessEntry {
+  id            String        @id
+  mode          ExecutionMode
+  reference     String
+  kind          String
+  asset         String
+  amountAtoms   Decimal       @db.Decimal(78, 0)
+  termsDigest   String
+  sourceKey     String?       @unique
+  payload       Json
+  createdAt     DateTime      @default(now())
+  @@unique([mode, reference])
+  @@index([mode, kind, createdAt])
+}

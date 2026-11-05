@@ -10,6 +10,10 @@ For the testnet entry, start with the [judge walkthrough](docs/TESTNET_SUBMISSIO
 It includes real Sepolia/Solana transaction links, the resumable agent runner,
 worker recovery, budget limits and the remaining TEE approval gate.
 
+## Business evidence
+
+The [business accounting feature](docs/BUSINESS_ACCOUNTING.md) adds performance-fee invoices, final Intents receipt checks, realized-cost reporting and proceeds reservations. It is a source-level addition, not evidence of a customer sale or released mainnet business. Confirmed customer revenue is unproven; automatic AI-credit purchase and proceeds-funded NFT settlement remain unimplemented. Private cost sources and customer identity are not exposed in the public status projection. Deployment revisions and evidence scope are recorded in [the release manifest](docs/RELEASE_REVISIONS.md).
+
 ## Run locally
 
 Requires Node 24, npm and Docker. Rust is needed only for contract checks. PAPER requires no wallet, paid model key, or real funds.

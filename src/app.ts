@@ -12,6 +12,14 @@ import { DomainError, Proposal, atoms, positiveAtoms, idSchema, eventCursor } fr
 import { exportEvidence } from './evidence.js';
 import { approveCostBasis } from './cost-basis.js';
 import { cycleEconomics } from './economics.js';
+import {
+  businessStatus,
+  issueFeeInvoice,
+  receiveInvoice,
+  closeBusinessWindow,
+  reserveProceeds,
+  ReceiptInput,
+} from './business.js';
 import type { PaperFaultController } from './paper-faults.js';
 import { dashboardHtml, dashboardCss } from './dashboard-page.js';
 import { readFile } from 'node:fs/promises';
@@ -103,6 +111,23 @@ export async function createApp(
   };
   const secured = { preHandler: read, schema: { security: [{ bearerAuth: [] }] } };
   const privileged = { preHandler: admin, schema: { security: [{ bearerAuth: [] }] } };
+  app.get('/api/business/status', secured, async (_req, reply) => {
+    reply.header('cache-control', 'private, no-store');
+    return businessStatus(store);
+  });
+  app.post('/api/business/invoices', privileged, async (req) => issueFeeInvoice(store, req.body));
+  app.post('/api/business/invoices/:reference/receipt', privileged, async (req) => {
+    const { reference } = z
+      .object({ reference: z.string().regex(/^[a-zA-Z0-9:_-]{1,100}$/) })
+      .parse(req.params);
+    return receiveInvoice(store, reference, ReceiptInput.parse(req.body));
+  });
+  app.post('/api/business/windows', privileged, async (req) =>
+    closeBusinessWindow(store, req.body),
+  );
+  app.post('/api/business/reservations', privileged, async (req) =>
+    reserveProceeds(store, req.body),
+  );
   app.get('/api/viewer/snapshot', secured, async (_req, reply) => {
     reply.header('cache-control', 'private, no-store');
     return viewerSnapshot(store);
