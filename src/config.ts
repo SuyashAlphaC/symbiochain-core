@@ -86,6 +86,10 @@ const Schema = z.object({
   INTENTS_BRAIN_PRIVATE_KEY: z.string().default(''),
   INTENTS_HAND_PRIVATE_KEY: z.string().default(''),
   SCOUT_ROUTES_FILE: z.string().default(''),
+  // Explicit denomination/receiver binding; unset disables external revenue acceptance.
+  BUSINESS_RECEIVER_ID: z.string().max(64).default(''),
+  BUSINESS_INTENTS_ASSET: z.string().max(180).default(''),
+  BUSINESS_RELATED_ACCOUNTS: list.prefault(''),
 });
 export type Config = z.infer<typeof Schema>;
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
