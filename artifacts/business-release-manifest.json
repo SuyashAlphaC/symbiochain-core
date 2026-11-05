@@ -24,7 +24,7 @@
   },
   "businessFeatureSourceCandidates": {
     "frontend": "be50793f719f8696736a648ad9ac9e4d3eb3a9a2",
-    "backend": "54883186106c70f2b83589f15f6003e9b87dbf92",
+    "backend": "ae70bbfb63a244ec86811c7abb66a443ba771555",
     "branch": "feature/business-revenue-loop",
     "deploymentStatus": "NOT_DEPLOYED",
     "migration": "20261105120000_business_evidence",
@@ -34,7 +34,7 @@
   "validation": {
     "scope": "LOCAL_CODE_AND_ISOLATED_DATABASE_BROWSER",
     "backendUnitTests": 116,
-    "backendIntegrationTests": 58,
+    "backendIntegrationTests": 59,
     "frontendTests": 22,
     "frontendCheck": "PASSED",
     "businessBrowserCheck": "PASSED",
