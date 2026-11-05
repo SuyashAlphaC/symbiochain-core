@@ -288,3 +288,26 @@ it('rolls back an altered invoice reference and rejects denomination changes', a
   const changed = new Store(db, { ...store.config, BUSINESS_INTENTS_ASSET: 'nep141:wrap.near' });
   await expect(closeBusinessWindow(changed, window('bad-asset'))).rejects.toThrow('denomination');
 });
+it('blocks proceeds when an older inference has an unknown financial outcome', async () => {
+  const inv = await invoice('fee');
+  await receiveInvoice(store, 'fee', pay, receipt());
+  await closeBusinessWindow(store, window('profit'));
+  await db.inferenceAttempt.create({
+    data: {
+      cycleId: (inv.payload as Record<string, string>).cycleId!,
+      proposalDigest: 'f'.repeat(64),
+      status: 'STARTED',
+      evidenceCiphertext: 'unused fixture',
+      createdAt: new Date('2025-01-01T00:00:00.000Z'),
+    },
+  });
+  await expect(
+    reserveProceeds(store, {
+      reference: 'held',
+      windowReference: 'profit',
+      purpose: 'NFT_DISTRIBUTION',
+      amountAtoms: '1',
+    }),
+  ).rejects.toThrow('outstanding inference');
+  expect((await businessStatus(store)).reservedAtoms).toBe('0');
+});

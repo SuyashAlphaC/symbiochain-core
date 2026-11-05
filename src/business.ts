@@ -398,6 +398,17 @@ export async function reserveProceeds(store: Store, input: unknown) {
   return store.atomic(async (tx) => {
     const found = await existing(tx, store, data.reference, termsDigest);
     if (found) return found;
+    const unresolved = await tx.inferenceAttempt.count({
+      where: {
+        cycle: { mode: store.mode },
+        status: { not: 'COMPLETE' },
+      },
+    });
+    if (unresolved)
+      throw new DomainError(
+        'BUSINESS_COST_UNKNOWN',
+        'Reconcile outstanding inference outcomes before reserving proceeds',
+      );
     const rows = await tx.businessEntry.findMany({ where: { mode: store.mode } });
     const window = rows.find(
       (r) => r.reference === data.windowReference && r.kind === 'COST_WINDOW',
