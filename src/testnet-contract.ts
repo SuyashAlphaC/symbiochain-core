@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { TestnetExecutionReport, TestnetSwarmReport } from './testnet-swarm-contract.js';
 
 export const testnetCheckIds = [
   'network',
@@ -34,6 +35,8 @@ export const TestnetReport = z
     economics: z.literal('SIMULATED'),
     mainnetTransactions: z.literal(0),
     paidInferenceRequests: z.literal(0),
+    swarm: TestnetSwarmReport.optional(),
+    executions: z.array(TestnetExecutionReport).max(2).optional(),
     checks: z
       .array(
         z

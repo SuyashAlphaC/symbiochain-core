@@ -1,6 +1,6 @@
 import { spawn } from 'node:child_process';
 import { mkdir, open, readFile, writeFile, rename, unlink } from 'node:fs/promises';
-import { applyTeeProbe, readTestnetReport } from '../src/testnet-report.js';
+import { applyTeeProbe, readTestnetReport, publishTestnetReport } from '../src/testnet-report.js';
 
 const dir = '.data/testnet-rehearsal';
 await mkdir(dir, { recursive: true, mode: 0o700 });
@@ -29,6 +29,7 @@ try {
   // Publish only the strict report. Never publish raw attestation reports, keys or logs.
   await writeFile('artifacts/testnet-rehearsal.json.tmp', data, { mode: 0o644 });
   await rename('artifacts/testnet-rehearsal.json.tmp', 'artifacts/testnet-rehearsal.json');
+  await publishTestnetReport();
   console.log(
     JSON.stringify(
       {

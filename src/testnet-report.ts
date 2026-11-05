@@ -1,17 +1,46 @@
-import { readFile, stat } from 'node:fs/promises';
+import { readFile, stat, writeFile, rename } from 'node:fs/promises';
 import { z } from 'zod';
 import { TestnetReport, emptyTestnetReport } from './testnet-contract.js';
+import { TestnetSwarmReport, TestnetExecutionReport } from './testnet-swarm.js';
+
+async function boundedOptional(path: string): Promise<unknown | undefined> {
+  try {
+    if ((await stat(path)).size > 100_000)
+      throw new Error('Testnet evidence exceeds publication limit');
+    return JSON.parse(await readFile(path, 'utf8'));
+  } catch (error) {
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'ENOENT')
+      return undefined;
+    throw error;
+  }
+}
 
 export async function readTestnetReport(path = 'artifacts/testnet-rehearsal.json') {
   try {
     if ((await stat(path)).size > 100_000)
       throw new Error('Testnet report exceeds publication limit');
-    return TestnetReport.parse(JSON.parse(await readFile(path, 'utf8')));
+    const report = TestnetReport.parse(JSON.parse(await readFile(path, 'utf8')));
+    if (path === 'artifacts/testnet-rehearsal.json') {
+      const swarm = await boundedOptional('.data/testnet-swarm/public.json');
+      const executions = await boundedOptional('.data/testnet-execution/public.json');
+      if (swarm !== undefined) report.swarm = TestnetSwarmReport.parse(swarm);
+      if (executions !== undefined)
+        report.executions = z.array(TestnetExecutionReport).max(2).parse(executions);
+    }
+    return TestnetReport.parse(report);
   } catch (error) {
     if (error && typeof error === 'object' && 'code' in error && error.code === 'ENOENT')
       return emptyTestnetReport();
     throw error;
   }
+}
+
+export async function publishTestnetReport(): Promise<void> {
+  const report = await readTestnetReport();
+  await writeFile('artifacts/testnet-rehearsal.json.tmp', JSON.stringify(report, null, 2) + '\n', {
+    mode: 0o644,
+  });
+  await rename('artifacts/testnet-rehearsal.json.tmp', 'artifacts/testnet-rehearsal.json');
 }
 
 export function applyTeeProbe(
