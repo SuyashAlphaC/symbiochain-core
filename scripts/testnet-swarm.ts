@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { mkdir } from 'node:fs/promises';
+import { mkdir, rename } from 'node:fs/promises';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { loadConfig } from '../src/config.js';
 import { createDatabase, type Database } from '../src/db.js';
@@ -21,6 +21,7 @@ import {
 import {
   newSwarmState,
   stepTestnetSwarm,
+  requireSafeNewSwarm,
   type SwarmState,
   type TestnetSwarmPorts,
 } from '../src/testnet-swarm.js';
@@ -31,8 +32,44 @@ await mkdir(directory, { recursive: true, mode: 0o700 });
 if (process.argv.includes('--recover-stale-lock')) await recoverTestnetLock();
 const unlock = await testnetLock();
 let db: Database | undefined, ledger: TestnetLedger | undefined;
-const state = ((await optionalJson(`${directory}/state.json`)) ?? newSwarmState()) as SwarmState;
+let state = ((await optionalJson(`${directory}/state.json`)) ?? newSwarmState()) as SwarmState;
 try {
+  if (process.argv.includes('--new-run') && (await optionalJson(`${directory}/state.json`))) {
+    const url = process.env.TESTNET_DATABASE_URL;
+    if (!url || !new URL(url).pathname.endsWith('_testnet'))
+      throw new DomainError(
+        'TESTNET_DATABASE_REQUIRED',
+        'Reconciliation requires the original durable testnet database',
+      );
+    const marker = (await optionalJson(`${directory}/inference-database.json`)) as {
+      identity: string;
+    } | null;
+    if (marker && marker.identity !== digest(url))
+      throw new DomainError(
+        'TESTNET_DATABASE_CHANGED',
+        'Use the original inference database to reconcile this run',
+      );
+    const original = createDatabase(url, 1);
+    try {
+      const attempt = await original.inferenceAttempt.findUnique({
+        where: { cycleId: state.runId },
+      });
+      const journal = (await optionalJson(`${directory}/near-journal.json`)) ?? {};
+      requireSafeNewSwarm(
+        state,
+        attempt?.status ?? null,
+        journal as Record<string, { outcome?: unknown }>,
+      );
+    } finally {
+      await original.$disconnect();
+    }
+    if (!/^[a-f0-9-]{36}$/.test(state.runId))
+      throw new DomainError('TESTNET_RUN_ID', 'Invalid archived run identity');
+    await mkdir('.data/testnet-swarm-history', { recursive: true, mode: 0o700 });
+    await rename(directory, `.data/testnet-swarm-history/${state.runId}`);
+    await mkdir(directory, { recursive: true, mode: 0o700 });
+    state = newSwarmState();
+  }
   ledger = await TestnetLedger.open(directory);
   const executor = new TestnetExecutor(ledger);
   const treasury = ledger.accounts.treasury.accountId;
@@ -121,6 +158,16 @@ try {
         );
       requireTestnetTransfer(quote, await executor.address('solana:devnet'));
       const databaseClient = database();
+      const marker = (await optionalJson(`${directory}/inference-database.json`)) as {
+        identity: string;
+      } | null;
+      const identity = digest(process.env.TESTNET_DATABASE_URL);
+      if (marker && marker.identity !== identity)
+        throw new DomainError(
+          'TESTNET_DATABASE_CHANGED',
+          'Do not move an inference attempt to a different database',
+        );
+      await privateJson(`${directory}/inference-database.json`, { identity });
       await databaseClient.cycle.upsert({
         where: { id: runId },
         update: {},

@@ -42,6 +42,33 @@ export function newSwarmState(): SwarmState {
     paidInferenceRequests: 0,
   };
 }
+
+/** Explicit retirement never abandons a possibly paid request or signed operation. */
+export function requireSafeNewSwarm(
+  state: SwarmState,
+  inferenceStatus: string | null,
+  journal: Record<string, { outcome?: unknown }>,
+): void {
+  const entries = Object.values(journal);
+  const complete =
+    (state.status === 'CLOSED' && state.stage === 'CLOSED') ||
+    (state.status === 'REJECTED' && state.stage === 'REJECTED');
+  if (complete) publicSwarmReport(state);
+  const beforeInference =
+    ['SCOUT', 'BRAIN'].includes(state.stage) &&
+    state.paidInferenceRequests === 0 &&
+    inferenceStatus === null &&
+    entries.length === 0;
+  if (
+    entries.some((entry) => !entry.outcome) ||
+    (inferenceStatus !== null && inferenceStatus !== 'COMPLETE') ||
+    (!complete && !beforeInference)
+  )
+    throw new DomainError(
+      'TESTNET_RECONCILIATION_REQUIRED',
+      'Finish or reconcile the existing run before starting another',
+    );
+}
 export function publicSwarmReport(state: SwarmState): TestnetSwarmReport {
   const p = state.brain?.proof;
   return TestnetSwarmReport.parse({

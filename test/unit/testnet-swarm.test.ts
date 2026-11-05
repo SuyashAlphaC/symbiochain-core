@@ -12,6 +12,7 @@ import {
   publicSwarmReport,
   TestnetSwarmReport,
   TestnetExecutionReport,
+  requireSafeNewSwarm,
   type TestnetSwarmPorts,
   type SwarmState,
 } from '../../src/testnet-swarm.js';
@@ -135,6 +136,24 @@ it('stops before signing or paying when deployment approval is unavailable', asy
   expect(f.state.events.find((event) => event.code === 'COMPLETED')?.stage).toBe('SCOUT');
   expect(f.counters()).toEqual({ paid: 0, broadcasts: 0, receipts: 0 });
   expect(f.state.events.at(-1)?.code).toBe('TEE_DEPLOYMENT_UNAPPROVED');
+});
+
+it('allows explicit zero-effect renewal but refuses uncertain paid or chain outcomes', async () => {
+  const s = newSwarmState();
+  s.stage = 'BRAIN';
+  s.status = 'BLOCKED';
+  expect(() => requireSafeNewSwarm(s, null, {})).not.toThrow();
+  for (const status of ['STARTED', 'RECEIVED'])
+    expect(() => requireSafeNewSwarm(s, status, {})).toThrow('reconcile');
+  expect(() => requireSafeNewSwarm(s, null, { signature: {} })).toThrow('reconcile');
+  s.stage = 'HAND';
+  s.paidInferenceRequests = 1;
+  expect(() => requireSafeNewSwarm(s, 'COMPLETE', {})).toThrow('reconcile');
+  const complete = fixture();
+  for (let i = 0; i < 4; i++) await stepTestnetSwarm(complete.state, complete.ports);
+  expect(() =>
+    requireSafeNewSwarm(complete.state, 'COMPLETE', { signature: { outcome: { success: true } } }),
+  ).not.toThrow();
 });
 it('completes the bounded workflow and publishes no private evidence', async () => {
   const f = fixture();

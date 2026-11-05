@@ -145,3 +145,20 @@ wallet or database credentials belong in that deployment. Both repositories
 include MIT application-code licences; third-party assets retain their notices.
 Before submission, record release commits, check credentials, publish source,
 verify the hosted pages and record exactly what the prototype demonstrates.
+
+## Start another bounded run
+
+```sh
+npm run testnet:swarm -- --new-run --watch
+```
+
+Use the original `TESTNET_DATABASE_URL`. This explicit action checks the original
+inference record and NEAR journal, then archives the old runtime directory under
+`.data/testnet-swarm-history/<runId>`. It retains the faucet account credentials,
+derived wallets, database billing records and cumulative $0.10 allowance.
+A completed/rejected run, or a run with no inference/chain effects yet, can be
+retired. A STARTED/RECEIVED paid request, unfinished chain operation or inconsistent
+database identity prevents retirement and requires reconciliation. Do not delete
+journals or change database URLs to bypass this check. This command is how to
+issue fresh terms after an opportunity expires; refreshes never silently replace
+an immutable proposal.
