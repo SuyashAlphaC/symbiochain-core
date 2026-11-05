@@ -284,6 +284,10 @@ export class TestnetExecutor {
       code: 'CONFIRMED',
       txHash: plan.signed.txHash,
       nativeFeeAtoms: confirmation.nativeFeeAtoms,
+      nearTransactions: this.ledger
+        .transactions()
+        .filter((tx) => tx.operation.startsWith(`${prefix}:`))
+        .map(({ operation, hash }) => ({ operation, hash })),
     });
   }
 }

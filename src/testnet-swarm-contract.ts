@@ -13,6 +13,17 @@ export const TestnetExecutionReport = z
       .regex(/^(0x[a-fA-F0-9]{64}|[1-9A-HJ-NP-Za-km-z]{64,88})$/)
       .nullable(),
     nativeFeeAtoms: z.string().regex(/^\d+$/).nullable(),
+    nearTransactions: z
+      .array(
+        z
+          .object({
+            operation: z.string().regex(/^[a-z0-9:_-]{1,80}$/),
+            hash: z.string().regex(/^[1-9A-HJ-NP-Za-km-z]{43,44}$/),
+          })
+          .strict(),
+      )
+      .max(4)
+      .optional(),
   })
   .strict()
   .superRefine((value, ctx) => {
