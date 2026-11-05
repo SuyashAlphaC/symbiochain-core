@@ -1,5 +1,11 @@
 # Remaining deployment approval
 
+The [Brave verifier cross-check](TEE_LAUNCHER_POLICY.md) confirms that its launcher
+exception skips reproducible rebuilding, while still requiring signed SLSA
+provenance. Its pinned verification function returned unverified for our exact
+digest. `npm run probe:launcher` reproduces that key-free prerequisite diagnostic;
+it is not a complete service attestation and does not approve inference.
+
 Rechecked November 5, 2026: gateway/model hardware verification passes, but the
 same launcher digest is still present. Both GitHub organization/repository
 attestation endpoints and the legacy OCI `.att`/`.sig` tags returned 404. The

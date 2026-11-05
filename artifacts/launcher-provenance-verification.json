@@ -1,0 +1,22 @@
+{
+  "checkedAt": "2026-11-05T05:33:20.531Z",
+  "scope": "EXACT_LAUNCHER_PROVENANCE_ONLY",
+  "verifier": {
+    "repository": "https://github.com/brave/near-verifier",
+    "revision": "72a1a994f3ab44c00ed4747398c68d38ac46bffa"
+  },
+  "cosign": {
+    "version": "3.0.6",
+    "sha256": "c956e5dfcac53d52bcf058360d579472f0c1d2d9b69f55209e256fe7783f4c74"
+  },
+  "image": "nearaidev/compose-manager-launcher@sha256:079a14b41deb11e0e27f9b69648e8b3d89bd6fb9ccf6071643b8f447fa415085",
+  "expectedSourceCommit": "8e07c3583909c9ab9da94d883e87add1ae90832d",
+  "provenanceFound": false,
+  "provenanceVerified": false,
+  "launcherRebuildExempt": true,
+  "reproducibleBuildPerformed": false,
+  "fullServiceVerificationPerformed": false,
+  "deploymentApproved": false,
+  "apiKeyProvided": false,
+  "paidInferenceRequests": 0
+}
