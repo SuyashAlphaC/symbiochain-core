@@ -7,6 +7,7 @@ import {
   FundingRequest,
   FundingTerms,
   FundingSummary,
+  MAX_DISTRIBUTION_YOCTO,
   type FundingPorts,
   type PreparedFundingCall,
   type FinalFundingCall,
@@ -477,6 +478,11 @@ export async function runNftPayout(
       }
     }
     const amount = converted.nearYocto;
+    if (BigInt(amount) > MAX_DISTRIBUTION_YOCTO)
+      throw new DomainError(
+        'FUNDING_DISTRIBUTION_CAP',
+        'Converted amount exceeds the pinned treasury cap; keep wNEAR held',
+      );
     if (BigInt(amount) < BigInt(t.minimumNearYocto))
       throw new DomainError(
         'FUNDING_QUOTE_FLOOR',

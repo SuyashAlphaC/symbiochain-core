@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import bs58 from 'bs58';
 import { beforeEach, afterAll, it, expect } from 'vitest';
+import { createApp } from '../../src/app.js';
 import { loadConfig } from '../../src/config.js';
 import { createDatabase } from '../../src/db.js';
 import { Store } from '../../src/store.js';
@@ -451,4 +452,41 @@ it('serializes two recovering executors around one persisted identity per paymen
   expect((await fundingStatus(store)).completedDistributions).toBe(1);
   expect(new Set(p.calls.sent).size).toBe(2);
   expect(await db.journal.count({ where: { kind: 'EARNED_PROCEEDS_NFT_DISTRIBUTION' } })).toBe(1);
+});
+
+it('authenticates payout control and returns the purchase blocker without creating a payment', async () => {
+  const app = await createApp(new Store(db, base));
+  try {
+    for (const url of ['/api/business/payouts', '/api/business/compute-purchases']) {
+      const denied = await app.inject({ method: 'POST', url, payload: {} });
+      expect(denied.statusCode).toBe(401);
+      const readOnly = await app.inject({
+        method: 'POST',
+        url,
+        payload: {},
+        headers: { authorization: `Bearer ${base.READ_TOKEN}` },
+      });
+      expect(readOnly.statusCode).toBe(401);
+    }
+    const response = await app.inject({
+      method: 'POST',
+      url: '/api/business/compute-purchases',
+      headers: { authorization: `Bearer ${base.ADMIN_TOKEN}` },
+    });
+    expect(response.statusCode).toBe(409);
+    expect(response.json().error).toBe('PROVIDER_PURCHASE_PROTOCOL_REQUIRED');
+    const status = await app.inject({
+      url: '/api/business/funding',
+      headers: { authorization: `Bearer ${base.READ_TOKEN}` },
+    });
+    expect(status.json()).toMatchObject({
+      nftFundingImplemented: true,
+      nftFundingEnabled: false,
+      completedDistributions: 0,
+      computePurchaseImplemented: false,
+    });
+    expect(await db.businessEntry.count()).toBe(0);
+  } finally {
+    await app.close();
+  }
 });

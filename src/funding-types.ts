@@ -1,10 +1,15 @@
 import { z } from 'zod';
 import { atoms, positiveAtoms } from './domain.js';
 import { nearHash } from './providers/intent-receipts.js';
+export const MAX_DISTRIBUTION_YOCTO = 10n ** 30n;
+const nativeDistributionAmount = positiveAtoms.refine(
+  (v) => BigInt(v) <= MAX_DISTRIBUTION_YOCTO,
+  'Exceeds treasury distribution cap',
+);
 export const FundingRequest = z
   .object({
     reservationReference: z.string().regex(/^[a-zA-Z0-9:_-]{1,100}$/),
-    minimumNearYocto: positiveAtoms,
+    minimumNearYocto: nativeDistributionAmount,
   })
   .strict();
 export const FundingTerms = z
@@ -17,8 +22,8 @@ export const FundingTerms = z
     treasury: z.string(),
     treasuryCodeHash: nearHash,
     asset: z.string().regex(/^nep141:[a-z0-9._-]+$/),
-    amountAtoms: positiveAtoms,
-    minimumNearYocto: positiveAtoms,
+    amountAtoms: positiveAtoms.refine((v) => BigInt(v) < 2n ** 128n, 'Exceeds Intents U128 amount'),
+    minimumNearYocto: nativeDistributionAmount,
     maxGasYocto: positiveAtoms,
     minReserveYocto: positiveAtoms,
     slippageBps: z.number().int().min(0).max(1000),

@@ -5,6 +5,7 @@ import { sha256 } from '../../src/domain.js';
 import bs58 from 'bs58';
 import { quoteHash, type QuoteResponse } from '@defuse-protocol/one-click-sdk-typescript';
 import { NearFundingPorts, swapCredit, verifyFundingOutcome } from '../../src/providers/funding.js';
+import { FundingRequest } from '../../src/funding-types.js';
 import type { FundingTerms, PreparedFundingCall } from '../../src/funding-types.js';
 import { loadConfig } from '../../src/config.js';
 const h = (n: number) => bs58.encode(Buffer.alloc(32, n));
@@ -287,4 +288,19 @@ it('distinguishes the requested refund deadline from the signed deposit inactivi
   expect(swapCredit(t, f.quote, { payload: f.payload })).toBe('500');
   f.quote.quote.deadline = new Date(Date.parse(t.deadline) + 73 * 3600000).toISOString();
   expect(() => swapCredit(t, f.quote, { payload: f.payload })).toThrow('approved exchange');
+});
+
+it('rejects approvals above the actual treasury deposit cap', () => {
+  expect(
+    FundingRequest.safeParse({
+      reservationReference: 'x',
+      minimumNearYocto: (10n ** 30n).toString(),
+    }).success,
+  ).toBe(true);
+  expect(
+    FundingRequest.safeParse({
+      reservationReference: 'x',
+      minimumNearYocto: (10n ** 30n + 1n).toString(),
+    }).success,
+  ).toBe(false);
 });

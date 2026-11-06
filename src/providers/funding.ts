@@ -408,7 +408,12 @@ export class NearFundingPorts implements FundingPorts {
     return { status: 'PENDING' as const, creditYocto, evidenceDigest: digest(status) };
   }
   async submitSwap(signed: SignedFundingIntent) {
-    if (this.config.EXECUTION_MODE !== 'LIVE' || !this.config.BUSINESS_PAYOUTS_ENABLED)
+    if (
+      this.config.EXECUTION_MODE !== 'LIVE' ||
+      this.config.NEAR_NETWORK !== 'mainnet' ||
+      !this.config.LIVE_TRADING_ENABLED ||
+      !this.config.BUSINESS_PAYOUTS_ENABLED
+    )
       throw new DomainError('FUNDING_DISABLED', 'Financial submission is not armed');
     const deadline = JSON.parse(signed.payload.message).deadline;
     if (Date.parse(deadline) <= Date.now())
@@ -494,7 +499,12 @@ export class NearFundingPorts implements FundingPorts {
     return verifyFundingOutcome(t, call, raw);
   }
   async sendCall(call: PreparedFundingCall) {
-    if (this.config.EXECUTION_MODE !== 'LIVE' || !this.config.BUSINESS_PAYOUTS_ENABLED)
+    if (
+      this.config.EXECUTION_MODE !== 'LIVE' ||
+      this.config.NEAR_NETWORK !== 'mainnet' ||
+      !this.config.LIVE_TRADING_ENABLED ||
+      !this.config.BUSINESS_PAYOUTS_ENABLED
+    )
       throw new DomainError('FUNDING_DISABLED', 'Financial submission is not armed');
     if (
       call.kind === 'WITHDRAW' &&
