@@ -90,6 +90,14 @@ const Schema = z.object({
   BUSINESS_RECEIVER_ID: z.string().max(64).default(''),
   BUSINESS_INTENTS_ASSET: z.string().max(180).default(''),
   BUSINESS_RELATED_ACCOUNTS: list.prefault(''),
+  BUSINESS_PAYOUTS_ENABLED: bool.prefault('false'),
+  BUSINESS_INTENTS_PRIVATE_KEY: z.string().default(''),
+  BUSINESS_PAYOUT_PRIVATE_KEY: z.string().default(''),
+  BUSINESS_TREASURY_CODE_HASH: z.string().default(''),
+  BUSINESS_MAX_PAYOUT_ATOMS: atoms.default('0'),
+  BUSINESS_DAILY_PAYOUT_ATOMS: atoms.default('0'),
+  BUSINESS_MAX_GAS_YOCTO: atoms.default('0'),
+  BUSINESS_MIN_NATIVE_RESERVE_YOCTO: atoms.default('0'),
 });
 export type Config = z.infer<typeof Schema>;
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
