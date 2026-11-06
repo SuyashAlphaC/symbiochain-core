@@ -1,0 +1,41 @@
+{
+  "checkedOn": "2026-11-06",
+  "scope": "PUBLIC_DOCUMENTATION_ONLY",
+  "finding": "MANUAL_CRYPTO_CHECKOUT_SUPPORTED_CUSTOMER_AUTOMATION_NOT_VERIFIED",
+  "mainnetContractDeploymentRequiredForAdapter": false,
+  "realPaymentRequiredForRealCredits": true,
+  "providerCheckoutInspected": false,
+  "sources": [
+    {
+      "url": "https://docs.near.ai/cloud/quickstart",
+      "observation": "Customers add credits through the Cloud console."
+    },
+    {
+      "url": "https://near.ai/blog/near-ai-release-26-1",
+      "observation": "NEAR AI officially announced crypto payments through HOT Pay. This does not specify unattended checkout or organization binding."
+    },
+    {
+      "url": "https://raw.githubusercontent.com/nearai/docs/main/api-reference/openapi.json",
+      "sha256": "7a03bc46aa540a510c2d5b9826862a2b20a5beda10d2e096bf8196524d232f3e",
+      "observation": "Reviewed billing-related customer paths describe inference costs, organization balance and staking source/sync. A customer purchase/checkout path was not found in this specification."
+    },
+    {
+      "url": "https://github.com/nearai/cloud-api/blob/dfd97d5f97cf4e486bacc8ccf3abd4be60fdabdf/CLAUDE.md#external-billing-service",
+      "observation": "The Cloud API places checkout and credit recalculation in a separate billing UI/service."
+    },
+    {
+      "url": "https://hot-labs.gitbook.io/hot-pay/llms-full.txt",
+      "sha256": "ce8c085bec647d161a7f267897cccb79cd59ae74ca5c913626d177e0798697a3",
+      "observation": "Merchant payment links and merchant-authenticated processed-payment queries are documented. NEAR AI organization-to-credit mapping was not found."
+    },
+    {
+      "url": "https://hot-labs.gitbook.io/hot-pay/developer-api",
+      "observation": "GET /partners/processed_payments requires a partner token. Being a NEAR AI customer does not grant its merchant token."
+    }
+  ],
+  "inference": "The inspected interfaces do not yet establish a supported unattended NEAR AI customer purchase flow. A provider-issued checkout may help verify the missing binding; this is not a claim that all possible integrations are absent.",
+  "paymentRequests": 0,
+  "mainnetTransactions": 0,
+  "paidInferenceRequests": 0,
+  "automaticCreditPurchases": 0
+}

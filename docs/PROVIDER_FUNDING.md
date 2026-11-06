@@ -71,3 +71,43 @@ This is a completed refusal boundary, **not** an implemented purchase adapter.
 The separate [NFT funding implementation](BUSINESS_FUNDING.md) does not resolve
 this provider dependency. Grants, existing balances, transfers and staking sync
 remain distinct from purchases in the ledger and submission claims.
+
+## Checkout support and deployment are separate — November 6 clarification
+
+NEAR AI **does support customer purchases**. Its [quickstart](https://docs.near.ai/cloud/quickstart)
+directs customers to the console's Credits section, and its official
+[Release 26.1 announcement](https://near.ai/blog/near-ai-release-26-1) explicitly
+announces crypto payments through HOT Pay. The earlier missing-protocol finding
+concerns **verified unattended purchasing**, not the existence of manual checkout.
+
+The [HOT Pay quickstart](https://hot-labs.gitbook.io/hot-pay/quickstart) describes
+merchant-issued payment links with an item identifier, amount and merchant-defined
+memo. Its [Developer API](https://hot-labs.gitbook.io/hot-pay/developer-api)
+documents `/partners/processed_payments`, authenticated with the merchant's partner
+token. SymbioChain is a customer of NEAR AI, not the merchant receiving these
+payments. Creating our own HOT Pay merchant or token cannot establish a purchase
+from NEAR AI or grant access to NEAR AI's merchant payment history. An arbitrary
+memo cannot be assumed to map to the Builders key's organization.
+
+The reviewed Cloud OpenAPI still exposes costs, balances and staking sync rather
+than a customer checkout/invoice API. The public HOT Pay documentation does not
+specify NEAR AI's organization-to-checkout/credit-allocation contract. This is a
+limited finding about the inspected interfaces, not proof that no supported
+automation exists elsewhere. See the [source review](../artifacts/credit-purchase-protocol-review.json).
+
+| Requirement                                                                | Current position                                                                          |
+| -------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| SymbioChain mainnet contract deployment                                    | Not required to implement or test an off-chain billing adapter                            |
+| Provider-issued checkout for the correct organization                      | Required to verify the proposed HOT Pay path; not yet inspected                           |
+| Supported checkout creation, payment identity and final credit attribution | Still unverified for customer automation                                                  |
+| Real money for a real purchase                                             | Required; faucet/testnet tokens are not real payment assets                               |
+| A provider-supported billing sandbox                                       | Could test payment mechanics if supplied; it would not prove a production credit purchase |
+
+An unpaid provider-generated checkout URL has been requested in the ignored
+`NEAR_AI_CHECKOUT_URL` environment setting for inspection only. It is not yet an
+application configuration option or an authorization to pay, repeat a checkout,
+alter its memo, call undocumented endpoints or increase the inference budget.
+The Cloud API key alone does not establish billing access or ownership of the
+organization holding the Builders credit grant. No invoice was created, funds
+sent or paid inference requested by this review. The automatic purchase action
+remains disabled until the customer integration and spending policy are verified.
