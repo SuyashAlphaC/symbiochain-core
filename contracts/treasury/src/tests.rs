@@ -192,3 +192,23 @@ fn failed_dividend_payout_restores_the_original_claimants_credit() {
     assert_eq!(c.claim_credit(id("former-holder.near")).0, 100);
     assert_eq!(c.dividend_liability_yocto, 100);
 }
+
+#[test]
+fn distribution_policy_exposes_roles_without_changing_storage() {
+    let c = contract();
+    let policy = c.distribution_policy();
+    assert_eq!(policy["accountant"], "books.near");
+    assert_eq!(policy["total_shares_bps"], 0);
+    assert_eq!(policy["paused"], false);
+    assert_eq!(c.get_distribution("missing".into()), None);
+}
+
+#[test]
+#[should_panic(expected = "Paused")]
+fn paused_treasury_rejects_dividend_funding() {
+    let mut c = contract();
+    context("owner.near");
+    c.set_paused(true);
+    context("books.near");
+    c.distribute_revenue("paused-distribution".into());
+}
