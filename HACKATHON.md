@@ -71,6 +71,6 @@ The new [business accounting source](docs/BUSINESS_ACCOUNTING.md) separates invo
 
 Mainnet deployment and funded 1Click/Intents settlement still need a dedicated funded account, signing configuration, hard spending limits and a viable route. The owner currently has no mainnet funds. The existing losing preview remains rejected. The contract is already deployed on testnet; this is not a pending testnet deployment.
 
-Automatic NEAR AI purchases remain unimplemented pending a provider-approved payment-to-credit protocol. Proceeds-funded NFT conversion, distribution and recovery also remain unimplemented. No reservation, balance sync, faucet token or internal payment is presented as either completed cash flow.
+Automatic NEAR AI purchases remain unimplemented pending a provider-approved payment-to-credit protocol. Proceeds-funded NFT conversion, distribution and exact-identity recovery are [implemented and locally tested](docs/BUSINESS_FUNDING.md), but disabled without funded mainnet proof. No reservation, balance sync, faucet token or internal payment is presented as either completed cash flow.
 
 See the [acceptance ledger](docs/IMPLEMENTATION.md), [deployment record](docs/DEPLOYMENT.md) and [judge walkthrough](docs/JUDGING.md). Submit evidence with its actual revision, network, contract hash, approved model measurements and transaction links; keep real execution, simulations, implementation tests and unfinished work distinct.

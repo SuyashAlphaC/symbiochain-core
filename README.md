@@ -12,7 +12,7 @@ worker recovery, budget limits and the remaining TEE approval gate.
 
 ## Business evidence
 
-The [business accounting feature](docs/BUSINESS_ACCOUNTING.md) adds performance-fee invoices, final Intents receipt checks, realized-cost reporting and proceeds reservations. It is a source-level addition, not evidence of a customer sale or released mainnet business. Confirmed customer revenue is unproven; automatic AI-credit purchase and proceeds-funded NFT settlement remain unimplemented. Private cost sources and customer identity are not exposed in the public status projection. Deployment revisions and evidence scope are recorded in [the release manifest](docs/RELEASE_REVISIONS.md).
+The [business accounting feature](docs/BUSINESS_ACCOUNTING.md) adds performance-fee invoices, final Intents receipt checks, realized-cost reporting and proceeds reservations. It is a source-level addition, not evidence of a customer sale or released mainnet business. Confirmed customer revenue is unproven. The [proceeds-to-NFT workflow](docs/BUSINESS_FUNDING.md) now implements signed conversion, native withdrawal, verified treasury allocation and durable recovery; it is disabled and lacks funded mainnet proof. Automatic AI-credit purchasing remains provider-blocked and unimplemented under the public-interface-only policy. Private cost sources and customer identity are not exposed in the public status projection. Deployment revisions and evidence scope are recorded in [the release manifest](docs/RELEASE_REVISIONS.md).
 
 ## Run locally
 

@@ -14,7 +14,7 @@ deployment approval and signed inference. The existing agent runtime remains PAP
 or explicitly armed mainnet LIVE; no testnet market solver or paid inference bypass
 has been introduced.
 
-This is a fresh local repository for the requested SymbioChain backend. The trading swarm remains the product: Scout, Brain, Hand, NEAR treasury, Chain Signatures, 1Click, confidential inference, agent payments, accounting, frontend APIs and deployment artifacts.
+This public repository contains the SymbioChain backend. The trading swarm remains the product: Scout, Brain, Hand, NEAR treasury, Chain Signatures, 1Click, confidential inference, agent payments, accounting, frontend APIs and deployment artifacts.
 
 ## Implemented and exercised
 
@@ -56,4 +56,4 @@ The current live preflight still reports 16 missing dedicated settings. The sele
 
 ## Business evidence extension — November 5, 2026
 
-Source implementation now includes immutable 15% performance-fee crystallization with recorded loss recovery, mainnet Intents transfer receipt verification, separate external-revenue journals, complete reported-cost windows, and serializable proceeds reservations. See [scope, APIs and trust boundaries](BUSINESS_ACCOUNTING.md). These paths were tested against isolated PostgreSQL and injected receipts. No new hosted migration or mainnet transaction is claimed. Automatic provider credit purchase and business-funded NFT conversion/distribution remain unimplemented; actual customer revenue and business profit remain unproven.
+Source implementation now includes immutable 15% performance-fee crystallization with recorded loss recovery, mainnet Intents transfer receipt verification, separate external-revenue journals, complete reported-cost windows, and serializable proceeds reservations. See [scope, APIs and trust boundaries](BUSINESS_ACCOUNTING.md). These paths were tested against isolated PostgreSQL and injected receipts. No new hosted migration or mainnet transaction is claimed. Automatic provider credit purchase remains unimplemented; actual customer revenue and business profit remain unproven. The November 6 [NFT funding extension](BUSINESS_FUNDING.md) implements signed conversion, final native withdrawal, exact treasury allocation and durable recovery, with disabled defaults. Its testnet contract upgrade preserved state and left the treasury paused. No funded SymbioChain mainnet payout is claimed.

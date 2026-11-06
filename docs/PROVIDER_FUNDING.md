@@ -50,3 +50,24 @@ This establishes the remaining integration requirement, not the absence of all p
 Rechecked the published [OpenAPI source](https://github.com/nearai/docs/blob/main/api-reference/openapi.json) and [external billing architecture](https://github.com/nearai/cloud-api/blob/main/CLAUDE.md#external-billing-service). The published paths still include `/v1/billing/costs`, organization usage balance and staking farm/sync, with no customer purchase/invoice/payment endpoint in that specification. The architecture places Stripe checkout in the separate `nearai-cloud-ui` billing service; its GitHub repository was not publicly accessible during this review. This does not rule out provider-supported private billing integrations, but none has been supplied for this project.
 
 The new [business ledger](BUSINESS_ACCOUNTING.md) can reserve reported earned proceeds for compute, but cannot mark them paid or purchased. A grant, a different organization's checkout, staking sync or admin credit allocation still cannot close the profit-to-compute loop. The owner confirmed that mainnet funds/account/caps remain unavailable. No payment or inference was attempted.
+
+## Public-interface-only decision on 2026-11-06
+
+The owner explicitly requires publicly supported NEAR AI interfaces only. The
+reviewed [OpenAPI](https://github.com/nearai/docs/blob/main/api-reference/openapi.json)
+and [external billing architecture](https://github.com/nearai/cloud-api/blob/main/CLAUDE.md#external-billing-service)
+still do not supply a verified customer payment-to-credit purchase protocol. The
+public [credit-transfer source](https://github.com/nearai/cloud-api/blob/main/crates/api/src/routes/credit_transfers.rs)
+describes movement of existing organization credits, not purchase using earned
+crypto proceeds; source availability alone is not a deployment/API support check.
+No undocumented billing endpoint, privileged limit mutation, reseller or invented
+payment destination is used. No paid inference or credit purchase was attempted.
+
+`POST /api/business/compute-purchases` requires admin authorization and returns
+`409 PROVIDER_PURCHASE_PROTOCOL_REQUIRED` with no payment/journal side effects.
+The funding status reports `computePurchaseImplemented: false` and
+`NO_PUBLIC_NEAR_AI_PURCHASE_PROTOCOL`; the frontend keeps the purchase count zero.
+This is a completed refusal boundary, **not** an implemented purchase adapter.
+The separate [NFT funding implementation](BUSINESS_FUNDING.md) does not resolve
+this provider dependency. Grants, existing balances, transfers and staking sync
+remain distinct from purchases in the ledger and submission claims.
