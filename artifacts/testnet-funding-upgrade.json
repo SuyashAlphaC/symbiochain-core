@@ -1,0 +1,19 @@
+{
+  "checkedAt": "2026-11-06T05:35:51.109Z",
+  "network": "testnet",
+  "accountId": "treasury.sc-rehearsal-1bb69cb2.testnet",
+  "codeHash": "4uAgNJesg7U8amwmUDAd2LzQ4U7gyg6M7hrwows1G23e",
+  "wasmSha256": "39f034e6ae16ddb9cf253ac977c4146989a0fee1fa7c33ba0944092bf41de3d5",
+  "previousCodeHash": "EVY6VLzTu8s1vs5KS8eFmUzuRdZJQbyMLVstST45d1HE",
+  "statePreserved": true,
+  "stateHash": "cbcc248c46d03be8a535d39a65d998b20734102b7e439ab2108eea901984373b",
+  "transactionHash": "23jHZZmvfuSkn5PXhgVkhcrCn3rcZofXYmtbfwTExGCa",
+  "distributionPolicy": {
+    "accountant": "books.sc-rehearsal-1bb69cb2.testnet",
+    "total_shares_bps": 1000,
+    "paused": true
+  },
+  "mainnetTransactions": 0,
+  "paidInferenceRequests": 0,
+  "disclosure": "State-compatible testnet code upgrade only; no business revenue, conversion or dividend payment was performed."
+}

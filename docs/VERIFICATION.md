@@ -83,3 +83,29 @@ The [local browser record](../artifacts/operator-local-verification.json) uses a
 This does not establish a compute-credit purchase, complete actual business costs, independently verified cost valuation, funded mainnet execution or an actual mainnet NFT mint.
 
 Hosted operator verification passes on Render at revision `10964bb497bcdb283a2fe3fc30569f89b1c187dd`: actual targeted worker crash, same-job recovery on attempt two, WSS reconnection, administrative cost approval and closure with explicitly simulated rights. PostgreSQL checks confirm one settlement journal, one simulated inference usage record, one crash-trigger event and zero unbalanced journal/asset groups. The [hosted record](../artifacts/operator-hosted-verification.json) includes fresh Supabase TLS/RLS/grant checks. GitHub CI [run 40911885653](https://github.com/SuyashAlphaC/symbiochain-core/actions/runs/40911885653) passes both backend and contract jobs (35 unit, 39 integration, 12 Rust tests, 10 sandbox checks). The delayed-request browser regression also verifies that other controls stay disabled throughout pending actions.
+
+## Earned-proceeds funding checks — November 6, 2026
+
+`npm run check` passes TypeScript, 129 unit tests and the production build.
+`npm run test:integration` passes 70 cases on isolated PostgreSQL. Rust has 14
+passing unit tests, and the local NEAR sandbox passes real distribution/pull-claim,
+pause and duplicate-reference checks. The paired frontend passes 23 regression
+tests, its full production check, and isolated Chromium/Fastify/PostgreSQL browser
+checks at desktop and 390px. No backend credential exposure or direct browser
+request to the backend was observed. These are implementation checks, not funded
+mainnet business proof.
+
+Funding tests cover exact signed-quote/payload bounds, destination-credit parsing,
+nonce and finality checks, lost accepted responses for each payment, restart and
+concurrency, one journal per stage, retry exhaustion, disabled writes, operating
+loss/unknown-charge holds, cancellations, refunds and gas-cap breaches. The
+compute-purchase endpoint returns 409 without creating a payment or ledger row.
+
+The [public protocol check](../artifacts/funding-protocol-review.json) validates a
+real unsigned provider response with zero signatures/submissions. The
+[credit parser check](../artifacts/funding-credit-proof-review.json) validates a
+third party's final public receipt, not a SymbioChain sale or swap. The
+[testnet treasury upgrade](../artifacts/testnet-funding-upgrade.json) changes code
+only, preserves stored state and leaves the treasury paused. No mainnet funds or
+paid inference were used. Exact candidate/deployment/submission boundaries are in
+the [funding manifest](../artifacts/funding-release-manifest.json).
