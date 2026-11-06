@@ -1,0 +1,27 @@
+{
+  "checkedAt": "2026-11-06T05:45:22.544Z",
+  "scope": "READ_ONLY_DEPLOYMENT_PREFLIGHT",
+  "repositoryMain": {
+    "backend": "6a6a2ba6e6e1a4b3ad39a62b46d10500201453d6",
+    "frontend": "b855671653e4ac8a188f512b3a879c2a1a527227"
+  },
+  "mergedAccountingPullRequests": {
+    "backend": 1,
+    "frontend": 4
+  },
+  "latestRenderDeployment": {
+    "id": "dep-dbm0nohsrm7s73en4t9g",
+    "status": "live",
+    "revision": "e1633c7ff16cb2ce3ce484aa44b12d09cc0117a5",
+    "finishedAt": "2026-11-05T04:55:25.346036Z"
+  },
+  "frontendBusinessStatus": 404,
+  "backendBusinessStatus": 404,
+  "newFundingPullRequests": {
+    "backend": "https://github.com/SuyashAlphaC/symbiochain-core/pull/2",
+    "frontend": "https://github.com/AviraL0013/SymbioChain/pull/5"
+  },
+  "note": "Accounting PRs merged on November 5, but both hosted business endpoints still return 404. A merge is not deployment evidence. Prior verified frontend revision remains a historical baseline; no fresh exact frontend deployment revision was established. No production mutation was performed.",
+  "mainnetTransactions": 0,
+  "paidInferenceRequests": 0
+}

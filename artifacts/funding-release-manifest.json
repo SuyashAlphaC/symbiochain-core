@@ -12,7 +12,8 @@
       "url": "https://symbiochain.vercel.app",
       "project": "avirals-projects-27965510/symbiochain",
       "executionMode": "PAPER",
-      "repositoryVisibility": "PUBLIC"
+      "repositoryVisibility": "PUBLIC",
+      "revisionScope": "Last independently verified exact frontend baseline (November 5); not inferred from a later main-branch merge."
     },
     "backend": {
       "repository": "https://github.com/SuyashAlphaC/symbiochain-core",
@@ -87,5 +88,14 @@
       "funded validation of proceeds-to-NFT conversion/distribution/holder claim"
     ],
     "ownerFundingStatus": "No mainnet funds; dedicated account/caps unset. No new spending permission inferred."
+  },
+  "productionPreflight": "funding-production-preflight.json",
+  "repositoryMain": {
+    "backend": "6a6a2ba6e6e1a4b3ad39a62b46d10500201453d6",
+    "frontend": "b855671653e4ac8a188f512b3a879c2a1a527227"
+  },
+  "fundingPullRequests": {
+    "backend": "https://github.com/SuyashAlphaC/symbiochain-core/pull/2",
+    "frontend": "https://github.com/AviraL0013/SymbioChain/pull/5"
   }
 }

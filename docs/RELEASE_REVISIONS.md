@@ -45,3 +45,18 @@ state and left the treasury paused. Earlier artifacts retain their historical co
 No Supabase/Render/Vercel production update was performed for this extension.
 The prior [November 5 manifest](../artifacts/business-release-manifest.json) is retained
 as a dated historical record, superseded by the funding manifest above.
+
+## Accounting merge and funding follow-up
+
+The earlier backend PR #1 and frontend PR #4 were merged on November 5 at
+`6a6a2ba6e6e1a4b3ad39a62b46d10500201453d6` and
+`b855671653e4ac8a188f512b3a879c2a1a527227`, respectively. They contain accounting,
+not the new NFT payment path. The [November 6 read-only preflight](../artifacts/funding-production-preflight.json)
+confirmed Render still serves `e1633c7`, and both hosted business endpoints return 404. The frontend baseline above is the last verified exact deployment revision;
+a later repository merge does not prove its deployment. Apply the existing
+business migration and deploy the paired backend APIs before releasing this page.
+
+The new funding extension has separate draft reviews:
+[backend #2](https://github.com/SuyashAlphaC/symbiochain-core/pull/2) and
+[frontend #5](https://github.com/AviraL0013/SymbioChain/pull/5). Earlier merged PRs
+retain their original scope. No production deployment was performed in this task.
