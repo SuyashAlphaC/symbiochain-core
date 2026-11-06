@@ -11,6 +11,12 @@ import { Store, json } from './store.js';
 import { DomainError, Proposal, atoms, positiveAtoms, idSchema, eventCursor } from './domain.js';
 import { exportEvidence } from './evidence.js';
 import { approveCostBasis } from './cost-basis.js';
+import {
+  fundingStatus,
+  queueNftPayout,
+  requestComputePurchase,
+  cancelUnsubmittedPayout,
+} from './business-funding.js';
 import { cycleEconomics } from './economics.js';
 import {
   businessStatus,
@@ -111,6 +117,18 @@ export async function createApp(
   };
   const secured = { preHandler: read, schema: { security: [{ bearerAuth: [] }] } };
   const privileged = { preHandler: admin, schema: { security: [{ bearerAuth: [] }] } };
+  app.get('/api/business/funding', secured, async (_req, reply) => {
+    reply.header('cache-control', 'private, no-store');
+    return fundingStatus(store);
+  });
+  app.post('/api/business/payouts', privileged, async (req) => queueNftPayout(store, req.body));
+  app.post('/api/business/payouts/:reference/cancel', privileged, async (req) => {
+    const { reference } = z
+      .object({ reference: z.string().regex(/^nft:[a-f0-9-]{36}$/) })
+      .parse(req.params);
+    return cancelUnsubmittedPayout(store, reference);
+  });
+  app.post('/api/business/compute-purchases', privileged, async () => requestComputePurchase());
   app.get('/api/business/status', secured, async (_req, reply) => {
     reply.header('cache-control', 'private, no-store');
     return businessStatus(store);

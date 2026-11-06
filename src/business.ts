@@ -5,6 +5,7 @@ import { Store, json, type Tx } from './store.js';
 import { verifyIntentReceipt, nearHash } from './providers/intent-receipts.js';
 import type { Fetch } from './providers/http.js';
 import { BusinessStatus } from './business-contract.js';
+import { fundingStatus } from './business-funding.js';
 
 const hash = z.string().regex(/^[a-f0-9]{64}$/);
 const reference = z.string().regex(/^[a-zA-Z0-9:_-]{1,100}$/);
@@ -317,6 +318,40 @@ export async function closeBusinessWindow(store: Store, input: unknown) {
     const found = await existing(tx, store, data.reference, termsDigest);
     if (found) return found;
     const rows = await tx.businessEntry.findMany({ where: { mode: store.mode } });
+    const unfinishedFunding = rows
+      .filter(
+        (r) => r.kind === 'NFT_FUNDING_STARTED' && r.createdAt.getTime() < Date.parse(data.through),
+      )
+      .some(
+        (start) =>
+          !rows.some((r) =>
+            ['COMPLETE', 'CANCELLED'].some(
+              (p) => r.reference === `${(start.payload as { reference: string }).reference}:${p}`,
+            ),
+          ),
+      );
+    if (unfinishedFunding)
+      throw new DomainError(
+        'BUSINESS_COST_UNKNOWN',
+        'Reconcile pending NFT funding outcomes before closing operating costs',
+      );
+    const nativeFundingGas = await tx.posting.findFirst({
+      where: {
+        account: 'BUSINESS_GAS_EXPENSE',
+        asset: 'native:near',
+        amountAtoms: { gt: 0 },
+        journal: {
+          mode: store.mode,
+          createdAt: { gte: new Date(data.from), lt: new Date(data.through) },
+        },
+      },
+    });
+    if (nativeFundingGas && BigInt(data.realizedCosts.gas) === 0n)
+      throw new DomainError(
+        'BUSINESS_GAS_COST',
+        'Include realized native payout gas and its payment-asset valuation',
+      );
+
     if (
       rows
         .filter((r) => r.kind === 'COST_WINDOW')
@@ -431,9 +466,17 @@ export async function reserveProceeds(store: Store, input: unknown) {
     const allReserved = rows
       .filter((r) => r.kind === 'PROCEEDS_RESERVED' && r.asset === window.asset)
       .reduce((n, r) => n + BigInt(r.amountAtoms.toFixed(0)), 0n);
+    const releases = rows.filter((r) => r.kind === 'PROCEEDS_RELEASED' && r.asset === window.asset);
+    const releasedForWindow = releases
+      .filter(
+        (r) => (r.payload as { windowReference: string }).windowReference === data.windowReference,
+      )
+      .reduce((n, r) => n + BigInt(r.amountAtoms.toFixed(0)), 0n);
+    const releasedTotal = releases.reduce((n, r) => n + BigInt(r.amountAtoms.toFixed(0)), 0n);
     if (
-      BigInt(data.amountAtoms) > BigInt(window.amountAtoms.toFixed(0)) - reserved ||
-      BigInt(data.amountAtoms) > losses - allReserved
+      BigInt(data.amountAtoms) >
+        BigInt(window.amountAtoms.toFixed(0)) - reserved + releasedForWindow ||
+      BigInt(data.amountAtoms) > losses - allReserved + releasedTotal
     )
       throw new DomainError(
         'BUSINESS_INSUFFICIENT_PROFIT',
@@ -461,6 +504,7 @@ export async function reserveProceeds(store: Store, input: unknown) {
 }
 
 export async function businessStatus(store: Store) {
+  const funding = await fundingStatus(store);
   const rows = await store.db.businessEntry.findMany({
     where: { mode: store.mode },
     orderBy: { createdAt: 'asc' },
@@ -468,6 +512,9 @@ export async function businessStatus(store: Store) {
   const receipts = rows.filter((r) => r.kind === 'EXTERNAL_RECEIPT');
   const windows = rows.filter((r) => r.kind === 'COST_WINDOW');
   const reserved = rows.filter((r) => r.kind === 'PROCEEDS_RESERVED');
+  const released = rows
+    .filter((r) => r.kind === 'PROCEEDS_RELEASED')
+    .reduce((n, r) => n + BigInt(r.amountAtoms.toFixed(0)), 0n);
   const assets = [...new Set(rows.map((r) => r.asset))];
   if (assets.length > 1)
     throw new DomainError(
@@ -501,11 +548,18 @@ export async function businessStatus(store: Store) {
     costVerification: windows.length ? 'ACCOUNTANT_REPORTED' : 'UNKNOWN',
     independentlyVerifiedBusinessProfit: false,
     fullBusinessRunway: null,
-    reservedAtoms: reserved.reduce((n, r) => n + BigInt(r.amountAtoms.toFixed(0)), 0n).toString(),
+    reservedAtoms: (
+      reserved.reduce((n, r) => n + BigInt(r.amountAtoms.toFixed(0)), 0n) -
+      BigInt(funding.spentInputAtoms) -
+      released
+    ).toString(),
     computePurchaseImplemented: false,
     purchasedCreditsUsdMicros: '0',
-    businessFundedNftDistributions: 0,
-    blockers: ['PROVIDER_PURCHASE_PROTOCOL_REQUIRED', 'EARNED_PROCEEDS_NFT_SETTLEMENT_UNPROVEN'],
+    businessFundedNftDistributions: funding.completedDistributions,
+    blockers: [
+      'PROVIDER_PURCHASE_PROTOCOL_REQUIRED',
+      ...(funding.completedDistributions ? [] : ['EARNED_PROCEEDS_NFT_SETTLEMENT_UNPROVEN']),
+    ],
     // Invoice/customer identity and private cost sources never enter the public projection.
   });
 }

@@ -23,7 +23,7 @@ export const BusinessStatus = z
     reservedAtoms: atoms,
     computePurchaseImplemented: z.literal(false),
     purchasedCreditsUsdMicros: z.literal('0'),
-    businessFundedNftDistributions: z.literal(0),
+    businessFundedNftDistributions: z.number().int().nonnegative(),
     blockers: z.array(
       z.enum(['PROVIDER_PURCHASE_PROTOCOL_REQUIRED', 'EARNED_PROCEEDS_NFT_SETTLEMENT_UNPROVEN']),
     ),
@@ -32,7 +32,10 @@ export const BusinessStatus = z
   .superRefine((v, ctx) => {
     if (
       v.simulated !== (v.mode === 'PAPER') ||
-      (v.mode === 'PAPER' && (v.confirmedReceiptCount !== 0 || v.revenueAtoms !== '0'))
+      (v.mode === 'PAPER' &&
+        (v.confirmedReceiptCount !== 0 ||
+          v.revenueAtoms !== '0' ||
+          v.businessFundedNftDistributions !== 0))
     )
       ctx.addIssue({
         code: 'custom',

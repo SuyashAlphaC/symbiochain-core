@@ -3,6 +3,8 @@ import { loadConfig } from './config.js';
 import { createDatabase } from './db.js';
 import { Store } from './store.js';
 import { Engine } from './engine.js';
+import { tickBusinessFunding } from './business-funding.js';
+import { DomainError } from './domain.js';
 import { PaperProviders } from './providers/paper.js';
 import { LiveProviders } from './providers/live.js';
 import { scout } from './scout.js';
@@ -28,12 +30,24 @@ if (lanes.some((l) => !['SCOUT', 'BRAIN', 'HAND'].includes(l)))
   throw new Error('Invalid WORKER_ROLE');
 let stopped = false;
 let lastScan = 0;
+let lastFunding = 0;
 let lastCreditRefresh = 0;
 for (const signal of ['SIGTERM', 'SIGINT'] as const)
   process.on(signal, () => {
     stopped = true;
   });
 while (!stopped) {
+  if (lanes.includes('HAND') && Date.now() - lastFunding >= 10000) {
+    lastFunding = Date.now();
+    await tickBusinessFunding(store).catch((error) =>
+      console.error(
+        JSON.stringify({
+          event: 'business.funding_held',
+          code: error instanceof DomainError ? error.code : 'FUNDING_UNAVAILABLE',
+        }),
+      ),
+    );
+  }
   if (
     config.EXECUTION_MODE === 'LIVE' &&
     lanes.includes('SCOUT') &&
