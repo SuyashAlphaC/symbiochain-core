@@ -19,6 +19,7 @@ COPY --from=build --chown=node:node /app/src/database-connection.ts ./src/databa
 COPY --from=build --chown=node:node /app/certs ./certs
 COPY --from=build --chown=node:node /app/artifacts/testnet-rehearsal.json ./artifacts/testnet-rehearsal.json
 COPY --from=build --chown=node:node /app/artifacts/brave-cli-verification.json ./artifacts/brave-cli-verification.json
+COPY --from=build --chown=node:node /app/artifacts/mainnet-paused-deployment.json ./artifacts/mainnet-paused-deployment.json
 USER node
 EXPOSE 3001
 CMD ["node","dist/main.js"]

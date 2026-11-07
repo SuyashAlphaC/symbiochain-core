@@ -33,6 +33,64 @@ beforeEach(async () => {
 });
 afterAll(async () => db.$disconnect());
 
+it('keeps PAPER records private and rejects all privileged writes when LIVE is disarmed', async () => {
+  const live = new Store(db, {
+    ...config,
+    EXECUTION_MODE: 'LIVE',
+    EXECUTION_ENABLED: false,
+    NEAR_NETWORK: 'mainnet',
+    LIVE_TRADING_ENABLED: false,
+    LIVE_ARBITRAGE_ENABLED: false,
+    NEAR_CONTRACT_ID: 'treasury.owner.near',
+    NEAR_WORKER_ACCOUNT_ID: 'hand.owner.near',
+    NEAR_BRAIN_ACCOUNT_ID: 'brain.owner.near',
+    NEAR_SCOUT_ACCOUNT_ID: 'scout.owner.near',
+    NEAR_ACCOUNTANT_ACCOUNT_ID: 'books.owner.near',
+  });
+  const paperBalance = await store.balance();
+  await live.initialize();
+  const app = await createApp(live);
+  try {
+    expect((await app.inject('/api/runtime')).statusCode).toBe(401);
+    const status = await app.inject({ url: '/api/runtime', headers });
+    expect(status.json()).toMatchObject({
+      mode: 'LIVE',
+      executionEnabled: false,
+      mainnetAvailable: true,
+    });
+    expect((await app.inject({ url: '/api/viewer/snapshot', headers })).statusCode).toBe(403);
+    expect(
+      (
+        await app.inject({
+          method: 'POST',
+          url: '/api/cycles',
+          headers: { authorization: 'Bearer ' + config.ADMIN_TOKEN },
+          payload: {
+            strategy: 'round-trip',
+            originChain: 'near:paper',
+            destinationChain: 'eip155:31337',
+            originAsset: 'USDC',
+            intermediateAsset: 'WNEAR',
+            amountAtoms: '1000000',
+            recipient: 'paper.treasury',
+            refundTo: 'paper.treasury',
+            slippageBps: 50,
+            expiresAt: new Date(Date.now() + 600000).toISOString(),
+          },
+        })
+      ).json(),
+    ).toMatchObject({ error: 'EXECUTION_DISABLED' });
+    expect(await store.balance()).toBe(paperBalance);
+    expect(await live.balance()).toBe(0n);
+    expect((await db.policy.findUniqueOrThrow({ where: { mode: 'LIVE' } })).paused).toBe(true);
+    await expect(live.createCycle({}, 'disabled-test')).rejects.toMatchObject({
+      code: 'EXECUTION_DISABLED',
+    });
+  } finally {
+    await app.close();
+  }
+});
+
 it('publishes bounded PAPER ledger data without arbitrary decision, event, or proof payloads', async () => {
   const { cycle } = await store.createCycle(
     {

@@ -12,6 +12,8 @@ import { refreshComputeCredits } from './providers/compute-credits.js';
 import { colocatedPaperFaults } from './paper-faults.js';
 
 const config = loadConfig();
+if (!config.EXECUTION_ENABLED)
+  throw new Error('Execution is disarmed; start the production API without workers');
 const db = createDatabase(config.DATABASE_URL, config.DATABASE_POOL_MAX);
 const store = new Store(db, config);
 await store.initialize();

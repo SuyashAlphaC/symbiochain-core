@@ -11,6 +11,8 @@ const bool = z.enum(['true', 'false']).transform((v) => v === 'true');
 const Schema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   EXECUTION_MODE: Mode.default('PAPER'),
+  // LIVE can serve verified mainnet reads while its execution plane is disarmed.
+  EXECUTION_ENABLED: bool.prefault('true'),
   DATABASE_URL: z.string().min(1),
   DATABASE_POOL_MAX: z.coerce.number().int().min(1).max(20).default(10),
   HOST: z.string().default('127.0.0.1'),
@@ -110,30 +112,47 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
       '9c2f2503f551fb28a6f481b520f2520b1ab0340f5a0117c566cdd674c68b76e8'
     )
       throw new Error('LIVE refuses the public example evidence-encryption key');
-    if (!c.LIVE_TRADING_ENABLED) throw new Error('LIVE requires LIVE_TRADING_ENABLED=true');
-    for (const key of [
-      'NEAR_CONTRACT_ID',
-      'NEAR_WORKER_ACCOUNT_ID',
-      'NEAR_WORKER_PRIVATE_KEY',
-      'NEAR_BRAIN_ACCOUNT_ID',
-      'NEAR_BRAIN_PRIVATE_KEY',
-      'NEAR_SCOUT_ACCOUNT_ID',
-      'NEAR_ACCOUNTANT_ACCOUNT_ID',
-      'NEAR_ACCOUNTANT_PRIVATE_KEY',
-      'NEAR_AI_API_KEY',
-      'NEAR_AI_MODEL',
-      'EVM_RPC_URL',
-      'NFT_RECEIVER_ID',
-    ] as const) {
-      if (!c[key]) throw new Error(`LIVE requires ${key}`);
+    if (!c.EXECUTION_ENABLED) {
+      if (c.LIVE_TRADING_ENABLED || c.LIVE_ARBITRAGE_ENABLED || c.BUSINESS_PAYOUTS_ENABLED)
+        throw new Error('Disarmed LIVE refuses enabled spending switches');
+      for (const key of [
+        'NEAR_CONTRACT_ID',
+        'NEAR_WORKER_ACCOUNT_ID',
+        'NEAR_BRAIN_ACCOUNT_ID',
+        'NEAR_SCOUT_ACCOUNT_ID',
+        'NEAR_ACCOUNTANT_ACCOUNT_ID',
+      ] as const)
+        if (!c[key]) throw new Error(`Mainnet observation requires ${key}`);
     }
-    if (c.COMPUTE_CREDIT_POLICY === 'PROVIDER_BALANCE')
-      for (const key of ['NEAR_AI_ORG_ID', 'NEAR_AI_SESSION_TOKEN'] as const)
-        if (!c[key]) throw new Error(`LIVE provider balance policy requires ${key}`);
+    if (c.EXECUTION_ENABLED) {
+      if (!c.LIVE_TRADING_ENABLED) throw new Error('LIVE requires LIVE_TRADING_ENABLED=true');
+      for (const key of [
+        'NEAR_CONTRACT_ID',
+        'NEAR_WORKER_ACCOUNT_ID',
+        'NEAR_WORKER_PRIVATE_KEY',
+        'NEAR_BRAIN_ACCOUNT_ID',
+        'NEAR_BRAIN_PRIVATE_KEY',
+        'NEAR_SCOUT_ACCOUNT_ID',
+        'NEAR_ACCOUNTANT_ACCOUNT_ID',
+        'NEAR_ACCOUNTANT_PRIVATE_KEY',
+        'NEAR_AI_API_KEY',
+        'NEAR_AI_MODEL',
+        'EVM_RPC_URL',
+        'NFT_RECEIVER_ID',
+      ] as const) {
+        if (!c[key]) throw new Error(`LIVE requires ${key}`);
+      }
+      if (c.COMPUTE_CREDIT_POLICY === 'PROVIDER_BALANCE')
+        for (const key of ['NEAR_AI_ORG_ID', 'NEAR_AI_SESSION_TOKEN'] as const)
+          if (!c[key]) throw new Error(`LIVE provider balance policy requires ${key}`);
+    }
     if (c.ADMIN_TOKEN.startsWith('local-demo') || c.READ_TOKEN.startsWith('local-demo'))
       throw new Error('LIVE refuses demo authentication tokens');
     if (c.ENABLE_CHAOS_DEMO) throw new Error('Chaos controls cannot run in LIVE');
-    if (!c.TEE_GATEWAY_COMPOSE_HASHES.length || !c.TEE_MODEL_COMPOSE_HASHES.length)
+    if (
+      c.EXECUTION_ENABLED &&
+      (!c.TEE_GATEWAY_COMPOSE_HASHES.length || !c.TEE_MODEL_COMPOSE_HASHES.length)
+    )
       throw new Error(
         'LIVE requires independently approved gateway and model compose measurements',
       );
@@ -154,6 +173,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
   }
   if (
     c.EXECUTION_MODE === 'LIVE' &&
+    c.EXECUTION_ENABLED &&
     c.SERVICE_PAYMENT_RAIL === 'INTENTS' &&
     BigInt(c.SERVICE_PAYMENT_YOCTO) > 0n
   ) {

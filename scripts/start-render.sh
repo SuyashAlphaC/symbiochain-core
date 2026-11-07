@@ -4,6 +4,9 @@ set -euo pipefail
 # Free Render web instances do not have a pre-deploy command. Complete setup before either child starts.
 npm run db:migrate
 npm run db:harden
+if [[ "${EXECUTION_ENABLED:-true}" == "false" ]]; then
+  exec node dist/main.js
+fi
 export SYMBIO_COLOCATED_WORKER=true
 
 api_pid=''

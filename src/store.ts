@@ -53,9 +53,10 @@ export class Store {
     const c = this.config;
     await this.db.policy.upsert({
       where: { mode: this.mode },
-      update: {},
+      update: c.EXECUTION_ENABLED ? {} : { paused: true },
       create: {
         mode: this.mode,
+        paused: !c.EXECUTION_ENABLED,
         maxTradeAtoms: c.MAX_TRADE_ATOMS,
         maxDailySpendAtoms: c.MAX_DAILY_SPEND_ATOMS,
         minReserveAtoms: c.MIN_RESERVE_ATOMS,
@@ -100,6 +101,8 @@ export class Store {
     input: unknown,
     idempotencyKey: string,
   ): Promise<{ cycle: Cycle; created: boolean }> {
+    if (!this.config.EXECUTION_ENABLED)
+      throw new DomainError('EXECUTION_DISABLED', 'Execution is disarmed', 403);
     if (this.mode === 'REPLAY')
       throw new DomainError('READ_ONLY_MODE', 'Replay mode cannot create transactions', 403);
     const p = Proposal.parse(input);
