@@ -17,7 +17,8 @@
     "frontendTests": 25,
     "frontendCheck": "PASSED",
     "browser": "ISOLATED_LOCAL_PAPER_DESKTOP_AND_390PX",
-    "credentialExposures": 0
+    "credentialExposures": 0,
+    "runtimeImage": "PASSED: packaged rehearsal plus unapproved audit"
   },
   "limitations": [
     "TEE deployment approval remains unresolved",
@@ -25,5 +26,7 @@
     "Manual purchase reports are not provider-verified and keep reservations held",
     "No organic customer demand or funded mainnet economics proven",
     "Release backend then frontend before creating new risk-assessment cycles"
-  ]
+  ],
+  "backendRuntimeRevision": "99a482cc25e23b093b839c0f51f476bc5fe9e19b",
+  "frontendReleaseRevision": "9ef944a7156c06b8e18e03a381712b9998cf928a"
 }

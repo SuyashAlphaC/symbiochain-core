@@ -19,5 +19,12 @@
   "paidInferenceRequests": 0,
   "providerVerifiedPurchases": 0,
   "notificationsSent": 0,
-  "productionChanged": false
+  "productionChanged": false,
+  "backendRuntimeRevision": "99a482cc25e23b093b839c0f51f476bc5fe9e19b",
+  "runtimeImage": {
+    "build": "PASSED",
+    "packagedRehearsal": true,
+    "packagedQuarantineAudit": true,
+    "deploymentApproved": false
+  }
 }
