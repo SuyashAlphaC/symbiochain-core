@@ -111,3 +111,38 @@ The Cloud API key alone does not establish billing access or ownership of the
 organization holding the Builders credit grant. No invoice was created, funds
 sent or paid inference requested by this review. The automatic purchase action
 remains disabled until the customer integration and spending policy are verified.
+
+## Supplied PingPay checkout — November 7, 2026
+
+The owner supplied an unpaid provider-generated checkout in the ignored local
+environment file. The current Cloud UI redirected to **PingPay**, rather than the
+HOT Pay flow in the older announcement. The [sanitized inspection](../artifacts/pingpay-checkout-review.json)
+records a `CREATED` session for `1000000` USDC atoms (1 USDC), with metadata matching
+the Cloud organization shown in the owner's Credits page. The session URL, session
+identifier, recipient and customer identifiers remain private. The check opened
+the checkout page without a wallet and allowed only its exact session-read query;
+payment, quote, telemetry and wallet actions were blocked. No funds or inference
+credits were spent.
+
+The owner explicitly confirmed that the running inference key was supplied through
+NEAR Builders and **is not owned by that Cloud organization**. This invoice must
+not be treated as a way to replenish the Builders key. Its metadata establishes a
+checkout target, not completed payment or final credit attribution. No provider
+balance, paid purchase or purchased-credit counter was inferred from the session.
+
+The local runtime remains PAPER with `COMPUTE_CREDIT_POLICY=LOCAL_BUDGET`; the
+existing key, allowance, organization/session configuration and all purchase gates
+were left unchanged. The Builders grant can remain the intended inference source
+under that application budget and the separate TEE approval gate. Actual provider
+balance remains unknown. A future paid-credit validation needs an inference key
+from the organization being funded, plus its supported customer billing flow and
+an explicit real-money limit. Merely creating a key in that organization would
+not complete automated invoice creation, payment recovery or credit verification.
+
+PingPay's public [merchant example](https://github.com/Pingpayio/ping-checkout-example)
+documents session creation using a merchant API key, with the recipient configured
+in the merchant's organization. SymbioChain does not possess NEAR AI's merchant
+credentials; creating its own merchant account would not buy NEAR AI credits.
+The private browser session-read RPC is not added as an application integration or
+presented as a published unattended purchase contract. Automatic purchasing remains
+disabled. No mainnet deployment, API-key replacement or payment was performed.
