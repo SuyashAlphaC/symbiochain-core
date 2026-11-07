@@ -35,8 +35,7 @@ settlement economics and positive NFT accounting fixtures are simulated.
 New business accounting is implementation-tested, including finalized-receipt
 parsing with injected RPC responses. The earlier invoice probe timed out; a later independent wNEAR-credit parser
 check passed against a public third-party receipt, not project revenue. No actual customer fee, profitable mainnet round
-trip, AI-credit purchase or business-funded NFT payment was performed. The owner
-has no mainnet funds and has not selected an account or caps. Provider purchase
+trip, AI-credit purchase or business-funded NFT payment was performed. The November 7 owner funding update below supersedes the earlier unfunded status. Trading caps and operational funding remain undecided. Provider purchase
 integration remains blocked under the public-interface-only requirement. Earned-proceeds
 NFT conversion, withdrawal, allocation and recovery are implemented and tested,
 but disabled without funded validation; see [funding scope](BUSINESS_FUNDING.md).
@@ -76,3 +75,9 @@ The complete deployable backend revision is [`99a482c`](https://github.com/Suyas
 ## November 7 environment-only redeployment
 
 Deployment `dep-dbnb6gp5efls73arhbmg` refreshed the existing Render service's owned-Cloud credentials and budget configuration using `deploy_only`. The deployed code remains `e1633c7ff16cb2ce3ce484aa44b12d09cc0117a5`; the newer service and HITL revisions above are still separate source candidates. The [verification record](../artifacts/owned-cloud-render-verification.json) captures readiness, mode, budget, worker freshness and the absence of completion/transaction requests. It does not establish TEE approval, actual provider balance or purchased credits attributable to business proceeds.
+
+## November 7 owner-funded mainnet preparation
+
+The owner funded `solidvideo4090.near` with approximately 6.735 NEAR and authorized a mainnet infrastructure deployment. The [local Meteor signing tool](../tools/mainnet-deploy/README.md) prepares a 6.27 NEAR allocation plus a 0.13 NEAR fee contingency, with an owner reserve. It creates a paused treasury and disables runtime workers without enabling hosted LIVE mode.
+
+The [sandbox rehearsal](../artifacts/mainnet-owner-deployment-rehearsal.json) verifies the exact action sequence, scoped-key restrictions, storage budget and duplicate-creation behavior. This is local evidence. **Owner wallet signing and final mainnet verification remain pending; preparation is not a completed mainnet deployment.** TEE approval, real service revenue, supported compute purchases and business-funded NFT distributions remain independent unfinished validations.
