@@ -11,5 +11,6 @@ contracts/**/target
 artifacts/*
 !artifacts/testnet-rehearsal.json
 !artifacts/brave-cli-verification.json
+!artifacts/mainnet-paused-deployment.json
 coverage
 *.log

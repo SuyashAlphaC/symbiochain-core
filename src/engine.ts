@@ -26,6 +26,8 @@ export class Engine {
   ) {}
 
   async tick(lanes = ['SCOUT', 'BRAIN', 'HAND']): Promise<boolean> {
+    if (!this.store.config.EXECUTION_ENABLED)
+      throw new DomainError('EXECUTION_DISABLED', 'Execution is disarmed', 403);
     const job = await this.store.claim(lanes);
     if (!job) return false;
     await this.afterClaim?.(job);

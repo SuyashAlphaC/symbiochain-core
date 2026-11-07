@@ -47,7 +47,7 @@ jobs:
             const report = await readTestnetReport();
             assert.ok(report.runId);
             assert.equal(report.profile, "TESTNET_REHEARSAL");
-            assert.deepEqual((await readdir("artifacts")).sort(), ["brave-cli-verification.json", "testnet-rehearsal.json"]);
+            assert.deepEqual((await readdir("artifacts")).sort(), ["brave-cli-verification.json", "mainnet-paused-deployment.json", "testnet-rehearsal.json"]);
             const audit = JSON.parse(await readFile("artifacts/brave-cli-verification.json", "utf8"));
             assert.equal(audit.deploymentApproved, false);
             assert.equal(audit.signedModelResponseVerified, false);

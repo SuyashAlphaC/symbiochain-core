@@ -39,6 +39,8 @@ import { readFile } from 'node:fs/promises';
 import { viewerSnapshot, viewerProof, requirePaperViewer } from './viewer.js';
 import { readTestnetReport } from './testnet-report.js';
 import { viewerStatus, viewerCycles, viewerCycle, viewerEvents } from './viewer-details.js';
+import { MainnetReader } from './mainnet.js';
+import { RuntimeStatus } from './mainnet-contract.js';
 
 export function tokenEquals(actual: string | undefined, expected: string): boolean {
   if (!actual) return false;
@@ -114,6 +116,8 @@ export async function createApp(
   const admin = async (req: FastifyRequest) => {
     if (!tokenEquals(req.headers.authorization?.replace(/^Bearer /, ''), c.ADMIN_TOKEN))
       throw new DomainError('UNAUTHORIZED', 'Admin token required', 401);
+    if (req.method !== 'GET' && !c.EXECUTION_ENABLED)
+      throw new DomainError('EXECUTION_DISABLED', 'Production execution is disarmed', 403);
     const expected = req.headers['x-symbio-expected-mode'];
     if (expected !== undefined && expected !== store.mode)
       throw new DomainError(
@@ -124,6 +128,37 @@ export async function createApp(
   };
   const secured = { preHandler: read, schema: { security: [{ bearerAuth: [] }] } };
   const privileged = { preHandler: admin, schema: { security: [{ bearerAuth: [] }] } };
+  const mainnet = new MainnetReader(c);
+  app.get('/api/runtime', secured, async (_req, reply) => {
+    reply.header('cache-control', 'private, no-store');
+    return RuntimeStatus.parse({
+      contractVersion: 1,
+      mode: store.mode,
+      executionEnabled: c.EXECUTION_ENABLED,
+      network: c.NEAR_NETWORK,
+      mainnetAvailable: store.mode === 'LIVE' && c.NEAR_NETWORK === 'mainnet',
+    });
+  });
+  app.get('/api/mainnet/snapshot', secured, async (_req, reply) => {
+    reply.header('cache-control', 'private, no-store');
+    return mainnet.snapshot();
+  });
+  app.get('/api/mainnet/wallet', secured, async (req, reply) => {
+    const { accountId } = z
+      .object({ accountId: z.string().min(2).max(64) })
+      .strict()
+      .parse(req.query);
+    reply.header('cache-control', 'private, no-store');
+    return mainnet.wallet(accountId);
+  });
+  app.get('/api/mainnet/transaction', secured, async (req, reply) => {
+    const { hash } = z
+      .object({ hash: z.string().regex(/^[1-9A-HJ-NP-Za-km-z]{43,44}$/) })
+      .strict()
+      .parse(req.query);
+    reply.header('cache-control', 'private, no-store');
+    return mainnet.transaction(hash);
+  });
   app.post('/api/business/services', privileged, async (req) => createRiskService(store, req.body));
   app.post('/api/business/services/:reference/simulate-payment', privileged, async (req) => {
     const { reference } = z
