@@ -30,6 +30,12 @@ jobs:
       - run: npm run infra:check
       - run: npm run db:migrate
       - run: npm run check
+      - name: Validate owner deployment manifest and browser bundle
+        run: |
+          npm ci --prefix tools/mainnet-deploy
+          node --test tools/mainnet-deploy/*.test.mjs
+          npm run build --prefix tools/mainnet-deploy
+          npm audit --prefix tools/mainnet-deploy --audit-level=high
       - name: Build release image
         run: docker build -t symbiochain-core:ci .
       - name: Verify packaged rehearsal and quarantine evidence

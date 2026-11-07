@@ -1,0 +1,22 @@
+{
+  "name": "symbiochain-owner-deployment",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "esbuild client.js --bundle --platform=browser --format=esm --define:global=globalThis --define:process.env.NODE_ENV=\"'production'\" --inject:./globals.js --outfile=../../.data/mainnet-deployment/client.js"
+  },
+  "dependencies": {
+    "@near-wallet-selector/core": "10.1.4",
+    "@near-wallet-selector/meteor-wallet": "10.1.4",
+    "process": "0.11.10",
+    "util": "0.12.5"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "playwright-core": "1.64.1"
+  },
+  "overrides": {
+    "decode-uri-component": "0.5.1",
+    "nanoid": "5.1.16"
+  }
+}

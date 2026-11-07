@@ -1,0 +1,12 @@
+{
+  "observedAt": "2026-11-07T06:01:33.040Z",
+  "scope": "REAL_METEOR_WALLET_POLICY_DENIAL",
+  "directBatchCompatible": false,
+  "blockedAction": "AddKey(FullAccess) on a newly created subaccount",
+  "ownerAccount": "solidvideo4090.near",
+  "mainnetAccountsCreatedAtObservation": 0,
+  "ownerBalanceYoctoAtObservation": "6735041233785237412378082",
+  "replacement": "Separate funded deployment wallet through official near.create_account, with explicit temporary local custody and key revocation",
+  "originalOwnerKeyExported": false,
+  "walletProtectionDisabled": false
+}

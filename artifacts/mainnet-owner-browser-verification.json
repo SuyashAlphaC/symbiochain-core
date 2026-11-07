@@ -1,0 +1,16 @@
+{
+  "checkedAt": "2026-11-07T05:58:47.396Z",
+  "scope": "LOCAL_METEOR_TRANSPORT_FIXTURE",
+  "realWalletUsed": false,
+  "actualMainnetTransactions": 0,
+  "browserErrors": [],
+  "protectedRoutes": true,
+  "foreignOriginBlocked": true,
+  "ownerConnectFixturePassed": true,
+  "transactionEncodingVerified": 5,
+  "signatureDeliberatelyRejected": true,
+  "rootPermissionRequestContract": "",
+  "mobileOverflow": false,
+  "wasmSha256": "39f034e6ae16ddb9cf253ac977c4146989a0fee1fa7c33ba0944092bf41de3d5",
+  "paidRequests": 0
+}
