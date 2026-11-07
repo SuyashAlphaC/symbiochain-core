@@ -1,13 +1,11 @@
 import assert from 'node:assert/strict';
 import { readFile, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
-import { createHash } from 'node:crypto';
-import bs58 from 'bs58';
 import { chromium } from 'playwright-core';
 const { Transaction } = createRequire(new URL('../../package.json', import.meta.url))(
   'near-api-js',
 );
-const plan = JSON.parse(await readFile('.data/mainnet-deployment/plan.json', 'utf8'));
+const plan = JSON.parse(await readFile('.data/mainnet-deployment-factory/plan.json', 'utf8'));
 const browser = await chromium.launch({
   executablePath: process.env.CHROME_PATH ?? '/opt/google/chrome/chrome',
   headless: true,
@@ -130,9 +128,13 @@ try {
     logins: window.__logins,
     transactions: window.__capture,
   }));
-  await writeFile('.data/mainnet-deployment/unsigned-fixture.json', JSON.stringify(captured), {
-    mode: 0o600,
-  });
+  await writeFile(
+    '.data/mainnet-deployment-factory/unsigned-fixture.json',
+    JSON.stringify(captured),
+    {
+      mode: 0o600,
+    },
+  );
   assert.equal(captured.logins[0].contractId, '');
   assert.equal(captured.logins[0].network, 'mainnet');
   assert.equal(
@@ -143,56 +145,30 @@ try {
   const decoded = captured.transactions[0]
     .split(',')
     .map((bytes) => Transaction.decode(Buffer.from(bytes, 'base64')));
-  assert.equal(decoded.length, 5);
-  for (const [index, tx] of decoded.entries()) {
-    assert.equal(tx.signerId, plan.owner);
-    assert.equal(tx.receiverId, plan.groups[index].receiverId);
-    assert.equal(tx.publicKey.toString(), plan.ownerPublicKey);
-    assert.ok('createAccount' in tx.actions[0]);
-    assert.equal(tx.actions[1].transfer.deposit.toString(), plan.groups[index].fundingYocto);
-    assert.equal(tx.actions.length, plan.groups[index].actions.length);
-    if (index) assert.equal(tx.nonce, decoded[index - 1].nonce + 1n);
-    const grants = tx.actions.filter((action) => action.addKey).map((action) => action.addKey);
-    const wantedGrants = plan.groups[index].actions
-      .filter((action) => action.type === 'AddKey')
-      .map((action) => action.params);
-    for (const [n, grant] of grants.entries()) {
-      assert.equal(
-        `ed25519:${bs58.encode(grant.publicKey.ed25519Key.data)}`,
-        wantedGrants[n].publicKey,
-      );
-      const wanted = wantedGrants[n].accessKey.permission;
-      if (wanted === 'FullAccess') assert.ok('fullAccess' in grant.accessKey.permission);
-      else {
-        assert.equal(grant.accessKey.permission.functionCall.receiverId, wanted.receiverId);
-        assert.deepEqual(grant.accessKey.permission.functionCall.methodNames, wanted.methodNames);
-        assert.equal(String(grant.accessKey.permission.functionCall.allowance), wanted.allowance);
-      }
-    }
-    if (plan.groups[index].role === 'treasury') {
-      const code = tx.actions.find((action) => action.deployContract).deployContract.code;
-      assert.equal(createHash('sha256').update(Buffer.from(code)).digest('hex'), plan.wasmSha256);
-      const calls = tx.actions
-        .filter((action) => action.functionCall)
-        .map((action) => action.functionCall);
-      const wanted = plan.groups[index].actions
-        .filter((action) => action.type === 'FunctionCall')
-        .map((action) => action.params);
-      for (const [n, call] of calls.entries()) {
-        assert.equal(call.methodName, wanted[n].methodName);
-        assert.deepEqual(JSON.parse(Buffer.from(call.args)), wanted[n].args);
-        assert.equal(String(call.gas), wanted[n].gas);
-        assert.equal(String(call.deposit), wanted[n].deposit);
-      }
-    }
-  }
+  assert.equal(decoded.length, 1);
+  const tx = decoded[0];
+  assert.equal(tx.signerId, plan.owner);
+  assert.equal(tx.receiverId, 'near');
+  assert.equal(tx.publicKey.toString(), plan.ownerPublicKey);
+  assert.equal(tx.actions.length, 1);
+  assert.ok('functionCall' in tx.actions[0]);
+  assert.ok(!tx.actions.some((action) => action.addKey));
+  const call = tx.actions[0].functionCall;
+  assert.equal(call.methodName, 'create_account');
+  assert.equal(String(call.deposit), '6380000000000000000000000');
+  assert.equal(String(call.gas), '50000000000000');
+  assert.deepEqual(JSON.parse(Buffer.from(call.args)), {
+    new_account_id: plan.namespace,
+    new_public_key: plan.deployerPublicKey,
+  });
+  assert.equal(await page.locator('#namespace').innerText(), plan.namespace);
   await page.setViewportSize({ width: 390, height: 844 });
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
   assert.deepEqual(errors, []);
   assert.deepEqual(blockedRpc, []);
   const report = {
     checkedAt: new Date().toISOString(),
-    scope: 'LOCAL_METEOR_TRANSPORT_FIXTURE',
+    scope: 'LOCAL_FACTORY_FUNDING_TRANSPORT_FIXTURE',
     realWalletUsed: false,
     actualMainnetTransactions: 0,
     browserErrors: errors,
@@ -200,6 +176,9 @@ try {
     foreignOriginBlocked: true,
     ownerConnectFixturePassed: true,
     transactionEncodingVerified: decoded.length,
+    rootFullAccessGrants: 0,
+    factoryMethod: 'near.create_account',
+    separateWalletFundingYocto: plan.deploymentFundingYocto,
     signatureDeliberatelyRejected: true,
     rootPermissionRequestContract: '',
     mobileOverflow: false,
@@ -207,7 +186,7 @@ try {
     paidRequests: 0,
   };
   await writeFile(
-    'artifacts/mainnet-owner-browser-verification.json',
+    'artifacts/mainnet-factory-browser-verification.json',
     JSON.stringify(report, null, 2) + '\n',
   );
   console.log(JSON.stringify(report));

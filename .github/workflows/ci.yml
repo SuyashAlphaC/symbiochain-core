@@ -33,7 +33,7 @@ jobs:
       - name: Validate owner deployment manifest and browser bundle
         run: |
           npm ci --prefix tools/mainnet-deploy
-          node --test tools/mainnet-deploy/plan.test.mjs
+          node --test tools/mainnet-deploy/*.test.mjs
           npm run build --prefix tools/mainnet-deploy
           npm audit --prefix tools/mainnet-deploy --audit-level=high
       - name: Build release image

@@ -1,9 +1,15 @@
 import Fastify from 'fastify';
 import { randomBytes, timingSafeEqual } from 'node:crypto';
 import { readFile, writeFile, open, unlink } from 'node:fs/promises';
-import { ROOT, STATE_DIR, prepare, inspect, planDigest, WASM_SHA256 } from './plan.mjs';
+import { ROOT, planDigest, WASM_SHA256 } from './plan.mjs';
+import {
+  FACTORY_STATE_DIR as STATE_DIR,
+  prepareFactory,
+  inspectFactory,
+  runFundedDeployment,
+} from './factory-plan.mjs';
 
-const { plan, wasm } = await prepare();
+const { plan, wasm, credentials } = await prepareFactory();
 const digest = planDigest(plan);
 const token = randomBytes(32).toString('hex');
 const port = 3417;
@@ -12,9 +18,9 @@ const lock = await open(lockPath, 'wx', 0o600).catch(() => {
   throw Error('ANOTHER_PORTAL_OR_STALE_LOCK_REQUIRES_REVIEW');
 });
 await lock.writeFile(String(process.pid));
-const client = await readFile(`${STATE_DIR}/client.js`);
+const client = await readFile('.data/mainnet-deployment/client.js');
 const app = Fastify({ logger: false, bodyLimit: 16000 });
-const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="deployment-token" content="${token}"><title>SymbioChain mainnet owner deployment</title><style>body{font:16px system-ui;background:#111c22;color:#e7f0f3;max-width:860px;margin:32px auto;padding:0 20px}section{border:1px solid #50626a;border-radius:14px;padding:18px;margin:20px 0}button{padding:12px 18px;margin:8px 8px 8px 0;cursor:pointer}pre,code{white-space:pre-wrap;overflow-wrap:anywhere}h1{font-size:28px}p{line-height:1.6}.hold{color:#ffcc91}label{display:block;margin:16px 0}</style></head><body><h1>SymbioChain mainnet deployment</h1><p>Owner-signed infrastructure deployment. Your seed phrase and owner private key stay in Meteor.</p><section><h2>Review before signing</h2><p>Owner: <code id="owner"></code></p><p><strong>6.27 NEAR allocated:</strong> treasury 6.10; Brain, Hand and accountant 0.05 each; Scout 0.02. The treasury allocation mainly covers storage and stays locked while the code exists.</p><p><strong>Fee contingency: 0.13 NEAR. Planning ceiling: 6.40 NEAR.</strong> The portal checks the live network gas price and leaves at least 0.30 NEAR in the owner account. Actual network fees are determined by NEAR.</p><p class="hold">Treasury initializes and pauses in the same transaction, then disables all workers. Initial trade caps are one atomic unit. No trade, inference, cross-chain funding, mint or Intents settlement is requested.</p><pre id="accounts"></pre><p>WASM SHA-256: <code id="hash"></code></p></section><section><button id="connect">Connect Meteor</button><label><input id="reviewed" type="checkbox">I reviewed the account allocations, fee contingency and paused deployment.</label><button id="deploy" disabled>Sign deployment batch in Meteor</button><button id="refresh">Refresh on-chain state</button><p id="progress" aria-live="polite"></p><pre id="status" role="status">Checking mainnet state…</pre></section><script type="module" src="/client.js"></script></body></html>`;
+const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="deployment-token" content="${token}"><title>SymbioChain mainnet deployment wallet</title><style>body{font:16px system-ui;background:#111c22;color:#e7f0f3;max-width:860px;margin:32px auto;padding:0 20px}section{border:1px solid #50626a;border-radius:14px;padding:18px;margin:20px 0}button{padding:12px 18px;margin:8px 8px 8px 0;cursor:pointer}pre,code{white-space:pre-wrap;overflow-wrap:anywhere}h1{font-size:28px}p{line-height:1.6}.hold{color:#ffcc91}label{display:block;margin:16px 0}</style></head><body><h1>SymbioChain mainnet deployment</h1><p>Your owner private key and seed stay in Meteor. This revised flow creates a separate, funded deployment wallet through NEAR's standard account factory.</p><section><h2>Review funding and custody</h2><p>Meteor owner: <code id="owner"></code></p><p>Separate deployment wallet: <strong><code id="namespace"></code></strong></p><p><strong>One wallet transaction: 6.38 NEAR to the official <code>near.create_account</code> factory.</strong> This creates and funds the deployment wallet shown above. A temporary key stored only on this computer controls that separate wallet until deployment completes. No key is added to your original Meteor account.</p><p>The deployment wallet is the treasury owner account. After setup, your existing Meteor recovery key controls it; the temporary local key is revoked.</p><p>The local tool installs your Meteor recovery public key, creates the paused treasury and four agent accounts, refunds excess funds to your Meteor account, then revokes the temporary deployment key. Your Meteor recovery key remains the only full-access key on the deployment wallet and each child account.</p><p><strong>Infrastructure: 6.27 NEAR.</strong> Treasury 6.10; Brain, Hand and accountant 0.05 each; Scout 0.02. Remaining deployment-wallet funds cover fees, parent storage and a recovery balance. The owner-side fee contingency is 0.02 NEAR, for a <strong>6.40 NEAR planning ceiling</strong>. Actual network fees are set by NEAR.</p><p class="hold">The deployed treasury stays PAUSED and all workers disabled. Trading, paid inference, Intents settlement and NFT minting stay off.</p><pre id="accounts"></pre><p>WASM SHA-256: <code id="hash"></code></p></section><section><button id="connect">Connect Meteor</button><label><input id="reviewed" type="checkbox">I authorize the separate deployment wallet to receive 6.38 NEAR and its temporary local key to deploy the reviewed paused infrastructure, refund excess funds and revoke itself.</label><button id="deploy" disabled>Create deployment wallet in Meteor</button><button id="refresh">Refresh on-chain state</button><p id="progress" aria-live="polite"></p><pre id="status" role="status">Checking mainnet state…</pre></section><script type="module" src="/client.js"></script></body></html>`;
 app.addHook('onRequest', async (request, reply) => {
   if (![`127.0.0.1:${port}`, `localhost:${port}`].includes(request.headers.host))
     return reply.code(403).send({ code: 'HOST_NOT_ALLOWED' });
@@ -49,26 +55,45 @@ app.get('/client.js', async (_request, reply) => reply.type('text/javascript').s
 app.get('/wasm', async (_request, reply) => reply.type('application/wasm').send(wasm));
 app.get('/plan', async () => ({ ...plan, digest }));
 async function state() {
-  const result = await inspect(plan);
+  const result = await inspectFactory(plan);
   await writeFile(`${STATE_DIR}/status.json`, JSON.stringify(result, null, 2), { mode: 0o600 });
   return result;
 }
 app.get('/state', async () => state());
-app.post('/preflight', async (request) => {
+async function checkRehearsal(request) {
   if (request.body?.planDigest !== digest) throw Error('PLAN_DIGEST_CHANGED');
   const rehearsal = JSON.parse(
-    await readFile('artifacts/mainnet-owner-deployment-rehearsal.json', 'utf8').catch(() => {
+    await readFile('artifacts/mainnet-factory-deployment-rehearsal.json', 'utf8').catch(() => {
       throw Error('SANDBOX_REHEARSAL_REQUIRED');
     }),
   );
   if (
     rehearsal.wasmSha256 !== plan.wasmSha256 ||
-    !rehearsal.initializedAndPausedInSameTransaction ||
-    !rehearsal.runtimeKeyCannotUnpause ||
-    !rehearsal.duplicateCreationCannotDoubleFund
+    !rehearsal.rootOwnerKeysUnchanged ||
+    !rehearsal.temporaryKeyRevoked ||
+    !rehearsal.duplicateRunSubmitsZeroTransactions ||
+    !rehearsal.paused
   )
     throw Error('SANDBOX_REHEARSAL_REQUIRED');
+}
+app.post('/preflight', async (request) => {
+  await checkRehearsal(request);
   return state();
+});
+let deploymentInProgress = false;
+app.post('/deploy-funded', async (request) => {
+  await checkRehearsal(request);
+  if (deploymentInProgress) throw Error('DEPLOYMENT_ALREADY_RUNNING');
+  deploymentInProgress = true;
+  try {
+    const current = await state();
+    if (current.fullyDeployed) return current;
+    if (current.fundingRequired) throw Error('DEPLOYMENT_WALLET_NOT_FUNDED');
+    await runFundedDeployment(plan, credentials, wasm, { beforeStep: state });
+    return await state();
+  } finally {
+    deploymentInProgress = false;
+  }
 });
 app.post('/observe', async (request) => {
   const hashes = request.body?.hashes;
@@ -98,12 +123,13 @@ console.log(
   JSON.stringify({
     portal: `http://localhost:${port}`,
     owner: ROOT,
-    plannedFundingNEAR: '6.27',
-    feeContingencyNEAR: '0.13',
+    deploymentWalletFundingNEAR: '6.38',
+    rootFeeContingencyNEAR: '0.02',
     plannedCeilingNEAR: '6.40',
     wasmSha256: WASM_SHA256,
     ownerSignatureRequired: true,
     serverCanSignOwnerTransactions: false,
+    serverCanSignFundedDeploymentWallet: true,
   }),
 );
 let closing = false;

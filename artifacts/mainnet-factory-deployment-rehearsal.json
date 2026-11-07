@@ -1,0 +1,22 @@
+{
+  "checkedAt": "2026-11-07T06:14:33.479Z",
+  "scope": "LOCAL_NEAR_FACTORY_SNAPSHOT_REHEARSAL",
+  "actualMainnetTransactions": 0,
+  "factoryWasmSha256": "f87b56e82fec98541e8ac524851d301be5d1572ff66af905bbf08c8f77afa458",
+  "wasmSha256": "39f034e6ae16ddb9cf253ac977c4146989a0fee1fa7c33ba0944092bf41de3d5",
+  "walletTransactionTypes": [
+    "FunctionCall"
+  ],
+  "walletMethod": "near.create_account",
+  "walletFundingYocto": "6380000000000000000000000",
+  "rootOwnerKeysUnchanged": true,
+  "temporaryKeyRevoked": true,
+  "paused": true,
+  "localDeploymentTransactions": 8,
+  "duplicateRunSubmitsZeroTransactions": true,
+  "ownerSpentYocto": "6333550470405439500000000",
+  "ownerRemainingYocto": "401490763379797912378082",
+  "refundedYocto": "53888544806902300000000",
+  "maximumPlannedYocto": "6400000000000000000000000",
+  "paidRequests": 0
+}

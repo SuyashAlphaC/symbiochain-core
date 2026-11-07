@@ -254,7 +254,10 @@ export async function viewCall(accountId, method, args = {}, url = RPC) {
   assert.ok(result, 'CONTRACT_VIEW_UNAVAILABLE');
   return JSON.parse(Buffer.from(result.result).toString());
 }
-export async function inspect(plan) {
+export async function inspect(
+  plan,
+  { fundingAccountId = ROOT, minimumFundingBalance = OWNER_MINIMUM, gasReserve = GAS_RESERVE } = {},
+) {
   const [owner, gas, protocol, ownerKeys] = await Promise.all([
     rpc('query', { request_type: 'view_account', finality: 'final', account_id: ROOT }),
     rpc('gas_price', [null]),
@@ -355,10 +358,25 @@ export async function inspect(plan) {
     });
   }
   const stillRequired = remaining.reduce((sum, group) => sum + BigInt(group.fundingYocto), 0n);
+  const fundingAccount =
+    fundingAccountId === ROOT
+      ? owner
+      : await rpc('query', {
+          request_type: 'view_account',
+          finality: 'final',
+          account_id: fundingAccountId,
+        });
+  assert.ok(fundingAccount, 'DEPLOYMENT_ACCOUNT_NOT_FUNDED');
+  const spendableFunding =
+    BigInt(fundingAccount.amount) -
+    BigInt(fundingAccount.storage_usage) * BigInt(protocol.runtime_config.storage_amount_per_byte);
+  const remainingGasReserve = (gasReserve * BigInt(remaining.length)) / BigInt(plan.groups.length);
   assert.ok(
-    BigInt(owner.amount) >= stillRequired + (remaining.length ? GAS_RESERVE : 0n) + OWNER_MINIMUM,
+    spendableFunding >= stillRequired + remainingGasReserve + minimumFundingBalance,
     'OWNER_REMAINING_BALANCE_TOO_LOW',
   );
+  if (fundingAccountId !== ROOT)
+    assert.ok(BigInt(owner.amount) >= OWNER_MINIMUM, 'METEOR_OWNER_RESERVE_TOO_LOW');
   return {
     checkedAt: new Date().toISOString(),
     ownerBalanceYocto: owner.amount,

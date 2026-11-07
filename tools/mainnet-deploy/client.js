@@ -37,15 +37,22 @@ async function refresh() {
     show(
       'Mainnet deployment verified. Treasury is PAUSED; workers are disabled. Trading, inference and NFT minting remain off.',
     );
-  } else if (!wallet && !busy)
+  } else if (state.fundingRequired && !wallet && !busy)
     show(
-      'Ready for owner review. Connect Meteor with solidvideo4090.near to sign the paused deployment.',
+      'Ready for owner review. Connect Meteor to create and fund the separate deployment wallet with 6.38 NEAR.',
     );
+  if (!state.fullyDeployed) {
+    deploy.textContent = state.fundingRequired
+      ? 'Create deployment wallet in Meteor'
+      : 'Complete funded deployment locally';
+    if (!busy) deploy.disabled = state.fundingRequired && !wallet;
+  }
   return state;
 }
 try {
   plan = await read('/plan');
   document.querySelector('#owner').textContent = plan.owner;
+  document.querySelector('#namespace').textContent = plan.namespace;
   document.querySelector('#accounts').textContent = Object.entries(plan.accounts)
     .map(([role, id]) => `${role}: ${id}`)
     .join('\n');
@@ -75,7 +82,7 @@ connect.addEventListener('click', async () => {
     const state = await refresh();
     deploy.disabled = state.fullyDeployed;
     show(
-      `Connected ${plan.owner}. Review the account funding and sign the fixed deployment batch in Meteor.`,
+      `Connected ${plan.owner}. Review the separate deployment wallet and its temporary local key before authorizing the fixed funding transaction.`,
     );
   } catch (error) {
     show(error.message);
@@ -86,45 +93,50 @@ connect.addEventListener('click', async () => {
 });
 
 deploy.addEventListener('click', async () => {
-  if (busy || !wallet) return;
+  if (busy || !plan) return;
   busy = true;
   deploy.disabled = true;
   try {
     if (!document.querySelector('#reviewed').checked)
-      throw Error('Review the 6.27 NEAR allocation and network-fee budget first.');
-    if ((await wallet.getAccounts())[0]?.accountId !== plan.owner)
-      throw Error('CONNECTED_OWNER_CHANGED');
+      throw Error('Review and authorize the separate funded deployment wallet first.');
     const state = await read('/preflight', { planDigest: plan.digest });
-    if (!state.transactions.length) {
+    if (state.fullyDeployed) {
       await refresh();
       return;
     }
-    const response = await fetch('/wasm', { cache: 'no-store' });
-    if (!response.ok) throw Error('WASM_UNAVAILABLE');
-    const wasm = new Uint8Array(await response.arrayBuffer());
-    const digest = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', wasm)), (byte) =>
-      byte.toString(16).padStart(2, '0'),
-    ).join('');
-    if (digest !== plan.wasmSha256) throw Error('WASM_DIGEST_MISMATCH');
-    const transactions = state.transactions.map(({ signerId, receiverId, actions }) => ({
-      signerId,
-      receiverId,
-      actions: actions.map((action) =>
-        internalActionToNaj(
-          action.type === 'DeployContract'
-            ? { type: 'DeployContract', params: { code: wasm } }
-            : action,
-        ),
-      ),
-    }));
+    if (state.fundingRequired) {
+      if (!wallet || (await wallet.getAccounts())[0]?.accountId !== plan.owner)
+        throw Error('CONNECTED_OWNER_CHANGED');
+      const tx = plan.factoryTransaction;
+      if (
+        tx.actions.length !== 1 ||
+        tx.actions[0].type !== 'FunctionCall' ||
+        tx.receiverId !== 'near' ||
+        tx.actions[0].params.methodName !== 'create_account' ||
+        tx.actions[0].params.deposit !== '6380000000000000000000000'
+      )
+        throw Error('FACTORY_TRANSACTION_CHANGED');
+      show(
+        'Meteor must approve one 6.38 NEAR account-creation payment. The temporary local key controls only the separate deployment wallet.',
+      );
+      const result = await wallet.signAndSendTransactions({
+        transactions: [
+          {
+            signerId: tx.signerId,
+            receiverId: tx.receiverId,
+            actions: tx.actions.map(internalActionToNaj),
+          },
+        ],
+      });
+      const hashes = Array.isArray(result)
+        ? result.map((row) => row?.transaction?.hash).filter(Boolean)
+        : [];
+      await read('/observe', { hashes });
+    }
     show(
-      'Meteor must sign the prepared transactions. Your owner private key stays in the wallet. Do not start a second batch.',
+      'Deploying from the funded local wallet. The treasury remains paused. Excess funds will return to Meteor and the temporary key will be revoked.',
     );
-    const result = await wallet.signAndSendTransactions({ transactions });
-    const hashes = Array.isArray(result)
-      ? result.map((row) => row?.transaction?.hash).filter(Boolean)
-      : [];
-    await read('/observe', { hashes });
+    await read('/deploy-funded', { planDigest: plan.digest });
     await refresh();
   } catch (error) {
     show(
@@ -134,7 +146,7 @@ deploy.addEventListener('click', async () => {
     busy = false;
     try {
       const state = await refresh();
-      deploy.disabled = state.fullyDeployed || !wallet;
+      deploy.disabled = state.fullyDeployed || (state.fundingRequired && !wallet);
     } catch (error) {
       show(error.message);
     }
