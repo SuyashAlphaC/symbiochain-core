@@ -1,0 +1,210 @@
+[
+  {
+    "type": "Gateway",
+    "tdx_verified": true,
+    "os_measurements_valid": false,
+    "mrconfig_valid": true,
+    "report_data_valid": true,
+    "compose_verified": false,
+    "image_provenance_verified": false,
+    "image_verification": {
+      "images": {
+        "nearaidev/cloud-api@sha256:d74c3c3eb67c18db5483f2e152741ffc57dbbc3ca52c10cdeb8138054fd213dd": {
+          "image": "nearaidev/cloud-api@sha256:d74c3c3eb67c18db5483f2e152741ffc57dbbc3ca52c10cdeb8138054fd213dd",
+          "provenance_found": false,
+          "provenance_verified": false,
+          "build_reproducible": false,
+          "messages": [
+            "❌ Provenance check failed: Commit SHA mismatch for 'nearaidev/cloud-api':\n\texpected: 752e2976a7ee2a8790163974ba4a70dd218bbf3b\n\tgot:      4ac61fdb0da5f6df4391e259734f5c0b55272257"
+          ]
+        },
+        "nearaidev/cvm-ingress@sha256:1653c23200298a823c08c66d829c633fc36919bca1e09cf577b83b01353e0891": {
+          "image": "nearaidev/cvm-ingress@sha256:1653c23200298a823c08c66d829c633fc36919bca1e09cf577b83b01353e0891",
+          "provenance_found": true,
+          "provenance_verified": true,
+          "build_reproducible": false,
+          "messages": [
+            "✅ Source repository allowed: https://github.com/nearai/cvm-ingress",
+            "✅ Builder allowed: https://github.com/nearai/cvm-ingress/.github/workflows/build-push.yml@refs/heads/main",
+            "✅ Valid commit SHA: 6b1b58c9cf63ada80cb3be7456fbedcae9cf0173",
+            "⚠️ Reproducibility check skipped for this image"
+          ],
+          "provenance": {
+            "source_repo": "https://github.com/nearai/cvm-ingress",
+            "commit_sha": "6b1b58c9cf63ada80cb3be7456fbedcae9cf0173",
+            "builder_id": "https://github.com/nearai/cvm-ingress/.github/workflows/build-push.yml@refs/heads/main",
+            "build_type": "https://actions.github.io/buildtypes/workflow/v1"
+          }
+        },
+        "nearaidev/dstack-vpc@not-found": {
+          "image": "nearaidev/dstack-vpc@not-found",
+          "provenance_found": false,
+          "provenance_verified": false,
+          "build_reproducible": false,
+          "messages": [
+            "❌ Required image 'nearaidev/dstack-vpc' not found in compose file"
+          ]
+        },
+        "nearaidev/dstack-vpc-client@not-found": {
+          "image": "nearaidev/dstack-vpc-client@not-found",
+          "provenance_found": false,
+          "provenance_verified": false,
+          "build_reproducible": false,
+          "messages": [
+            "❌ Required image 'nearaidev/dstack-vpc-client' not found in compose file"
+          ]
+        }
+      },
+      "unverified_images": [
+        "otel/opentelemetry-collector-contrib@sha256:85ac41c2db88d0df9bd6145e608a3cb023f5d8443868adbfbbf66efb51087917",
+        "alpine@sha256:4b7ce07002c69e8f3d704a9c5d6fd3053be500b7f1c69fc0d80990c2ad8dd412"
+      ]
+    }
+  },
+  {
+    "type": "Model #1",
+    "gpu_verified": true
+  },
+  {
+    "type": "Inference: z-ai/glm-5.3-flash",
+    "model_name": "z-ai/glm-5.3-flash",
+    "model_name_matches": true,
+    "tdx_verified": true,
+    "os_measurements_valid": false,
+    "mrconfig_valid": true,
+    "compose_hash_valid": true,
+    "near_images_verified": false,
+    "compose_manager_verified": false,
+    "boot_compose_manager_verified": true,
+    "boot_compose_manager_image": {
+      "image": "nearaidev/compose-manager@sha256:6e035c8fb99c1d31f41760d25af178683a658cca4afd73cd0d366fbb5bf884be",
+      "provenance_found": true,
+      "provenance_verified": true,
+      "build_reproducible": false,
+      "messages": [
+        "✅ Source repository allowed: https://github.com/nearai/compose-manager",
+        "✅ Builder allowed: https://github.com/nearai/compose-manager/.github/workflows/build.yml@refs/heads/master",
+        "✅ Valid commit SHA: 8cf272a67671fa1d8ff09613a2de83194f27e06f",
+        "⚠️ Reproducibility check skipped for this image"
+      ],
+      "provenance": {
+        "source_repo": "https://github.com/nearai/compose-manager",
+        "commit_sha": "8cf272a67671fa1d8ff09613a2de83194f27e06f",
+        "builder_id": "https://github.com/nearai/compose-manager/.github/workflows/build.yml@refs/heads/master",
+        "build_type": "https://actions.github.io/buildtypes/workflow/v1"
+      }
+    },
+    "compose_manager_tdx_verified": true,
+    "proxy_report_data_valid": true,
+    "actions_hash_bound": true,
+    "nonce_bound": true,
+    "same_cvm": true,
+    "report_data_valid": true,
+    "serving_yaml_verified": true,
+    "model_weights_approved": true,
+    "serving_weights": [
+      "graphistry/GLM-5.3-Flash-W4AFP8@99f1fa70408c52b007d4fd69e02e5a522422e755",
+      "zai-org/GLM-5.3-Flash@3f1971b7b5f7a528c9c4ef6212c8785298a8c24a",
+      "graphistry/GLM-5.3-Flash-W4AFP8@99f1fa70408c52b007d4fd69e02e5a522422e755",
+      "zai-org/GLM-5.3-Flash@3f1971b7b5f7a528c9c4ef6212c8785298a8c24a",
+      "graphistry/GLM-5.3-Flash-W4AFP8@99f1fa70408c52b007d4fd69e02e5a522422e755",
+      "zai-org/GLM-5.3-Flash@3f1971b7b5f7a528c9c4ef6212c8785298a8c24a",
+      "graphistry/GLM-5.3-Flash-W4AFP8@99f1fa70408c52b007d4fd69e02e5a522422e755",
+      "zai-org/GLM-5.3-Flash@3f1971b7b5f7a528c9c4ef6212c8785298a8c24a"
+    ],
+    "serving_composes": [
+      {
+        "file": "prod/rotate-compose-manager-token.yaml",
+        "commit": "3c2f033b2a44d08832ffec32417dc35a95cdbe2c",
+        "file_sha256": "0d1263e5169ebacdb1da157857aafff9a5bb5645aabbd921b3bd7e18d60a8ee2",
+        "approved": true
+      },
+      {
+        "file": "prod/GLM-5.3-Flash-SGL-TP2x4-W4AFP8-V12Q8.yaml",
+        "commit": "5a5119f799409672cfd101429b01dcd6db30188e",
+        "file_sha256": "309c07af98ff96349716dde078158ee021cf0eed33cd8690aa638f2e61546dd1",
+        "approved": true
+      },
+      {
+        "file": "prod/GLM-5.3-Flash-SGL-TP2x4-W4AFP8-V12Q8.yaml",
+        "commit": "7ee4a4c741259d0c69a81e5cda22c3dfce21cbc2",
+        "file_sha256": "904054f502ccdb2f913d6b80f156ea658b8bc5cb6f8af06082723581d62a45c0",
+        "approved": true
+      },
+      {
+        "file": "prod/GLM-5.3-Flash-SGL-TP2x4-W4AFP8-V8KdaCanary.yaml",
+        "commit": "6b8c3b191a432f671a0529e7e8589149fb910c0d",
+        "file_sha256": "2a4865b227a6908f5a50e20c3f5e7a4e8222c2c6da0d25359b11e78d86e9e1c0",
+        "approved": true
+      },
+      {
+        "file": "prod/GLM-5.3-Flash-SGL-TP2x4-W4AFP8-V8KdaCanary.yaml",
+        "commit": "8977a0e8383685752d4a43621c9226bbaccd857d",
+        "file_sha256": "9f1981bc7bec1477af24bf51bab2959e376cde8a350b35b95fe18d7fd8ac6329",
+        "approved": true
+      }
+    ],
+    "compose_log": "e781155f1760e4a63c2f48e1ee02185a06c1dfe74a7b1909a6594045e75ac76f",
+    "image_verification": {
+      "images": {
+        "nearaidev/vllm-proxy-rs@sha256:0be4ee8f40a2bf71a6e2fab1e780ad1a6e738ffb2085553f1ed4b85fcb944207": {
+          "image": "nearaidev/vllm-proxy-rs@sha256:0be4ee8f40a2bf71a6e2fab1e780ad1a6e738ffb2085553f1ed4b85fcb944207",
+          "provenance_found": false,
+          "provenance_verified": false,
+          "build_reproducible": false,
+          "messages": [
+            "❌ Provenance check failed: Commit SHA mismatch for 'nearaidev/vllm-proxy-rs':\n\texpected: 0f37728af5387d4805a12db133662d769a679373\n\tgot:      53d79441487089b069de775b63cfe975cd1abb4d"
+          ]
+        },
+        "nearaidev/compose-manager@sha256:a0c073085684e12e19f31bb279fc8da663a374199bfecc47b04167ae79eaa766": {
+          "image": "nearaidev/compose-manager@sha256:a0c073085684e12e19f31bb279fc8da663a374199bfecc47b04167ae79eaa766",
+          "provenance_found": false,
+          "provenance_verified": false,
+          "build_reproducible": false,
+          "messages": [
+            "❌ Provenance check failed: Commit SHA mismatch for 'nearaidev/compose-manager':\n\texpected: 8cf272a67671fa1d8ff09613a2de83194f27e06f\n\tgot:      c7fbaaf5f8a993c6a3c53ac3748ed3b28bafcea3"
+          ]
+        },
+        "nearaidev/compose-manager-launcher@sha256:079a14b41deb11e0e27f9b69648e8b3d89bd6fb9ccf6071643b8f447fa415085": {
+          "image": "nearaidev/compose-manager-launcher@sha256:079a14b41deb11e0e27f9b69648e8b3d89bd6fb9ccf6071643b8f447fa415085",
+          "provenance_found": false,
+          "provenance_verified": false,
+          "build_reproducible": false,
+          "messages": [
+            "❌ No SLSA provenance attestation found"
+          ]
+        }
+      },
+      "unverified_images": [
+        "docker:27-cli@sha256:851f91d241214e7c6db86513b270d58776379aacc5eb9c4a87e5b47115e3065c",
+        "nvcr.io/nvidia/k8s/dcgm-exporter@sha256:613ab03c11d442fd960ff515f547e9921537454a712d08160bc8f677f89f1c35",
+        "nearaidev/sglang@sha256:fa730e6e62b2ae8058114ce540487ade33ab93bc42b1179ae78edc92bd563fc5",
+        "nearaidev/sglang@sha256:e9d29a1cb1cd65284392c4d62d5f2a36669628057e15c60fe93ea40cfe4fc7e7",
+        "nginx@sha256:1d13701a5f9f3fb01aaa88cef2344d65b6b5bf6b7d9fa4cf0dca557a8d7702ba",
+        "alpine:3.20@sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc",
+        "ghcr.io/astral-sh/uv:python3.11-bookworm-slim@sha256:4f5d923c9dcea037f57bda425dd209f3ec643da2f0b74227f68d09dab0b3bb36",
+        "curlimages/curl@sha256:d94d07ba9e7d6de898b6d96c1a072f6f8266c687af78a74f380087a0addf5d17",
+        "nearaidev/sglang@sha256:da8d4e4b5ec667499b58a21e56050aae9bcfc4df9669b3ac27e2e20af033d681",
+        "nearaidev/sglang@sha256:da8d4e4b5ec667499b58a21e56050aae9bcfc4df9669b3ac27e2e20af033d681",
+        "nearaidev/sglang@sha256:da8d4e4b5ec667499b58a21e56050aae9bcfc4df9669b3ac27e2e20af033d681",
+        "nearaidev/sglang@sha256:da8d4e4b5ec667499b58a21e56050aae9bcfc4df9669b3ac27e2e20af033d681",
+        "nginx@sha256:1d13701a5f9f3fb01aaa88cef2344d65b6b5bf6b7d9fa4cf0dca557a8d7702ba",
+        "otel/opentelemetry-collector-contrib@sha256:85ac41c2db88d0df9bd6145e608a3cb023f5d8443868adbfbbf66efb51087917",
+        "certbot/dns-cloudflare@sha256:742dbd2e61c8709b930712c38958386c3cb3928e09eeb1f1e490600c127e2edb",
+        "certbot/dns-cloudflare@sha256:742dbd2e61c8709b930712c38958386c3cb3928e09eeb1f1e490600c127e2edb"
+      ]
+    },
+    "gpu_verified": true,
+    "signing_public_key": "42d42e51842e50841e08b096b62cdaf52786c7ce0b04577bb476cef327d42d8db9cc9dd35c9738bf7769e2b33d51c0a2d9aa01e85da0507ddb4e875a2b5bdfd1",
+    "signing_address": "0x3b753b4406613c5e70ae640508632b600424fa0c",
+    "signing_algo": "ecdsa"
+  },
+  {
+    "type": "Domain TLS Certificate",
+    "domain": "cloud-api.near.ai",
+    "certificate_verified": true,
+    "fingerprint_matches": true,
+    "attestation_fingerprint_matches": true,
+    "dns_caa_verified": true
+  }
+]
