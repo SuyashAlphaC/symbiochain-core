@@ -233,6 +233,8 @@ export class LiveProviders implements Providers {
     };
   }
   async assess(cycleId: string, p: Proposal, q: Quote) {
+    // A prepaid report does not purchase a trading signal or authorize a transfer.
+    if (p.strategy === 'risk-assessment') return this.ai.assess(cycleId, p, q);
     await this.pay(
       cycleId,
       'signal',
@@ -368,6 +370,8 @@ export class LiveProviders implements Providers {
     return payload.signed;
   }
   async prepare(cycleId: string, p: Proposal, q: Quote): Promise<PreparedExecution> {
+    if (p.strategy !== 'round-trip')
+      throw new DomainError('SERVICE_CANNOT_TRADE', 'A risk report cannot authorize a transaction');
     const r = q.route as unknown as Route;
     await this.pay(
       cycleId,

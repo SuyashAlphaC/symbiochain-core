@@ -1,0 +1,19 @@
+{
+  "checkedAt": "2026-11-07T06:15:09.430Z",
+  "scope": "LOCAL_FACTORY_FUNDING_TRANSPORT_FIXTURE",
+  "realWalletUsed": false,
+  "actualMainnetTransactions": 0,
+  "browserErrors": [],
+  "protectedRoutes": true,
+  "foreignOriginBlocked": true,
+  "ownerConnectFixturePassed": true,
+  "transactionEncodingVerified": 1,
+  "rootFullAccessGrants": 0,
+  "factoryMethod": "near.create_account",
+  "separateWalletFundingYocto": "6380000000000000000000000",
+  "signatureDeliberatelyRejected": true,
+  "rootPermissionRequestContract": "",
+  "mobileOverflow": false,
+  "wasmSha256": "39f034e6ae16ddb9cf253ac977c4146989a0fee1fa7c33ba0944092bf41de3d5",
+  "paidRequests": 0
+}

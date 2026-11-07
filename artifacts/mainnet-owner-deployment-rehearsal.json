@@ -1,0 +1,20 @@
+{
+  "checkedAt": "2026-11-07T05:50:07.766Z",
+  "scope": "LOCAL_NEAR_SANDBOX_EXACT_ACTION_REHEARSAL",
+  "walletSignatureEmulatedBySandboxOwner": true,
+  "actualMainnetTransactions": 0,
+  "wasmSha256": "39f034e6ae16ddb9cf253ac977c4146989a0fee1fa7c33ba0944092bf41de3d5",
+  "accountGroups": 5,
+  "initializedAndPausedInSameTransaction": true,
+  "runtimeKeyCannotUnpause": true,
+  "duplicateCreationCannotDoubleFund": true,
+  "treasuryStorageBytes": 583866,
+  "treasuryAvailableYocto": "261553665633884100000000",
+  "ownerSpentYocto": "6313422717576426800000000",
+  "fundingYocto": "6270000000000000000000000",
+  "ownerRemainingYocto": "421618516208810612378082",
+  "maximumPlannedYocto": "6400000000000000000000000",
+  "paused": true,
+  "tradingCapsAtoms": "1",
+  "modelRequests": 0
+}

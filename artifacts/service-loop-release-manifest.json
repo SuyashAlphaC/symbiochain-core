@@ -1,0 +1,32 @@
+{
+  "scope": "SERVICE_AND_MANUAL_FUNDING_SOURCE_CANDIDATE",
+  "backendApplicationRevision": "e59d172c30caab19f8ccf1d7e3a114d54ee57ff0",
+  "frontendApplicationRevision": "b879d0514d2551eb53504b757dde9cdfaed27974",
+  "productionDeploymentPerformed": false,
+  "schema": "Reuses existing BusinessEntry migration; no new migration",
+  "teeApproval": "QUARANTINED",
+  "modelInference": "PAPER_FIXTURES_ONLY_IN_THIS_VALIDATION",
+  "realMainnetTransactions": 0,
+  "externalCustomerRevenue": 0,
+  "providerCreditPurchases": 0,
+  "notificationsSent": 0,
+  "validation": {
+    "backendUnitTests": 129,
+    "postgresIntegrationTests": 80,
+    "contractTests": 16,
+    "frontendTests": 25,
+    "frontendCheck": "PASSED",
+    "browser": "ISOLATED_LOCAL_PAPER_DESKTOP_AND_390PX",
+    "credentialExposures": 0,
+    "runtimeImage": "PASSED: packaged rehearsal plus unapproved audit"
+  },
+  "limitations": [
+    "TEE deployment approval remains unresolved",
+    "Customer checkout, wallet authentication and automatic refunds are not implemented",
+    "Manual purchase reports are not provider-verified and keep reservations held",
+    "No organic customer demand or funded mainnet economics proven",
+    "Release backend then frontend before creating new risk-assessment cycles"
+  ],
+  "backendRuntimeRevision": "99a482cc25e23b093b839c0f51f476bc5fe9e19b",
+  "frontendReleaseRevision": "9ef944a7156c06b8e18e03a381712b9998cf928a"
+}

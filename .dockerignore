@@ -6,8 +6,10 @@ dist
 .env.*
 !.env.example
 .data
+tools/mainnet-deploy
 contracts/**/target
 artifacts/*
 !artifacts/testnet-rehearsal.json
+!artifacts/brave-cli-verification.json
 coverage
 *.log

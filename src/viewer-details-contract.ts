@@ -34,7 +34,7 @@ export const ViewerCycleSummary = z
     id,
     mode: z.literal('PAPER'),
     state: z.string().max(40),
-    strategy: z.literal('round-trip'),
+    strategy: z.enum(['round-trip', 'risk-assessment']),
     rejection: z.string().max(500).nullable(),
     createdAt: time,
     updatedAt: time,

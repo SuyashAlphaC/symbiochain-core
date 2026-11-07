@@ -1,16 +1,30 @@
 # SymbioChain Core
 
-**Three agents, one treasury, measurable operating costs.** Scout searches approved cross-chain routes. Brain evaluates committed proposals using NEAR AI confidential inference. Hand requests constrained Chain Signatures, broadcasts deposits, and reconciles settlement. Agents buy each other's services through NEAR Intents. An operational reserve and a separate inference-spending policy govern whether the swarm may continue.
+## Supply chain trust boundary: fail-closed policy
+
+**TEE execution status: QUARANTINED. The inference gate is closed.** Demo inference uses local PAPER fixtures with no enclave or TEE signature.
+
+The November 7 audit used unmodified [Brave near-verifier](https://github.com/brave/near-verifier) against `z-ai/glm-5.3-flash` in **provenance-only mode**. Intel TDX, NVIDIA and gateway TLS/binding subchecks passed. **The deployment was not approved:** the launcher had no accepted signed SLSA provenance; other image/source pins, OS measurements and required gateway services also differed from Brave's policy. Gateway, model and inference-proxy software are not claimed as fully verified. The launcher rebuild exemption does not waive signed provenance. [Raw report and audit scope](artifacts/brave-cli-verification.json).
+
+Paid inference remains gated; we have not changed trust pins to force a pass. [Compose-manager issue #64](https://github.com/nearai/compose-manager/issues/64) concerns reproducible launcher builds and does not establish provenance for our observed digest. **Mainnet economics, external revenue and automatic provider credit purchases remain unproven.** See [the exact approval handoff](docs/TEE_APPROVAL_HANDOFF.md).
+
+**Three agents, one treasury, measurable operating costs.** The [prepaid risk-report path](docs/SERVICE_LOOP.md) lets Scout gather quotes, Brain assess committed terms behind the unchanged TEE gate, and Hand deliver a report without trading. LIVE arbitrage admission defaults to disabled. The trading adapter retains constrained Chain Signatures, settlement reconciliation and internal Intents payments. An operational reserve and a separate inference-spending policy govern real execution.
 
 The backend includes TypeScript/Fastify, PostgreSQL/Prisma, durable workers, a Rust NEAR treasury/NFT contract, EVM and native Solana transfer adapters, encrypted evidence, replayable WebSocket events, and Docker/CI configuration.
 
 **Evidence status:** the [hosted PAPER backend](https://symbiochain-core.onrender.com/docs), PostgreSQL recovery tests, real local NEAR contract calls, public signed quotes, and authenticated TEE hardware audits have run. Hardware evidence, deployment approval and signed inference remain separate gates; no funded mainnet round trip or verified paid completion is claimed. The [testnet rehearsal](docs/TESTNET_REHEARSAL.md) records its own actual checks and explicit simulations. This repository does not claim that an arbitrage opportunity exists or that the swarm has achieved financial self-sufficiency. See [implementation status](docs/IMPLEMENTATION.md).
+
+**Mainnet foundation — November 7:** [treasury.symbio-fcef733893.near](https://nearblocks.io/address/treasury.symbio-fcef733893.near) is deployed and **paused**, with four funded agent accounts and disabled workers. The dedicated owner is `symbio-fcef733893.near`, controlled by the funding wallet’s existing Meteor recovery key; the temporary deployment key is revoked. [Final on-chain verification](artifacts/mainnet-paused-deployment.json) records nine successful known transactions, balances and the pinned executable. Render stays PAPER. This establishes infrastructure, not TEE-approved execution, trading, external revenue or compute purchases.
 
 For the testnet entry, start with the [judge walkthrough](docs/TESTNET_SUBMISSION.md).
 It includes real Sepolia/Solana transaction links, the resumable agent runner,
 worker recovery, budget limits and the remaining TEE approval gate.
 
 ## Business evidence
+
+Reviewable release candidates: [backend `99a482c`](https://github.com/SuyashAlphaC/symbiochain-core/commit/99a482cc25e23b093b839c0f51f476bc5fe9e19b) and [frontend `9ef944a`](https://github.com/AviraL0013/SymbioChain/commit/9ef944a7156c06b8e18e03a381712b9998cf928a). These include runtime packaging and release documentation; the implementation/test revisions are separately recorded in [the manifest](artifacts/service-loop-release-manifest.json). Production is unchanged.
+
+The [human-in-the-loop metabolic bridge](docs/SERVICE_LOOP.md#human-in-the-loop-metabolic-bridge) turns eligible reported net proceeds into a durable manual-purchase task. Optional Discord alerts and operator confirmation do not purchase or verify provider credits. The dashboard distinguishes **QUARANTINED**, **HUMAN IN THE LOOP** and **UNPROVEN revenue**. Local PAPER reports have no enclave or TEE signature. No organic demand or guaranteed profit is claimed.
 
 The [business accounting feature](docs/BUSINESS_ACCOUNTING.md) adds performance-fee invoices, final Intents receipt checks, realized-cost reporting and proceeds reservations. It is a source-level addition, not evidence of a customer sale or released mainnet business. Confirmed customer revenue is unproven. The [proceeds-to-NFT workflow](docs/BUSINESS_FUNDING.md) now implements signed conversion, native withdrawal, verified treasury allocation and durable recovery; it is disabled and lacks funded mainnet proof. Automatic AI-credit purchasing remains provider-blocked and unimplemented under the public-interface-only policy. Private cost sources and customer identity are not exposed in the public status projection. Deployment revisions and evidence scope are recorded in [the release manifest](docs/RELEASE_REVISIONS.md).
 
@@ -44,6 +58,8 @@ API: `http://127.0.0.1:3001`; Swagger: `/docs`; readiness: `/readyz`. Applicatio
 The operator panel is at `/dashboard` (also the root redirect). It shows the three agents, treasury, cycles, durable events, cost approvals and net after approved costs. Administrator controls pause/resume spending and agents. The colocated PAPER profile can crash a worker after it claims a specific job and demonstrate recovery after restart and lease expiry. See the [operator demonstration](docs/OPERATIONS.md#user-facing-fault-and-cost-demonstration). PAPER rights are simulated and never presented as an on-chain mint.
 
 ## Architecture
+
+Service orders follow Scout quoting → prepaid Brain assessment → Hand report delivery, as described in the [service runbook](docs/SERVICE_LOOP.md). The following diagram and execution states describe the trading adapter, whose LIVE admission defaults to disabled.
 
 ```mermaid
 flowchart LR
@@ -95,6 +111,8 @@ Intents service payments use NEP-413, the verifier's current salt, a durable non
 The hardware verifier uses patched `@phala/dcap-qvl`, not the vulnerable legacy Node binding. TLS connection binding and end-to-end encrypted inference transport are not implemented; proofs expose `tlsConnectionBinding: false`. Backend orchestration and function-call keys run in ordinary server processes. Chain Signatures keys remain with the MPC system.
 
 See the [private inference verification runbook](docs/PRIVATE_INFERENCE.md) for model privacy tiers, the NVIDIA verdict trust boundary, non-billable preparation, and remaining transport work.
+
+An independent cross-check uses [Brave's unmodified NEAR verifier](https://github.com/brave/near-verifier), which targets the NEAR AI Cloud backend behind Brave Leo. On November 7, its authenticated CLI returned **exit 1** in the documented provenance-only mode: CPU/GPU and TLS subchecks passed, but launcher provenance was unavailable and the live deployment differed from its source/OS/service pins. The launcher exemption skips rebuilding only after provenance verification. See the [unaltered CLI report](artifacts/brave-cli-provenance-only-report.json), [invocation and scope](artifacts/brave-cli-verification.json), and [launcher policy analysis](docs/TEE_LAUNCHER_POLICY.md). No image rebuild or paid inference was performed, and deployment approval remains false.
 
 ## PAPER, LIVE and REPLAY
 

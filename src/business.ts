@@ -67,7 +67,7 @@ export function performanceFee(previousNet: bigint, previousHighWater: bigint, n
     performanceFeeBps: 1500,
   };
 }
-async function enabled(store: Store) {
+export async function enabled(store: Store) {
   const c = store.config;
   if (!c.BUSINESS_RECEIVER_ID || !/^nep141:[a-z0-9._-]+$/.test(c.BUSINESS_INTENTS_ASSET))
     throw new DomainError(
@@ -88,7 +88,7 @@ async function enabled(store: Store) {
       'Existing ledger denomination cannot be changed',
     );
 }
-async function existing(tx: Tx, store: Store, ref: string, termsDigest: string) {
+export async function existing(tx: Tx, store: Store, ref: string, termsDigest: string) {
   const found = await tx.businessEntry.findUnique({
     where: { mode_reference: { mode: store.mode, reference: ref } },
   });
@@ -100,7 +100,7 @@ async function existing(tx: Tx, store: Store, ref: string, termsDigest: string) 
     );
   return found;
 }
-async function append(
+export async function append(
   tx: Tx,
   store: Store,
   ref: string,
@@ -251,8 +251,11 @@ export async function receiveInvoice(
       mode_reference: { mode: store.mode, reference: invoiceReference },
     },
   });
-  if (invoice.kind !== 'FEE_INVOICE' || BigInt(invoice.amountAtoms.toFixed(0)) <= 0n)
-    throw new DomainError('BUSINESS_INVOICE', 'A positive fee invoice is required');
+  if (
+    !['FEE_INVOICE', 'SERVICE_ORDER'].includes(invoice.kind) ||
+    BigInt(invoice.amountAtoms.toFixed(0)) <= 0n
+  )
+    throw new DomainError('BUSINESS_INVOICE', 'A positive business invoice is required');
   const payload = invoice.payload as Record<string, string>;
   if (
     invoice.asset !== store.config.BUSINESS_INTENTS_ASSET ||
@@ -283,21 +286,30 @@ export async function receiveInvoice(
       tx,
       store,
       ref,
-      'EXTERNAL_RECEIPT',
+      invoice.kind === 'SERVICE_ORDER' ? 'SERVICE_PAYMENT' : 'EXTERNAL_RECEIPT',
       proof.amountAtoms,
       {
         invoiceReference,
         ...proof,
         costVerification: 'ACCOUNTANT_REPORTED',
-        customerRelationship: 'OPERATOR_ATTESTED',
+        customerRelationship: payload.customerRelationship ?? 'OPERATOR_ATTESTED',
       },
       termsDigest,
       proof.sourceKey,
     );
-    await store.journal(tx, `business:${entry.id}`, 'EXTERNAL_BUSINESS_REVENUE', [
-      { account: 'BUSINESS_CASH', asset: proof.asset, amountAtoms: BigInt(proof.amountAtoms) },
-      { account: 'BUSINESS_REVENUE', asset: proof.asset, amountAtoms: -BigInt(proof.amountAtoms) },
-    ]);
+    await store.journal(
+      tx,
+      `business:${entry.id}`,
+      invoice.kind === 'SERVICE_ORDER' ? 'CUSTOMER_ADVANCE' : 'EXTERNAL_BUSINESS_REVENUE',
+      [
+        { account: 'BUSINESS_CASH', asset: proof.asset, amountAtoms: BigInt(proof.amountAtoms) },
+        {
+          account: invoice.kind === 'SERVICE_ORDER' ? 'CUSTOMER_ADVANCES' : 'BUSINESS_REVENUE',
+          asset: proof.asset,
+          amountAtoms: -BigInt(proof.amountAtoms),
+        },
+      ],
+    );
     return entry;
   });
 }

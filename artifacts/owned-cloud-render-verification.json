@@ -1,0 +1,43 @@
+{
+  "verifiedAt": "2026-11-07T05:14:10.737Z",
+  "serviceId": "srv-dbgd7u4s728c738qjstg",
+  "deploymentId": "dep-dbnb6gp5efls73arhbmg",
+  "deploymentStatus": "live",
+  "deployedCommit": "e1633c7ff16cb2ce3ce484aa44b12d09cc0117a5",
+  "sourceRevisionUnchanged": true,
+  "aiConfigurationMatchedLocal": true,
+  "unrelatedEnvironmentPreserved": true,
+  "updatedVariableNames": [
+    "NEAR_AI_API_KEY",
+    "NEAR_AI_ORG_ID",
+    "NEAR_AI_BASE_URL",
+    "AI_BUDGET_ID",
+    "LIVE_ARBITRAGE_ENABLED"
+  ],
+  "cloudKeyAuthentication": "ACCEPTED_BY_AUTHENTICATED_ATTESTATION_GET",
+  "keyOrganizationBinding": "USER_CONFIRMED_NOT_INDEPENDENTLY_ATTESTED",
+  "executionMode": "PAPER",
+  "liveTradingEnabled": false,
+  "liveArbitrageConfigured": false,
+  "computeControl": {
+    "source": "LOCAL_BUDGET",
+    "totalLimitUsdMicros": "1000000",
+    "committedUsdMicros": "0",
+    "availableUsdMicros": "1000000",
+    "providerBalanceVerified": false
+  },
+  "maxRequestUsdMicros": "100000",
+  "model": "z-ai/glm-5.3-flash",
+  "readinessHttpStatus": 200,
+  "anonymousProtectedApiStatus": 401,
+  "authenticatedProtectedApiStatus": 200,
+  "frontendSnapshotHttpStatus": 200,
+  "freshWorkerCount": 3,
+  "measurementApprovalConfigured": false,
+  "deploymentActionsApprovalConfigured": false,
+  "teeApprovalChanged": false,
+  "automaticCreditPurchasesEnabled": false,
+  "paidInferenceRequests": 0,
+  "realTransactionsSubmitted": 0,
+  "credentialValuesExposed": 0
+}

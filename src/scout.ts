@@ -4,9 +4,12 @@ import { Store } from './store.js';
 import { Proposal, DomainError, digest } from './domain.js';
 import { evaluatePolicy } from './policy.js';
 import type { Providers } from './providers/types.js';
-const routes = z.array(Proposal.omit({ expiresAt: true })).max(10);
+const routes = z
+  .array(Proposal.extend({ strategy: z.literal('round-trip') }).omit({ expiresAt: true }))
+  .max(10);
 /** Bounded allowlisted route discovery. Historical swaps are never treated as pending orders. */
 export async function scout(store: Store, providers: Providers): Promise<void> {
+  if (store.mode === 'LIVE' && !store.config.LIVE_ARBITRAGE_ENABLED) return;
   if (!store.config.SCOUT_ROUTES_FILE) return;
   const control = await store.db.workerControl.findUniqueOrThrow({ where: { role: 'SCOUT' } });
   const policy = await store.db.policy.findUniqueOrThrow({ where: { mode: store.mode } });

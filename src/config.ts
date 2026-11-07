@@ -34,6 +34,8 @@ const Schema = z.object({
   WORKER_LEASE_MS: z.coerce.number().int().min(1000).default(60000),
   SCOUT_INTERVAL_MS: z.coerce.number().int().min(1000).default(10000),
   LIVE_TRADING_ENABLED: bool.prefault('false'),
+  // Separately opt in to capital-at-risk round trips; service assessments do not trade.
+  LIVE_ARBITRAGE_ENABLED: bool.prefault('false'),
   ENABLE_CHAOS_DEMO: bool.prefault('false'),
   NEAR_NETWORK: z.enum(['mainnet', 'testnet', 'sandbox']).default('testnet'),
   NEAR_RPC_URL: z.url().default('https://rpc.testnet.near.org'),

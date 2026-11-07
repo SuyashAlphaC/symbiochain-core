@@ -25,7 +25,7 @@ Set only the selected role account IDs locally to inspect those accounts. Do not
 
 ## Funding worksheet
 
-The rebuilt treasury currently occupies **579,388 bytes**. At the observed mainnet storage price of **10,000,000,000,000,000,000 yoctoNEAR per byte**, code alone locks **5.79388 NEAR**. Refresh the inspector before budgeting; a different WASM or protocol price changes the amount. This is locked capital, not a burned deployment fee. Account/key storage, initial and growing contract state, operational reserves and gas are additional.
+The rebuilt treasury currently occupies **582,885 bytes**. At the observed mainnet storage price of **10,000,000,000,000,000,000 yoctoNEAR per byte**, code alone locks **5.82885 NEAR**. Refresh the inspector before budgeting; a different WASM or protocol price changes the amount. This is locked capital, not a burned deployment fee. Account/key storage, initial and growing contract state, operational reserves and gas are additional.
 
 Record the following decisions before constructing signed transactions:
 
