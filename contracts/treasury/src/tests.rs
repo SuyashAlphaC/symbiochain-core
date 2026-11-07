@@ -212,3 +212,43 @@ fn paused_treasury_rejects_dividend_funding() {
     context("books.near");
     c.distribute_revenue("paused-distribution".into());
 }
+
+#[test]
+fn small_distributions_preserve_split_rounding_and_claim_liabilities() {
+    let mut c = contract();
+    c.receipt_shares.insert(&"holder-a".into(), &2500);
+    c.receipt_shares.insert(&"holder-b".into(), &1000);
+    c.total_shares_bps = 3500;
+    let mut builder = VMContextBuilder::new();
+    builder
+        .current_account_id(id("treasury.test.near"))
+        .predecessor_account_id(id("books.near"))
+        .account_balance(NearToken::from_near(100))
+        .attached_deposit(NearToken::from_yoctonear(11));
+    testing_env!(builder.build());
+    c.distribute_revenue("small-external-deposit-fixture".into());
+    assert_eq!(c.dividend_balance("holder-a".into()).0, 2);
+    assert_eq!(c.dividend_balance("holder-b".into()).0, 1);
+    assert_eq!(c.dividend_liability_yocto, 3);
+    assert_eq!(
+        c.get_distribution("small-external-deposit-fixture".into()),
+        Some(U128(11))
+    );
+    // The remaining 8 yocto stays unallocated; this deposit is not evidence of profit.
+    assert_eq!(c.service_liability_yocto, 0);
+}
+
+#[test]
+#[should_panic(expected = "Distribution reference already used")]
+fn distribution_replay_cannot_allocate_the_same_reference_twice() {
+    let mut c = contract();
+    let mut builder = VMContextBuilder::new();
+    builder
+        .current_account_id(id("treasury.test.near"))
+        .predecessor_account_id(id("books.near"))
+        .account_balance(NearToken::from_near(100))
+        .attached_deposit(NearToken::from_yoctonear(11));
+    testing_env!(builder.build());
+    c.distribute_revenue("same-reference".into());
+    c.distribute_revenue("same-reference".into());
+}
