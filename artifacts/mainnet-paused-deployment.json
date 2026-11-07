@@ -1,0 +1,227 @@
+{
+  "checkedAt": "2026-11-07T06:25:54.042Z",
+  "scope": "MAINNET_PAUSED_INFRASTRUCTURE",
+  "network": "mainnet",
+  "deploymentVerified": true,
+  "ownerFundingAccount": "solidvideo4090.near",
+  "ownerAccount": "symbio-fcef733893.near",
+  "treasury": "treasury.symbio-fcef733893.near",
+  "accounts": {
+    "brain": "brain.symbio-fcef733893.near",
+    "hand": "hand.symbio-fcef733893.near",
+    "accountant": "books.symbio-fcef733893.near",
+    "scout": "scout.symbio-fcef733893.near",
+    "treasury": "treasury.symbio-fcef733893.near"
+  },
+  "wasmSha256": "39f034e6ae16ddb9cf253ac977c4146989a0fee1fa7c33ba0944092bf41de3d5",
+  "wasmBytes": 582885,
+  "contractSourceRevision": "cc46cbc9da4f54098b187925b01417fd8a9d7c76",
+  "deploymentHelperRevision": "1fc56df99472b5c163b82c594accccd2cc0b8f45",
+  "factoryCodeHash": "HiyC5tB1gBDpgR4x1guEp1orBde5PXqUYGoWaZfX3JGX",
+  "recoveryPublicKey": "ed25519:DxXuTDdVTStif6m6JASsnTk4mzntcFn18rAoSXUFhfMy",
+  "temporaryKeyRevoked": true,
+  "originalMeteorKeyExported": false,
+  "treasuryPaused": true,
+  "workersDisabled": true,
+  "nftSharesBps": 0,
+  "policy": {
+    "max_trade_atoms": "1",
+    "max_daily_atoms": "1",
+    "min_reserve_yocto": "100000000000000000000000",
+    "max_signing_cost_yocto": "1",
+    "max_slippage_bps": 0,
+    "allowed_chain_ids": [
+      0
+    ],
+    "allowed_token_contracts": [
+      "sol:native"
+    ],
+    "token_max_trade_atoms": [
+      "1"
+    ],
+    "token_max_daily_atoms": [
+      "1"
+    ]
+  },
+  "metabolism": {
+    "status": "PAUSED",
+    "available_yocto": "260780000000000000000000",
+    "service_liability_yocto": "0",
+    "compute_credits": "UNKNOWN"
+  },
+  "initialOwnerBalanceYocto": "6735041233785237412378082",
+  "finalOwnerBalanceYocto": "401437473119140312378082",
+  "ownerNetBalanceDecreaseYocto": "6333603760666097100000000",
+  "netBalanceDecreaseIncludesCollateralAndRetainedBalances": true,
+  "deploymentWalletFundingYocto": "6380000000000000000000000",
+  "childAccountFundingYocto": "6270000000000000000000000",
+  "parentBalanceYocto": "12554762262500000000000",
+  "parentStorageBytes": 182,
+  "networkTokensBurntForRecordedTransactionsYocto": "51048998403597100000000",
+  "maximumPlannedYocto": "6400000000000000000000000",
+  "verifiedAccounts": [
+    {
+      "role": "treasury",
+      "accountId": "treasury.symbio-fcef733893.near",
+      "amountYocto": "6100000000000000000000000",
+      "storageBytes": 583922,
+      "codeHash": "4uAgNJesg7U8amwmUDAd2LzQ4U7gyg6M7hrwows1G23e"
+    },
+    {
+      "role": "brain",
+      "accountId": "brain.symbio-fcef733893.near",
+      "amountYocto": "50000000000000000000000",
+      "storageBytes": 339,
+      "codeHash": "11111111111111111111111111111111"
+    },
+    {
+      "role": "hand",
+      "accountId": "hand.symbio-fcef733893.near",
+      "amountYocto": "50000000000000000000000",
+      "storageBytes": 394,
+      "codeHash": "11111111111111111111111111111111"
+    },
+    {
+      "role": "accountant",
+      "accountId": "books.symbio-fcef733893.near",
+      "amountYocto": "50000000000000000000000",
+      "storageBytes": 356,
+      "codeHash": "11111111111111111111111111111111"
+    },
+    {
+      "role": "scout",
+      "accountId": "scout.symbio-fcef733893.near",
+      "amountYocto": "20000000000000000000000",
+      "storageBytes": 182,
+      "codeHash": "11111111111111111111111111111111"
+    }
+  ],
+  "successfulKnownTransactions": 9,
+  "transactions": [
+    {
+      "label": "fund-dedicated-deployment-wallet",
+      "hash": "2ZmseYGugRhj5dUbPBXnMHPa7fixn9G78f1YZNtLoRWa",
+      "signerId": "solidvideo4090.near",
+      "receiverId": "near",
+      "finalExecutionStatus": "FINAL",
+      "status": {
+        "SuccessValue": "dHJ1ZQ=="
+      },
+      "tokensBurntYocto": "7443801940063600000000",
+      "url": "https://nearblocks.io/txns/2ZmseYGugRhj5dUbPBXnMHPa7fixn9G78f1YZNtLoRWa"
+    },
+    {
+      "label": "install-owner-recovery",
+      "hash": "9Ubhe7onpNyLRoX3GgSAU9qzEzhL2XPKtB2sx14G8WD4",
+      "signerId": "symbio-fcef733893.near",
+      "receiverId": "symbio-fcef733893.near",
+      "finalExecutionStatus": "FINAL",
+      "status": {
+        "SuccessValue": ""
+      },
+      "tokensBurntYocto": "41964925000000000000",
+      "url": "https://nearblocks.io/txns/9Ubhe7onpNyLRoX3GgSAU9qzEzhL2XPKtB2sx14G8WD4"
+    },
+    {
+      "label": "create-treasury",
+      "hash": "BiN87LG8nUbu3Uf7jJ6K4Da91F64vWvnm4AnNQ6v29Xp",
+      "signerId": "symbio-fcef733893.near",
+      "receiverId": "treasury.symbio-fcef733893.near",
+      "finalExecutionStatus": "FINAL",
+      "status": {
+        "SuccessValue": ""
+      },
+      "tokensBurntYocto": "14956154415622900000000",
+      "url": "https://nearblocks.io/txns/BiN87LG8nUbu3Uf7jJ6K4Da91F64vWvnm4AnNQ6v29Xp"
+    },
+    {
+      "label": "create-brain",
+      "hash": "Bayyt3EwWSDs7wLZN6yJy9gvvU6bWwsPMUmVZ14BoN66",
+      "signerId": "symbio-fcef733893.near",
+      "receiverId": "brain.symbio-fcef733893.near",
+      "finalExecutionStatus": "FINAL",
+      "status": {
+        "SuccessValue": ""
+      },
+      "tokensBurntYocto": "7135512436973600000000",
+      "url": "https://nearblocks.io/txns/Bayyt3EwWSDs7wLZN6yJy9gvvU6bWwsPMUmVZ14BoN66"
+    },
+    {
+      "label": "create-hand",
+      "hash": "CvqJAmSBo2B2wT1ymfnp5HVnvqwZizjRf17sqfc8VUrv",
+      "signerId": "symbio-fcef733893.near",
+      "receiverId": "hand.symbio-fcef733893.near",
+      "finalExecutionStatus": "FINAL",
+      "status": {
+        "SuccessValue": ""
+      },
+      "tokensBurntYocto": "7135755521299000000000",
+      "url": "https://nearblocks.io/txns/CvqJAmSBo2B2wT1ymfnp5HVnvqwZizjRf17sqfc8VUrv"
+    },
+    {
+      "label": "create-accountant",
+      "hash": "EYxUtK2bZf3ZYvyfmRhHvP61rCDziQvqicG9JHRhTUz8",
+      "signerId": "symbio-fcef733893.near",
+      "receiverId": "books.symbio-fcef733893.near",
+      "finalExecutionStatus": "FINAL",
+      "status": {
+        "SuccessValue": ""
+      },
+      "tokensBurntYocto": "7135581889638000000000",
+      "url": "https://nearblocks.io/txns/EYxUtK2bZf3ZYvyfmRhHvP61rCDziQvqicG9JHRhTUz8"
+    },
+    {
+      "label": "create-scout",
+      "hash": "Esrw5KwT6UfUfPcvgWMBXFBXhJKuZU4oMMtJntHCEgM",
+      "signerId": "symbio-fcef733893.near",
+      "receiverId": "scout.symbio-fcef733893.near",
+      "finalExecutionStatus": "FINAL",
+      "status": {
+        "SuccessValue": ""
+      },
+      "tokensBurntYocto": "7114989537500000000000",
+      "url": "https://nearblocks.io/txns/Esrw5KwT6UfUfPcvgWMBXFBXhJKuZU4oMMtJntHCEgM"
+    },
+    {
+      "label": "refund-excess-to-meteor",
+      "hash": "AySvbKtjxRrzrnxcE8m4GzTn8XLifi3fgSx368q3qxwW",
+      "signerId": "symbio-fcef733893.near",
+      "receiverId": "solidvideo4090.near",
+      "finalExecutionStatus": "FINAL",
+      "status": {
+        "SuccessValue": ""
+      },
+      "tokensBurntYocto": "44636512500000000000",
+      "url": "https://nearblocks.io/txns/AySvbKtjxRrzrnxcE8m4GzTn8XLifi3fgSx368q3qxwW"
+    },
+    {
+      "label": "revoke-temporary-deployer",
+      "hash": "4y3sshd8FBdLCsuVTRUdKKEh3t7LKFg48AcYUwVzdHCM",
+      "signerId": "symbio-fcef733893.near",
+      "receiverId": "symbio-fcef733893.near",
+      "finalExecutionStatus": "FINAL",
+      "status": {
+        "SuccessValue": ""
+      },
+      "tokensBurntYocto": "40601225000000000000",
+      "url": "https://nearblocks.io/txns/4y3sshd8FBdLCsuVTRUdKKEh3t7LKFg48AcYUwVzdHCM"
+    }
+  ],
+  "claims": {
+    "hostedExecutionMode": "PAPER",
+    "teeDeploymentApproved": false,
+    "paidInferenceRequests": 0,
+    "tradesPerformed": 0,
+    "intentsSettlements": 0,
+    "nftsMinted": 0,
+    "businessRevenueProven": false,
+    "purchasedComputeFromProceeds": false,
+    "businessDistributions": false
+  },
+  "localValidation": {
+    "manifestTests": 5,
+    "sandboxFactorySnapshotRehearsal": true,
+    "unsignedWalletTransportFixture": true
+  },
+  "contractSourceTree": "29a8a898f0dfce2da2a28300421c8d731c0900ec"
+}

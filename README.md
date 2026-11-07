@@ -14,6 +14,8 @@ The backend includes TypeScript/Fastify, PostgreSQL/Prisma, durable workers, a R
 
 **Evidence status:** the [hosted PAPER backend](https://symbiochain-core.onrender.com/docs), PostgreSQL recovery tests, real local NEAR contract calls, public signed quotes, and authenticated TEE hardware audits have run. Hardware evidence, deployment approval and signed inference remain separate gates; no funded mainnet round trip or verified paid completion is claimed. The [testnet rehearsal](docs/TESTNET_REHEARSAL.md) records its own actual checks and explicit simulations. This repository does not claim that an arbitrage opportunity exists or that the swarm has achieved financial self-sufficiency. See [implementation status](docs/IMPLEMENTATION.md).
 
+**Mainnet foundation — November 7:** [treasury.symbio-fcef733893.near](https://nearblocks.io/address/treasury.symbio-fcef733893.near) is deployed and **paused**, with four funded agent accounts and disabled workers. The dedicated owner is `symbio-fcef733893.near`, controlled by the funding wallet’s existing Meteor recovery key; the temporary deployment key is revoked. [Final on-chain verification](artifacts/mainnet-paused-deployment.json) records nine successful known transactions, balances and the pinned executable. Render stays PAPER. This establishes infrastructure, not TEE-approved execution, trading, external revenue or compute purchases.
+
 For the testnet entry, start with the [judge walkthrough](docs/TESTNET_SUBMISSION.md).
 It includes real Sepolia/Solana transaction links, the resumable agent runner,
 worker recovery, budget limits and the remaining TEE approval gate.

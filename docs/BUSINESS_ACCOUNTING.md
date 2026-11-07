@@ -2,7 +2,7 @@
 
 ## Status on November 6, 2026
 
-The owner has no mainnet NEAR funds and has not selected a dedicated mainnet account or spending caps. No mainnet deployment, customer collection, swap, compute purchase or business-funded distribution was performed for this change. No paid inference was requested. The losing 1Click round-trip preview remains rejected; a ledger cannot create a profitable route.
+At the time of this feature’s isolated validation, mainnet funding and accounts were unset. The November 7 [paused mainnet foundation](../artifacts/mainnet-paused-deployment.json) supersedes that funding status; operational trading limits remain unset. No mainnet deployment, customer collection, swap, compute purchase or business-funded distribution was performed for this change. No paid inference was requested. The losing 1Click round-trip preview remains rejected; a ledger cannot create a profitable route.
 
 This feature adds invoice accounting, external Intents receipt verification, reported operating-cost windows and proceeds reservations. **It does not complete the original self-funding business claim.** Automatic NEAR AI credit purchasing remains provider-blocked and unimplemented. The [earned-proceeds NFT workflow](BUSINESS_FUNDING.md) is now implemented with exact-identity recovery, but defaults to disabled and has no funded mainnet proof. Actual purchase/distribution counters remain zero. The existing testnet payout fixture is not relabelled as business revenue.
 

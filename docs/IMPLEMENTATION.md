@@ -38,7 +38,7 @@ The test suite contains separate TypeScript unit, PostgreSQL integration and Rus
 
 ## Material work not established by local verification
 
-- A dedicated funded mainnet deployment, real MPC response from that deployment, and completed two-leg 1Click settlement have not been performed.
+- A [funded, paused mainnet foundation](../artifacts/mainnet-paused-deployment.json) is now verified. A real MPC response from that deployment and completed two-leg 1Click settlement remain unperformed; the hosted runtime stays PAPER.
 - A real authenticated NEAR AI run with independently approved gateway/model measurements has not been performed. Hardware-policy fixtures do not replace that evidence.
 - Direct automatic conversion of trading proceeds into purchased NEAR AI credits is not implemented. The documented provider staking-credit sync supports an already linked source and is not a trade-profit purchase. The [provider funding decision](PROVIDER_FUNDING.md) records the inspected official interfaces and the missing customer payment protocol.
 - Hosting/funding costs and all native gas values are not yet a complete realized cost basis. The API reports gross trading P&L and keeps full-business runway unknown.
@@ -50,9 +50,9 @@ These boundaries are part of the acceptance record, not successful live demonstr
 
 ## External prerequisites
 
-Dedicated NEAR accounts/keys, treasury policy, operational reserves, derived EVM/Solana balances/gas, registered/funded Intents agent balances, NEAR AI inference and credit-balance credentials, and independently approved measurements are required for funded external validation. A 1Click partner JWT is optional; unauthenticated access uses the provider's applicable fee schedule. Existing wallets and unrelated project credentials were not accessed or reused.
+The paused mainnet accounts and scoped runtime keys now exist, with offline owner recovery and a separate private mainnet profile. Operational treasury policy, trading reserves, derived EVM/Solana balances/gas, registered/funded Intents agent balances, NEAR AI inference and credit-balance credentials, and independently approved measurements are required for funded external validation. A 1Click partner JWT is optional; unauthenticated access uses the provider's applicable fee schedule. No original Meteor private key was exported.
 
-The current live preflight still reports 16 missing dedicated settings. The selected PAPER stack is Supabase PostgreSQL plus Render, with an optional cron-job.org readiness check. Render deployment, Supabase migrations/TLS/RLS, authenticated HTTPS/WSS, all three workers and a complete hosted PAPER cycle pass. The five-minute readiness monitor is configured. See [hosted evidence](../artifacts/hosted-paper-verification.json). Railway provisioning was rejected; its alternative three-resource plan remains unapplied. See [deployment status](DEPLOYMENT.md). The backend code and passing checks do not resolve these external prerequisites or the missing compute-purchase protocol.
+The earlier live preflight recorded 16 missing dedicated settings. The selected PAPER stack is Supabase PostgreSQL plus Render, with an optional cron-job.org readiness check. Render deployment, Supabase migrations/TLS/RLS, authenticated HTTPS/WSS, all three workers and a complete hosted PAPER cycle pass. The five-minute readiness monitor is configured. See [hosted evidence](../artifacts/hosted-paper-verification.json). Railway provisioning was rejected; its alternative three-resource plan remains unapplied. See [deployment status](DEPLOYMENT.md). The backend code and passing checks do not resolve these external prerequisites or the missing compute-purchase protocol.
 
 ## Business evidence extension — November 5, 2026
 
