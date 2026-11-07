@@ -1,5 +1,11 @@
 # SymbioChain Core
 
+## Supply chain trust boundary: fail-closed policy
+
+The November 7 audit used unmodified [Brave near-verifier](https://github.com/brave/near-verifier) against `z-ai/glm-5.3-flash` in **provenance-only mode**. Intel TDX, NVIDIA and gateway TLS/binding subchecks passed. **The deployment was not approved:** the launcher had no accepted signed SLSA provenance; other image/source pins, OS measurements and required gateway services also differed from Brave's policy. Gateway, model and inference-proxy software are not claimed as fully verified. The launcher rebuild exemption does not waive signed provenance. [Raw report and audit scope](artifacts/brave-cli-verification.json).
+
+Paid inference remains gated; we have not changed trust pins to force a pass. [Compose-manager issue #64](https://github.com/nearai/compose-manager/issues/64) concerns reproducible launcher builds and does not establish provenance for our observed digest. **Mainnet economics, external revenue and automatic provider credit purchases remain unproven.** See [the exact approval handoff](docs/TEE_APPROVAL_HANDOFF.md).
+
 **Three agents, one treasury, measurable operating costs.** Scout searches approved cross-chain routes. Brain evaluates committed proposals using NEAR AI confidential inference. Hand requests constrained Chain Signatures, broadcasts deposits, and reconciles settlement. Agents buy each other's services through NEAR Intents. An operational reserve and a separate inference-spending policy govern whether the swarm may continue.
 
 The backend includes TypeScript/Fastify, PostgreSQL/Prisma, durable workers, a Rust NEAR treasury/NFT contract, EVM and native Solana transfer adapters, encrypted evidence, replayable WebSocket events, and Docker/CI configuration.
