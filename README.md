@@ -96,6 +96,8 @@ The hardware verifier uses patched `@phala/dcap-qvl`, not the vulnerable legacy 
 
 See the [private inference verification runbook](docs/PRIVATE_INFERENCE.md) for model privacy tiers, the NVIDIA verdict trust boundary, non-billable preparation, and remaining transport work.
 
+An independent cross-check uses [Brave's unmodified NEAR verifier](https://github.com/brave/near-verifier), which targets the NEAR AI Cloud backend behind Brave Leo. On November 7, its authenticated CLI returned **exit 1** in the documented provenance-only mode: CPU/GPU and TLS subchecks passed, but launcher provenance was unavailable and the live deployment differed from its source/OS/service pins. The launcher exemption skips rebuilding only after provenance verification. See the [unaltered CLI report](artifacts/brave-cli-provenance-only-report.json), [invocation and scope](artifacts/brave-cli-verification.json), and [launcher policy analysis](docs/TEE_LAUNCHER_POLICY.md). No image rebuild or paid inference was performed, and deployment approval remains false.
+
 ## PAPER, LIVE and REPLAY
 
 | Mode   | Behavior                                                                 | Evidence                                        |

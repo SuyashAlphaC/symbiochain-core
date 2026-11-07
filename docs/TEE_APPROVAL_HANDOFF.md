@@ -6,6 +6,19 @@ provenance. Its pinned verification function returned unverified for our exact
 digest. `npm run probe:launcher` reproduces that key-free prerequisite diagnostic;
 it is not a complete service attestation and does not approve inference.
 
+**November 7 update:** upstream HEAD remains `72a1a994`. Its unmodified,
+authenticated CLI was run for `z-ai/glm-5.3-flash` in its documented provenance-only
+mode and exited **1**, without a timeout. Intel TDX, NVIDIA and TLS subchecks
+passed; the exact launcher still had no accepted SLSA record. The live gateway,
+proxy and Compose Manager source commits also differ from Brave's pins, the OS
+measurement tuples are unapproved, and two gateway images required by its policy
+are absent from the measured compose. See the [raw CLI output](../artifacts/brave-cli-provenance-only-report.json)
+and [scope/commit details](../artifacts/brave-cli-verification.json). No pins were
+changed, rebuild performed, S3 approval marker written or inference purchased.
+The earlier observations below remain historical records. Resolution now also
+requires reviewing the current deployment differences or selecting a compatible,
+reviewed replacement; bypassing rebuilding does not supply missing provenance.
+
 Rechecked November 5, 2026: gateway/model hardware verification passes, but the
 same launcher digest is still present. Both GitHub organization/repository
 attestation endpoints and the legacy OCI `.att`/`.sig` tags returned 404. The
