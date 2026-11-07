@@ -1,5 +1,12 @@
 # Implementation and acceptance ledger
 
+**Current hosted profile: LIVE mainnet observation, execution DISARMED.** The
+[production record](../artifacts/mainnet-production-verification.json) verifies
+the paired release, real finalized balances, code identity, paused policy,
+disabled on-chain workers and known deployment receipts. Render starts only the
+API. No paid inference, new chain transaction or customer revenue was produced
+by this rollout. [Remaining activation requirements](MAINNET_PRODUCTION.md).
+
 November 5 testnet additions are detailed in the [submission walkthrough](TESTNET_SUBMISSION.md):
 confirmed Sepolia and Solana devnet execution fixtures, their NEAR MPC request
 links, a durable integrated runner and actual worker-stop/recovery evidence.
@@ -10,8 +17,8 @@ The isolated [testnet rehearsal](TESTNET_REHEARSAL.md) now supplements the local
 suites with a real testnet deployment, MPC signatures and NFT/distribution calls.
 Its [published report](../artifacts/testnet-rehearsal.json) keeps those observations
 separate from simulated settlement and economics, TEE hardware evidence,
-deployment approval and signed inference. The existing agent runtime remains PAPER
-or explicitly armed mainnet LIVE; no testnet market solver or paid inference bypass
+deployment approval and signed inference. The runtime supports PAPER, disarmed
+mainnet observation and separately armed LIVE execution; no testnet market solver or paid inference bypass
 has been introduced.
 
 This public repository contains the SymbioChain backend. The trading swarm remains the product: Scout, Brain, Hand, NEAR treasury, Chain Signatures, 1Click, confidential inference, agent payments, accounting, frontend APIs and deployment artifacts.
@@ -38,7 +45,7 @@ The test suite contains separate TypeScript unit, PostgreSQL integration and Rus
 
 ## Material work not established by local verification
 
-- A [funded, paused mainnet foundation](../artifacts/mainnet-paused-deployment.json) is now verified. A real MPC response from that deployment and completed two-leg 1Click settlement remain unperformed; the hosted runtime stays PAPER.
+- A [funded, paused mainnet foundation](../artifacts/mainnet-paused-deployment.json) and hosted mainnet observer are verified. A real MPC response from that deployment and completed two-leg 1Click settlement remain unperformed; hosted execution stays disarmed.
 - A real authenticated NEAR AI run with independently approved gateway/model measurements has not been performed. Hardware-policy fixtures do not replace that evidence.
 - Direct automatic conversion of trading proceeds into purchased NEAR AI credits is not implemented. The documented provider staking-credit sync supports an already linked source and is not a trade-profit purchase. The [provider funding decision](PROVIDER_FUNDING.md) records the inspected official interfaces and the missing customer payment protocol.
 - Hosting/funding costs and all native gas values are not yet a complete realized cost basis. The API reports gross trading P&L and keeps full-business runway unknown.
@@ -52,7 +59,7 @@ These boundaries are part of the acceptance record, not successful live demonstr
 
 The paused mainnet accounts and scoped runtime keys now exist, with offline owner recovery and a separate private mainnet profile. Operational treasury policy, trading reserves, derived EVM/Solana balances/gas, registered/funded Intents agent balances, NEAR AI inference and credit-balance credentials, and independently approved measurements are required for funded external validation. A 1Click partner JWT is optional; unauthenticated access uses the provider's applicable fee schedule. No original Meteor private key was exported.
 
-The earlier live preflight recorded 16 missing dedicated settings. The selected PAPER stack is Supabase PostgreSQL plus Render, with an optional cron-job.org readiness check. Render deployment, Supabase migrations/TLS/RLS, authenticated HTTPS/WSS, all three workers and a complete hosted PAPER cycle pass. The five-minute readiness monitor is configured. See [hosted evidence](../artifacts/hosted-paper-verification.json). Railway provisioning was rejected; its alternative three-resource plan remains unapplied. See [deployment status](DEPLOYMENT.md). The backend code and passing checks do not resolve these external prerequisites or the missing compute-purchase protocol.
+The earlier live preflight recorded 16 missing dedicated settings. Its PAPER stack used Supabase PostgreSQL plus Render, with an optional cron-job.org readiness check. Historical Render deployment, Supabase migrations/TLS/RLS, HTTPS/WSS, all three workers and a complete PAPER cycle passed. See [that dated evidence](../artifacts/hosted-paper-verification.json). The current mainnet observer preserves those records, starts no workers and uses the same hosting projects. Eight migrations and protection of 19 backend tables were verified. The five-minute readiness monitor remains configured. Railway provisioning was rejected; its alternative three-resource plan remains unapplied. See [current deployment status](DEPLOYMENT.md). Passing checks do not resolve the external execution prerequisites or missing compute-purchase protocol.
 
 ## Business evidence extension — November 5, 2026
 

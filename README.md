@@ -2,7 +2,7 @@
 
 ## Supply chain trust boundary: fail-closed policy
 
-**TEE execution status: QUARANTINED. The inference gate is closed.** Demo inference uses local PAPER fixtures with no enclave or TEE signature.
+**TEE execution status: QUARANTINED. The inference gate is closed.** The hosted LIVE observer performs no inference. Historical PAPER inference uses local fixtures with no enclave or TEE signature.
 
 The November 7 audit used unmodified [Brave near-verifier](https://github.com/brave/near-verifier) against `z-ai/glm-5.3-flash` in **provenance-only mode**. Intel TDX, NVIDIA and gateway TLS/binding subchecks passed. **The deployment was not approved:** the launcher had no accepted signed SLSA provenance; other image/source pins, OS measurements and required gateway services also differed from Brave's policy. Gateway, model and inference-proxy software are not claimed as fully verified. The launcher rebuild exemption does not waive signed provenance. [Raw report and audit scope](artifacts/brave-cli-verification.json).
 
@@ -12,9 +12,11 @@ Paid inference remains gated; we have not changed trust pins to force a pass. [C
 
 The backend includes TypeScript/Fastify, PostgreSQL/Prisma, durable workers, a Rust NEAR treasury/NFT contract, EVM and native Solana transfer adapters, encrypted evidence, replayable WebSocket events, and Docker/CI configuration.
 
-**Evidence status:** the [hosted PAPER backend](https://symbiochain-core.onrender.com/docs), PostgreSQL recovery tests, real local NEAR contract calls, public signed quotes, and authenticated TEE hardware audits have run. Hardware evidence, deployment approval and signed inference remain separate gates; no funded mainnet round trip or verified paid completion is claimed. The [testnet rehearsal](docs/TESTNET_REHEARSAL.md) records its own actual checks and explicit simulations. This repository does not claim that an arbitrage opportunity exists or that the swarm has achieved financial self-sufficiency. See [implementation status](docs/IMPLEMENTATION.md).
+**Current production:** the [permanent frontend](https://symbiochain.vercel.app/dashboard) and [backend](https://symbiochain-core.onrender.com/docs) serve **LIVE mainnet observations with execution DISARMED**. Finalized balances, storage collateral, permissions, executable identity and known deployment receipts are real blockchain data. The API starts no worker, and mutations are disabled. [Exact release revisions and verification](artifacts/mainnet-production-verification.json); [activation and rollback runbook](docs/MAINNET_PRODUCTION.md).
 
-**Mainnet foundation — November 7:** [treasury.symbio-fcef733893.near](https://nearblocks.io/address/treasury.symbio-fcef733893.near) is deployed and **paused**, with four funded agent accounts and disabled workers. The dedicated owner is `symbio-fcef733893.near`, controlled by the funding wallet’s existing Meteor recovery key; the temporary deployment key is revoked. [Final on-chain verification](artifacts/mainnet-paused-deployment.json) records nine successful known transactions, balances and the pinned executable. Render stays PAPER. This establishes infrastructure, not TEE-approved execution, trading, external revenue or compute purchases.
+**Evidence status:** PostgreSQL recovery tests, real local/testnet contract calls, public signed quotes and authenticated TEE hardware audits have run. Hardware evidence, deployment approval and signed inference remain separate gates; no funded mainnet round trip or verified paid completion is claimed. The [testnet rehearsal](docs/TESTNET_REHEARSAL.md) records its own actual checks and explicit simulations. This repository does not claim that an arbitrage opportunity exists or that the swarm has achieved financial self-sufficiency. See [implementation status](docs/IMPLEMENTATION.md).
+
+**Mainnet foundation — November 7:** [treasury.symbio-fcef733893.near](https://nearblocks.io/address/treasury.symbio-fcef733893.near) is deployed and **paused**, with four funded agent accounts and disabled workers. The dedicated owner is `symbio-fcef733893.near`, controlled by the funding wallet’s existing Meteor recovery key; the temporary deployment key is revoked. [Final on-chain verification](artifacts/mainnet-paused-deployment.json) records nine successful known transactions, balances and the pinned executable. Hosted observation does not unpause this infrastructure or establish TEE-approved execution, trading, external revenue or compute purchases.
 
 For the testnet entry, start with the [judge walkthrough](docs/TESTNET_SUBMISSION.md).
 It includes real Sepolia/Solana transaction links, the resumable agent runner,
@@ -22,7 +24,7 @@ worker recovery, budget limits and the remaining TEE approval gate.
 
 ## Business evidence
 
-Reviewable release candidates: [backend `99a482c`](https://github.com/SuyashAlphaC/symbiochain-core/commit/99a482cc25e23b093b839c0f51f476bc5fe9e19b) and [frontend `9ef944a`](https://github.com/AviraL0013/SymbioChain/commit/9ef944a7156c06b8e18e03a381712b9998cf928a). These include runtime packaging and release documentation; the implementation/test revisions are separately recorded in [the manifest](artifacts/service-loop-release-manifest.json). Production is unchanged.
+The current paired release includes the service, accounting and funding implementations. Exact deployed revisions are in [the production record](artifacts/mainnet-production-verification.json); [earlier service candidates](artifacts/service-loop-release-manifest.json) remain historical evidence. Deployment does not establish that disabled execution paths have completed a real-money cycle.
 
 The [human-in-the-loop metabolic bridge](docs/SERVICE_LOOP.md#human-in-the-loop-metabolic-bridge) turns eligible reported net proceeds into a durable manual-purchase task. Optional Discord alerts and operator confirmation do not purchase or verify provider credits. The dashboard distinguishes **QUARANTINED**, **HUMAN IN THE LOOP** and **UNPROVEN revenue**. Local PAPER reports have no enclave or TEE signature. No organic demand or guaranteed profit is claimed.
 
@@ -116,11 +118,11 @@ An independent cross-check uses [Brave's unmodified NEAR verifier](https://githu
 
 ## PAPER, LIVE and REPLAY
 
-| Mode   | Behavior                                                                 | Evidence                                        |
-| ------ | ------------------------------------------------------------------------ | ----------------------------------------------- |
-| PAPER  | Synthetic market/model/settlement, persistent PostgreSQL                 | `SIMULATED`                                     |
-| LIVE   | Real provider/RPC/contract calls; explicitly armed and separately funded | Only checks actually passed are marked verified |
-| REPLAY | Offline archived data; no new inference or transactions                  | `REPLAY` plus original source mode              |
+| Mode   | Behavior                                                                         | Evidence                                        |
+| ------ | -------------------------------------------------------------------------------- | ----------------------------------------------- |
+| PAPER  | Synthetic market/model/settlement, persistent PostgreSQL                         | `SIMULATED`                                     |
+| LIVE   | Finalized mainnet reads; provider execution requires separate arming and funding | Only checks actually passed are marked verified |
+| REPLAY | Offline archived data; no new inference or transactions                          | `REPLAY` plus original source mode              |
 
 Export an administrator-only evidence bundle and replay it:
 

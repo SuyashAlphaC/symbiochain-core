@@ -1,5 +1,26 @@
 # Deployment, candidate and submission revisions
 
+## Current production — November 7 mainnet observer
+
+The [production verification record](../artifacts/mainnet-production-verification.json)
+supersedes the historical deployment tables below. It identifies the exact
+frontend and backend revisions, existing hosting projects, sanitized checks and
+the LIVE/disarmed runtime. The frontend's `/api/release` independently exposes its
+public Vercel revision and deployment ID. Both repositories are public.
+The artifact is frozen at its check time; later documentation-only deployments
+can have a newer frontend Git revision. Consult `/api/release` for current identity.
+
+The treasury is paused and no worker is started by the observer. Mainnet native
+balances and recorded deployment transactions are real; PAPER economics, testnet
+accounting and local wallet fixtures retain their explicit scope. Paid inference,
+funded trading, external revenue, automatic credit purchasing and business-funded
+NFT distributions remain unproven. No hackathon form submission is confirmed.
+See [activation requirements and rollback](MAINNET_PRODUCTION.md).
+
+## Historical release records
+
+Statements below describe their dated checks, not the current runtime.
+
 The [machine-readable revision manifest](../artifacts/funding-release-manifest.json)
 records the verified deployed baseline separately from the business-accounting and NFT-funding source.
 A hackathon form submission has **not** been confirmed; no revision is falsely

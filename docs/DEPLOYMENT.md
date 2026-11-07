@@ -2,7 +2,26 @@
 
 The selected demo stack is Supabase PostgreSQL, a Render Docker web service, and an optional cron-job.org availability check. LIVE and PAPER share code but never share accounting modes. Use separate databases/environments for demonstrations and funded operation.
 
-## Verified deployment
+## Current deployment
+
+The existing [Render service](https://symbiochain-core.onrender.com/docs) and
+[Vercel application](https://symbiochain.vercel.app/dashboard) now serve LIVE
+mainnet observations with `EXECUTION_ENABLED=false`. The treasury stays paused,
+workers are not started, mutations are refused and no wallet recovery key is
+loaded. The [current verification artifact](../artifacts/mainnet-production-verification.json)
+identifies exact revisions and deployment IDs. [Mainnet operation and rollback](MAINNET_PRODUCTION.md)
+describes the independent requirements for paid inference and funded execution.
+
+`render.yaml` remains the reusable PAPER template. The existing service's reviewed
+runtime variables select LIVE/disarmed instead. Historical PAPER rows remain in
+the same database under their original mode; they are not counted as mainnet
+transactions. Eight migrations are applied, including additive business tables.
+Database hardening runs before the API starts. Hosting credentials and the
+durable compute-budget identity are preserved.
+
+## Historical PAPER deployment
+
+The following records describe the previous hosted profile and its checks.
 
 The PAPER service is live at [operator dashboard](https://symbiochain-core.onrender.com/dashboard), [API documentation](https://symbiochain-core.onrender.com/docs), and [public readiness](https://symbiochain-core.onrender.com/readyz). Source is the public [GitHub repository](https://github.com/SuyashAlphaC/symbiochain-core). The latest verified deployment `dep-dbnb6gp5efls73arhbmg` runs revision `e1633c7ff16cb2ce3ce484aa44b12d09cc0117a5`; automatic deployments are disabled. Later source changes add optional provenance diagnostics, documentation and business-accounting features; they are not part of this verified deployed application revision. See [the revision ledger](RELEASE_REVISIONS.md).
 
