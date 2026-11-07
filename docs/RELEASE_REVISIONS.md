@@ -56,7 +56,17 @@ confirmed Render still serves `e1633c7`, and both hosted business endpoints retu
 a later repository merge does not prove its deployment. Apply the existing
 business migration and deploy the paired backend APIs before releasing this page.
 
-The new funding extension has separate draft reviews:
+The funding extension reviews have been merged into their source repositories; this does not establish a hosted release:
 [backend #2](https://github.com/SuyashAlphaC/symbiochain-core/pull/2) and
 [frontend #5](https://github.com/AviraL0013/SymbioChain/pull/5). Earlier merged PRs
 retain their original scope. No production deployment was performed in this task.
+
+## November 7 service and manual funding candidate
+
+The application revisions for this extension are backend [`e59d172`](https://github.com/SuyashAlphaC/symbiochain-core/commit/e59d172c30caab19f8ccf1d7e3a114d54ee57ff0) and frontend [`b879d05`](https://github.com/AviraL0013/SymbioChain/commit/b879d0514d2551eb53504b757dde9cdfaed27974). Later documentation/evidence commits do not change those application revisions. The [candidate manifest](../artifacts/service-loop-release-manifest.json) records the exact scope.
+
+New behavior includes prepaid quote-risk reports, separate customer advances and delivered external revenue, disabled-by-default LIVE arbitrage, durable manual top-up tasks and unverified operator confirmations. The frontend displays recorded TEE quarantine and HITL status through a fixed server proxy and exposes PAPER-only reporting under the existing operator session. The NEAR contract executable did not change; additional tests cover small splits, rounding liabilities and distribution replay.
+
+[Isolated validation](../artifacts/service-loop-validation.json) passed 129 unit, 80 PostgreSQL integration and 16 Rust contract tests. Frontend validation passed 25 tests, formatting, lint, type checks, production build and the local browser flow. Local source fixtures are not external revenue, paid inference, provider credits or mainnet proof. The [read-only hosted preflight](../artifacts/service-loop-production-preflight.json) records API availability separately from source changes. No production database, hosting service, TEE allowlist or wallet was modified by this extension.
+
+See [the service and bridge runbook](SERVICE_LOOP.md). Existing business migrations are required, with no new migration. Release the backend and then the paired frontend before creating service cycles; older detail clients accept only the round-trip strategy. Manual reports remain unverified and their reservations stay held. Customer checkout/refund operations, actual mainnet revenue and supported automatic provider credit purchasing remain unfinished.

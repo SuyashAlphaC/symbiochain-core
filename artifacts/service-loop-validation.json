@@ -1,0 +1,23 @@
+{
+  "capturedAt": "2026-11-07T04:34:58.758Z",
+  "scope": "ISOLATED_LOCAL_PAPER_FIXTURES",
+  "backendApplicationRevision": "e59d172c30caab19f8ccf1d7e3a114d54ee57ff0",
+  "unitTests": 129,
+  "postgresIntegrationTests": 80,
+  "rustContractTests": 16,
+  "serviceDemo": {
+    "status": "DELIVERED",
+    "proofStatus": "SIMULATED",
+    "executionAuthorized": false
+  },
+  "manualBridge": {
+    "state": "OPERATOR_REPORTED_UNVERIFIED",
+    "purchasesSubmitted": 0
+  },
+  "realPayments": 0,
+  "externalCustomerRevenue": 0,
+  "paidInferenceRequests": 0,
+  "providerVerifiedPurchases": 0,
+  "notificationsSent": 0,
+  "productionChanged": false
+}
