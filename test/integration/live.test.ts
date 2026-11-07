@@ -16,6 +16,7 @@ import { loadConfig } from '../../src/config.js';
 import { createDatabase } from '../../src/db.js';
 import { Store } from '../../src/store.js';
 import { Engine } from '../../src/engine.js';
+import { PaperProviders } from '../../src/providers/paper.js';
 import { Proposal, digest, type BrainResult } from '../../src/domain.js';
 import { LiveProviders, type LivePorts } from '../../src/providers/live.js';
 import { ChainWallets, type UnsignedTransfer } from '../../src/providers/wallets.js';
@@ -44,6 +45,7 @@ const fixtureConfig = loadConfig({
   ...process.env,
   DATABASE_URL: url,
   EXECUTION_MODE: 'PAPER',
+  LIVE_ARBITRAGE_ENABLED: 'true',
   EVM_RPC_URL: 'http://127.0.0.1:1',
   BASE_ASSET: base,
   ALLOWED_ASSETS: `${base},${middle}`,
@@ -68,6 +70,33 @@ beforeEach(async () => {
 });
 afterEach(() => vi.restoreAllMocks());
 afterAll(async () => db.$disconnect());
+
+it('refuses new and queued round trips when live arbitrage is disabled', async () => {
+  const disabled = new Store(db, { ...store.config, LIVE_ARBITRAGE_ENABLED: false });
+  const provider = new PaperProviders();
+  const p = {
+    strategy: 'round-trip',
+    originChain: 'eip155:8453',
+    destinationChain: 'solana:mainnet',
+    originAsset: base,
+    intermediateAsset: middle,
+    amountAtoms: '10000000',
+    recipient: evmSigner.address,
+    refundTo: evmSigner.address,
+    slippageBps: 50,
+    expiresAt: new Date(Date.now() + 600000).toISOString(),
+  };
+  await expect(disabled.createCycle(p, randomUUID())).rejects.toMatchObject({
+    code: 'LIVE_ARBITRAGE_DISABLED',
+  });
+  const { cycle } = await store.createCycle(p, randomUUID());
+  const quote = vi.spyOn(provider, 'quote');
+  await new Engine(disabled, provider).tick(['SCOUT']);
+  expect((await disabled.getCycle(cycle.id)).rejection).toBe('LIVE_ARBITRAGE_DISABLED');
+  expect(quote).not.toHaveBeenCalled();
+  expect(await db.inferenceAttempt.count()).toBe(0);
+  expect(await db.liveLeg.count()).toBe(0);
+});
 
 function fixture(
   options: {

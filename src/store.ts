@@ -116,6 +116,8 @@ export class Store {
           throw new DomainError('IDEMPOTENCY_CONFLICT', 'Key already identifies another proposal');
         return { cycle: existing, created: false };
       }
+      if (this.mode === 'LIVE' && !this.config.LIVE_ARBITRAGE_ENABLED)
+        throw new DomainError('LIVE_ARBITRAGE_DISABLED', 'Live round-trip admission is disabled');
       const cycle = await tx.cycle.create({
         data: {
           mode: this.mode,

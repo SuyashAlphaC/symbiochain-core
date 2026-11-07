@@ -120,6 +120,16 @@ export class Engine {
       this.store.mode === 'LIVE' &&
       (await this.store.db.liveLeg.count({ where: { cycleId: cycle.id } })) > 0;
     if (
+      this.store.mode === 'LIVE' &&
+      !this.store.config.LIVE_ARBITRAGE_ENABLED &&
+      !cycle.submission &&
+      !hasLiveOperation &&
+      ['DISCOVERED', 'QUOTED', 'ASSESSED', 'RESERVED'].includes(cycle.state)
+    ) {
+      await this.reject(job, cycle, ['LIVE_ARBITRAGE_DISABLED']);
+      return;
+    }
+    if (
       ['DISCOVERED', 'QUOTED', 'ASSESSED', 'RESERVED'].includes(cycle.state) &&
       !cycle.submission &&
       !hasLiveOperation &&
