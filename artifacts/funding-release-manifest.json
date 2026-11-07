@@ -1,0 +1,101 @@
+{
+  "recordedAt": "2026-11-06T05:39:48.519661+00:00",
+  "supersedes": "business-release-manifest.json (historical November 5 accounting candidate)",
+  "submission": {
+    "status": "NOT_RECORDED",
+    "note": "No hackathon form receipt or submitted revision confirmation is available."
+  },
+  "verifiedDeployments": {
+    "frontend": {
+      "repository": "https://github.com/AviraL0013/SymbioChain",
+      "revision": "83d46d8eb5db2257989bf1c831694da20617635e",
+      "url": "https://symbiochain.vercel.app",
+      "project": "avirals-projects-27965510/symbiochain",
+      "executionMode": "PAPER",
+      "repositoryVisibility": "PUBLIC",
+      "revisionScope": "Last independently verified exact frontend baseline (November 5); not inferred from a later main-branch merge."
+    },
+    "backend": {
+      "repository": "https://github.com/SuyashAlphaC/symbiochain-core",
+      "revision": "e1633c7ff16cb2ce3ce484aa44b12d09cc0117a5",
+      "url": "https://symbiochain-core.onrender.com",
+      "deployment": "dep-dbm0nohsrm7s73en4t9g",
+      "executionMode": "PAPER",
+      "repositoryVisibility": "PUBLIC"
+    }
+  },
+  "fundingFeatureSourceCandidates": {
+    "frontend": "e6bbcfe57d608297447b068d11c4910456c016d7",
+    "backend": "bc5df4e4c67fde7cd336a466436d1b53dacf7dac",
+    "branch": "feature/business-revenue-loop",
+    "productionDeploymentStatus": "NOT_DEPLOYED",
+    "migration": "20261105120000_business_evidence",
+    "additionalFundingMigrationRequired": false,
+    "hostedMigrationApplied": false,
+    "note": "Application/test commits are pinned here. Later documentation commits do not change these source revisions."
+  },
+  "testnetContract": {
+    "checkedAt": "2026-11-06T05:35:51.109Z",
+    "network": "testnet",
+    "accountId": "treasury.sc-rehearsal-1bb69cb2.testnet",
+    "codeHash": "4uAgNJesg7U8amwmUDAd2LzQ4U7gyg6M7hrwows1G23e",
+    "wasmSha256": "39f034e6ae16ddb9cf253ac977c4146989a0fee1fa7c33ba0944092bf41de3d5",
+    "previousCodeHash": "EVY6VLzTu8s1vs5KS8eFmUzuRdZJQbyMLVstST45d1HE",
+    "statePreserved": true,
+    "stateHash": "cbcc248c46d03be8a535d39a65d998b20734102b7e439ab2108eea901984373b",
+    "transactionHash": "23jHZZmvfuSkn5PXhgVkhcrCn3rcZofXYmtbfwTExGCa",
+    "distributionPolicy": {
+      "accountant": "books.sc-rehearsal-1bb69cb2.testnet",
+      "total_shares_bps": 1000,
+      "paused": true
+    },
+    "mainnetTransactions": 0,
+    "paidInferenceRequests": 0,
+    "disclosure": "State-compatible testnet code upgrade only; no business revenue, conversion or dividend payment was performed."
+  },
+  "capabilities": {
+    "nftFundingImplemented": true,
+    "nftFundingEnabled": false,
+    "computePurchaseImplemented": false,
+    "computePurchaseBlocker": "NO_PUBLIC_NEAR_AI_PURCHASE_PROTOCOL"
+  },
+  "validation": {
+    "scope": "LOCAL_IMPLEMENTATION_AND_TESTNET_CODE_UPGRADE_ONLY",
+    "backendUnitTests": 129,
+    "backendIntegrationTests": 70,
+    "rustUnitTests": 14,
+    "localNearSandbox": "PASSED",
+    "frontendTests": 23,
+    "frontendCheck": "PASSED",
+    "businessBrowserCheck": "PASSED",
+    "unsignedProviderIntentValidation": "PASSED_NO_SIGNATURE_OR_SUBMISSION",
+    "publicNearCreditParser": "PASSED_THIRD_PARTY_TRANSACTION_NOT_PROJECT_REVENUE",
+    "actualCustomerReceiptsVerified": 0,
+    "newMainnetTransactions": 0,
+    "paidInferenceRequests": 0,
+    "businessFundedMainnetDistributions": 0,
+    "automaticCreditPurchases": 0
+  },
+  "evidenceBoundaries": {
+    "realExecution": "Existing testnet safeguards, MPC signatures and separate Sepolia/Solana devnet authorization fixtures; state-preserving paused testnet code upgrade.",
+    "simulation": "PAPER cycles/economics and testnet market quotes/settlement/NFT accounting fixture.",
+    "codeTested": "External fee accounting; strict signed Intents conversion; exact-identity withdrawal/distribution recovery; final receipt/event checks; balanced journals; caps, pause, cancellation and held refunds.",
+    "unfinished": [
+      "TEE-approved AI execution",
+      "funded profitable mainnet settlement",
+      "actual external customer revenue and independently verified net business profit",
+      "automatic provider credit purchasing",
+      "funded validation of proceeds-to-NFT conversion/distribution/holder claim"
+    ],
+    "ownerFundingStatus": "No mainnet funds; dedicated account/caps unset. No new spending permission inferred."
+  },
+  "productionPreflight": "funding-production-preflight.json",
+  "repositoryMain": {
+    "backend": "6a6a2ba6e6e1a4b3ad39a62b46d10500201453d6",
+    "frontend": "b855671653e4ac8a188f512b3a879c2a1a527227"
+  },
+  "fundingPullRequests": {
+    "backend": "https://github.com/SuyashAlphaC/symbiochain-core/pull/2",
+    "frontend": "https://github.com/AviraL0013/SymbioChain/pull/5"
+  }
+}

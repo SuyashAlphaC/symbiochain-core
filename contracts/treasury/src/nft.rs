@@ -80,9 +80,19 @@ impl Contract {
         token
     }
 
+    pub fn distribution_policy(&self) -> near_sdk::serde_json::Value {
+        near_sdk::serde_json::json!({"accountant": self.accountant,
+            "total_shares_bps": self.total_shares_bps, "paused": self.paused})
+    }
+
+    pub fn get_distribution(&self, distribution_reference: String) -> Option<U128> {
+        self.distributions.get(&distribution_reference).map(U128)
+    }
+
     #[payable]
     pub fn distribute_revenue(&mut self, distribution_reference: String) {
         self.role(&self.accountant);
+        require!(!self.paused, "Paused");
         require!(
             !distribution_reference.is_empty() && distribution_reference.len() <= 100,
             "Invalid reference"

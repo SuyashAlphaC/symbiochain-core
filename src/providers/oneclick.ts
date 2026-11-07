@@ -19,7 +19,7 @@ export interface SwapTerms {
   deadline: string;
   slippageBps: number;
 }
-const quoteSchema = z
+export const quoteSchema = z
   .object({
     correlationId: z.string(),
     timestamp: z.iso.datetime(),
@@ -71,7 +71,11 @@ export class OneClickClient {
       )
       .parse(raw) as TokenResponse[];
   }
-  async quote(t: SwapTerms, dry: boolean): Promise<QuoteResponse> {
+  async quote(
+    t: SwapTerms,
+    dry: boolean,
+    balances: 'CHAIN' | 'INTENTS' = 'CHAIN',
+  ): Promise<QuoteResponse> {
     const request = {
       dry,
       swapType: 'EXACT_INPUT',
@@ -79,12 +83,12 @@ export class OneClickClient {
       slippageTolerance: t.slippageBps,
       originAsset: t.originAsset,
       destinationAsset: t.destinationAsset,
-      depositType: 'ORIGIN_CHAIN',
+      depositType: balances === 'INTENTS' ? 'INTENTS' : 'ORIGIN_CHAIN',
       amount: t.amount,
       recipient: t.recipient,
-      recipientType: 'DESTINATION_CHAIN',
+      recipientType: balances === 'INTENTS' ? 'INTENTS' : 'DESTINATION_CHAIN',
       refundTo: t.refundTo,
-      refundType: 'ORIGIN_CHAIN',
+      refundType: balances === 'INTENTS' ? 'INTENTS' : 'ORIGIN_CHAIN',
       deadline: t.deadline,
     } as QuoteRequest;
     const raw = quoteSchema.parse(
@@ -154,6 +158,33 @@ export class OneClickClient {
     )
       throw new DomainError('QUOTE_SIGNATURE', 'Status carries an invalid 1Click quote signature');
     return data as unknown as GetExecutionStatusResponse;
+  }
+  async generateIntent(address: string, signerId: string): Promise<unknown> {
+    return httpJson(
+      new URL('/v0/generate-intent', this.config.ONECLICK_API_BASE_URL),
+      {
+        method: 'POST',
+        headers: this.headers(),
+        body: JSON.stringify({
+          type: 'swap_transfer',
+          standard: 'nep413',
+          depositAddress: address,
+          signerId,
+        }),
+      },
+      this.transport,
+    );
+  }
+  async submitIntent(signedData: unknown): Promise<unknown> {
+    return httpJson(
+      new URL('/v0/submit-intent', this.config.ONECLICK_API_BASE_URL),
+      {
+        method: 'POST',
+        headers: this.headers(),
+        body: JSON.stringify({ type: 'swap_transfer', signedData }),
+      },
+      this.transport,
+    );
   }
   async notify(address: string, txHash: string): Promise<void> {
     await httpJson(

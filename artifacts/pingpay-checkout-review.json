@@ -1,0 +1,35 @@
+{
+  "checkedAt": "2026-11-07T03:08:52.127Z",
+  "scope": "READ_ONLY_PROVIDER_CHECKOUT_UI",
+  "provider": "PINGPAY",
+  "checkoutHost": "pay.pingpay.io",
+  "sessionStatus": "CREATED",
+  "invoice": {
+    "amountAtoms": "1000000",
+    "asset": "USDC",
+    "decimals": 6,
+    "expiresAt": "2026-11-07 03:59:32.572+00",
+    "assetVerifiedAgainstCheckoutCatalog": true
+  },
+  "checkoutMetadataMatchesDisplayedCloudOrganization": true,
+  "successOrigin": "https://cloud.near.ai",
+  "buildersKeyOwnership": "EXTERNAL_ORGANIZATION_USER_CONFIRMED",
+  "inferenceKeyMatchesCheckoutOrganization": false,
+  "organizationBindingEvidence": "CHECKOUT_METADATA_ONLY_NOT_CREDIT_ATTRIBUTION",
+  "purchaseAutomationVerified": false,
+  "sessionUrlPublished": false,
+  "sessionIdPublished": false,
+  "customerIdentifiersPublished": false,
+  "runtimeConfigurationChanged": false,
+  "apiKeyChanged": false,
+  "paymentRequests": 0,
+  "mainnetTransactions": 0,
+  "paidInferenceRequests": 0,
+  "creditedPurchaseObserved": false,
+  "notes": [
+    "The existing Builders grant key is not owned by the checkout organization, per the owner. Paying this checkout must not be counted as replenishing that key.",
+    "Session details were read through the provider checkout page; all payment, quote, telemetry and wallet actions remained blocked.",
+    "A browser session-read RPC is not treated as a documented unattended customer purchase API.",
+    "No payment destination or provider session credential is published."
+  ]
+}

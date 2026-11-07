@@ -1,0 +1,12 @@
+{
+  "checkedAt": "2026-11-06T05:19:10.698Z",
+  "scope": "THIRD_PARTY_PUBLIC_RECEIPT_PARSER_ONLY",
+  "transactionHash": "wQzevjbFaPmwgh1vrQ8srxGBfuY4k1pxnuKU7PCXN7C",
+  "finalReceiptParsingPassed": true,
+  "netWrapCreditYocto": "3781656133366795171239802",
+  "evidenceDigest": "35303daf4c02ef7de18e40b03da892f68eb46b1f2160148cfd508f1af7bc29d7",
+  "symbiochainRevenue": false,
+  "symbiochainSwap": false,
+  "transactionsSubmitted": 0,
+  "paidInferenceRequests": 0
+}

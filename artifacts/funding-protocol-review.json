@@ -1,0 +1,16 @@
+{
+  "capturedAt": "2026-11-06T05:07:40.263Z",
+  "validatedAt": "2026-11-06T05:13:56.475Z",
+  "scope": "UNSIGNED_PROVIDER_METADATA_ONLY",
+  "syntheticUnfundedSigner": true,
+  "providerQuoteSignatureVerified": true,
+  "authorizationValidatorPassed": true,
+  "payloadType": "transfer",
+  "refundDeadlineDistinctFromDepositInactivity": true,
+  "minimumNearYocto": "271744540890729533132528",
+  "signaturesCreated": 0,
+  "transactionsSubmitted": 0,
+  "swapsExecuted": 0,
+  "paidInferenceRequests": 0,
+  "source": "https://docs.near-intents.org/integration/distribution-channels/1click-api/quickstart/signed-intent-execution"
+}

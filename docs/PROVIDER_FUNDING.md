@@ -50,3 +50,99 @@ This establishes the remaining integration requirement, not the absence of all p
 Rechecked the published [OpenAPI source](https://github.com/nearai/docs/blob/main/api-reference/openapi.json) and [external billing architecture](https://github.com/nearai/cloud-api/blob/main/CLAUDE.md#external-billing-service). The published paths still include `/v1/billing/costs`, organization usage balance and staking farm/sync, with no customer purchase/invoice/payment endpoint in that specification. The architecture places Stripe checkout in the separate `nearai-cloud-ui` billing service; its GitHub repository was not publicly accessible during this review. This does not rule out provider-supported private billing integrations, but none has been supplied for this project.
 
 The new [business ledger](BUSINESS_ACCOUNTING.md) can reserve reported earned proceeds for compute, but cannot mark them paid or purchased. A grant, a different organization's checkout, staking sync or admin credit allocation still cannot close the profit-to-compute loop. The owner confirmed that mainnet funds/account/caps remain unavailable. No payment or inference was attempted.
+
+## Public-interface-only decision on 2026-11-06
+
+The owner explicitly requires publicly supported NEAR AI interfaces only. The
+reviewed [OpenAPI](https://github.com/nearai/docs/blob/main/api-reference/openapi.json)
+and [external billing architecture](https://github.com/nearai/cloud-api/blob/main/CLAUDE.md#external-billing-service)
+still do not supply a verified customer payment-to-credit purchase protocol. The
+public [credit-transfer source](https://github.com/nearai/cloud-api/blob/main/crates/api/src/routes/credit_transfers.rs)
+describes movement of existing organization credits, not purchase using earned
+crypto proceeds; source availability alone is not a deployment/API support check.
+No undocumented billing endpoint, privileged limit mutation, reseller or invented
+payment destination is used. No paid inference or credit purchase was attempted.
+
+`POST /api/business/compute-purchases` requires admin authorization and returns
+`409 PROVIDER_PURCHASE_PROTOCOL_REQUIRED` with no payment/journal side effects.
+The funding status reports `computePurchaseImplemented: false` and
+`NO_PUBLIC_NEAR_AI_PURCHASE_PROTOCOL`; the frontend keeps the purchase count zero.
+This is a completed refusal boundary, **not** an implemented purchase adapter.
+The separate [NFT funding implementation](BUSINESS_FUNDING.md) does not resolve
+this provider dependency. Grants, existing balances, transfers and staking sync
+remain distinct from purchases in the ledger and submission claims.
+
+## Checkout support and deployment are separate — November 6 clarification
+
+NEAR AI **does support customer purchases**. Its [quickstart](https://docs.near.ai/cloud/quickstart)
+directs customers to the console's Credits section, and its official
+[Release 26.1 announcement](https://near.ai/blog/near-ai-release-26-1) explicitly
+announces crypto payments through HOT Pay. The earlier missing-protocol finding
+concerns **verified unattended purchasing**, not the existence of manual checkout.
+
+The [HOT Pay quickstart](https://hot-labs.gitbook.io/hot-pay/quickstart) describes
+merchant-issued payment links with an item identifier, amount and merchant-defined
+memo. Its [Developer API](https://hot-labs.gitbook.io/hot-pay/developer-api)
+documents `/partners/processed_payments`, authenticated with the merchant's partner
+token. SymbioChain is a customer of NEAR AI, not the merchant receiving these
+payments. Creating our own HOT Pay merchant or token cannot establish a purchase
+from NEAR AI or grant access to NEAR AI's merchant payment history. An arbitrary
+memo cannot be assumed to map to the Builders key's organization.
+
+The reviewed Cloud OpenAPI still exposes costs, balances and staking sync rather
+than a customer checkout/invoice API. The public HOT Pay documentation does not
+specify NEAR AI's organization-to-checkout/credit-allocation contract. This is a
+limited finding about the inspected interfaces, not proof that no supported
+automation exists elsewhere. See the [source review](../artifacts/credit-purchase-protocol-review.json).
+
+| Requirement                                                                | Current position                                                                          |
+| -------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| SymbioChain mainnet contract deployment                                    | Not required to implement or test an off-chain billing adapter                            |
+| Provider-issued checkout for the correct organization                      | Required to verify the proposed HOT Pay path; not yet inspected                           |
+| Supported checkout creation, payment identity and final credit attribution | Still unverified for customer automation                                                  |
+| Real money for a real purchase                                             | Required; faucet/testnet tokens are not real payment assets                               |
+| A provider-supported billing sandbox                                       | Could test payment mechanics if supplied; it would not prove a production credit purchase |
+
+An unpaid provider-generated checkout URL has been requested in the ignored
+`NEAR_AI_CHECKOUT_URL` environment setting for inspection only. It is not yet an
+application configuration option or an authorization to pay, repeat a checkout,
+alter its memo, call undocumented endpoints or increase the inference budget.
+The Cloud API key alone does not establish billing access or ownership of the
+organization holding the Builders credit grant. No invoice was created, funds
+sent or paid inference requested by this review. The automatic purchase action
+remains disabled until the customer integration and spending policy are verified.
+
+## Supplied PingPay checkout — November 7, 2026
+
+The owner supplied an unpaid provider-generated checkout in the ignored local
+environment file. The current Cloud UI redirected to **PingPay**, rather than the
+HOT Pay flow in the older announcement. The [sanitized inspection](../artifacts/pingpay-checkout-review.json)
+records a `CREATED` session for `1000000` USDC atoms (1 USDC), with metadata matching
+the Cloud organization shown in the owner's Credits page. The session URL, session
+identifier, recipient and customer identifiers remain private. The check opened
+the checkout page without a wallet and allowed only its exact session-read query;
+payment, quote, telemetry and wallet actions were blocked. No funds or inference
+credits were spent.
+
+The owner explicitly confirmed that the running inference key was supplied through
+NEAR Builders and **is not owned by that Cloud organization**. This invoice must
+not be treated as a way to replenish the Builders key. Its metadata establishes a
+checkout target, not completed payment or final credit attribution. No provider
+balance, paid purchase or purchased-credit counter was inferred from the session.
+
+The local runtime remains PAPER with `COMPUTE_CREDIT_POLICY=LOCAL_BUDGET`; the
+existing key, allowance, organization/session configuration and all purchase gates
+were left unchanged. The Builders grant can remain the intended inference source
+under that application budget and the separate TEE approval gate. Actual provider
+balance remains unknown. A future paid-credit validation needs an inference key
+from the organization being funded, plus its supported customer billing flow and
+an explicit real-money limit. Merely creating a key in that organization would
+not complete automated invoice creation, payment recovery or credit verification.
+
+PingPay's public [merchant example](https://github.com/Pingpayio/ping-checkout-example)
+documents session creation using a merchant API key, with the recipient configured
+in the merchant's organization. SymbioChain does not possess NEAR AI's merchant
+credentials; creating its own merchant account would not buy NEAR AI credits.
+The private browser session-read RPC is not added as an application integration or
+presented as a published unattended purchase contract. Automatic purchasing remains
+disabled. No mainnet deployment, API-key replacement or payment was performed.

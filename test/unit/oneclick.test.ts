@@ -52,6 +52,13 @@ describe('1Click boundary', () => {
     expect(q.quoteRequest.slippageTolerance).toBe(50);
     expect(q.quoteRequest.depositType).toBe('ORIGIN_CHAIN');
   });
+  it('binds a signed internal-balance quote to Intents recipients and refunds', async () => {
+    const q = await client().quote(terms, false, 'INTENTS');
+    expect(q.quoteRequest.depositType).toBe('INTENTS');
+    expect(q.quoteRequest.recipientType).toBe('INTENTS');
+    expect(q.quoteRequest.refundType).toBe('INTENTS');
+    expect(q.quoteRequest.recipient).toBe(terms.recipient);
+  });
   it('rejects a provider-substituted recipient', async () => {
     await expect(
       client((r) => {

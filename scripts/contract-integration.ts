@@ -129,11 +129,50 @@ try {
     receiver_id: holder.accountId,
     share_bps: 1000,
   });
+  assert.deepEqual(await treasury.view('distribution_policy', {}), {
+    accountant: books.accountId,
+    paused: false,
+    total_shares_bps: 1000,
+  });
+  await owner.call(treasury, 'set_paused', { paused: true });
+  await assert.rejects(
+    books.call(
+      treasury,
+      'distribute_revenue',
+      {
+        distribution_reference: 'paused-dividend-fixture',
+      },
+      { attachedDeposit: 10n ** 24n },
+    ),
+    /Paused/,
+  );
+  await owner.call(treasury, 'set_paused', { paused: false });
   await books.call(
     treasury,
     'distribute_revenue',
     { distribution_reference: 'sandbox-synthetic-funding' },
     { attachedDeposit: 10n ** 24n },
+  );
+  assert.equal(
+    await treasury.view('dividend_balance', { token_id: 'cycle:sandbox-cycle:1' }),
+    '100000000000000000000000',
+  );
+  assert.equal(
+    await treasury.view('get_distribution', {
+      distribution_reference: 'sandbox-synthetic-funding',
+    }),
+    '1000000000000000000000000',
+  );
+  await assert.rejects(
+    books.call(
+      treasury,
+      'distribute_revenue',
+      {
+        distribution_reference: 'sandbox-synthetic-funding',
+      },
+      { attachedDeposit: 10n ** 24n },
+    ),
+    /already used/,
   );
   assert.equal(
     await treasury.view('dividend_balance', { token_id: 'cycle:sandbox-cycle:1' }),
