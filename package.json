@@ -41,7 +41,9 @@
     "testnet:tee": "tsx scripts/testnet-tee.ts",
     "testnet:swarm": "tsx scripts/testnet-swarm.ts",
     "testnet:execute": "tsx scripts/testnet-execute.ts",
-    "business:funding": "tsx scripts/business-funding.ts"
+    "business:funding": "tsx scripts/business-funding.ts",
+    "business:bridge": "tsx scripts/metabolic-bridge.ts",
+    "demo:service": "tsx scripts/service-demo.ts"
   },
   "dependencies": {
     "@defuse-protocol/one-click-sdk-typescript": "0.1.26",

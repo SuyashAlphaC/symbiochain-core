@@ -1,4 +1,5 @@
 import {
+  DomainError,
   digest,
   type Proposal,
   type Quote,
@@ -62,6 +63,8 @@ export class PaperProviders implements Providers {
     };
   }
   async prepare(cycleId: string, proposal: Proposal, quote: Quote): Promise<PreparedExecution> {
+    if (proposal.strategy !== 'round-trip')
+      throw new DomainError('SERVICE_CANNOT_TRADE', 'A risk report cannot authorize a transaction');
     return {
       id: cycleId,
       chainId: proposal.destinationChain,

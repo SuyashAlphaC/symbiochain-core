@@ -14,7 +14,7 @@ export const eventCursor = atoms.refine(
 export const idSchema = z.string().uuid();
 export const Proposal = z
   .object({
-    strategy: z.literal('round-trip'),
+    strategy: z.enum(['round-trip', 'risk-assessment']),
     originChain: z.string().min(3).max(80),
     destinationChain: z.string().min(3).max(80),
     originAsset: z.string().min(1).max(200),
@@ -133,7 +133,7 @@ export const terminalStates = new Set(['CLOSED', 'REJECTED', 'EXPIRED', 'REFUNDE
 export const transitions: Record<string, ReadonlySet<string>> = {
   DISCOVERED: new Set(['QUOTED', 'REJECTED', 'EXPIRED']),
   QUOTED: new Set(['ASSESSED', 'REJECTED', 'EXPIRED']),
-  ASSESSED: new Set(['RESERVED', 'REJECTED', 'EXPIRED']),
+  ASSESSED: new Set(['RESERVED', 'REJECTED', 'EXPIRED', 'CLOSED']),
   RESERVED: new Set(['SUBMITTED', 'REJECTED', 'EXPIRED', 'UNKNOWN']),
   SUBMITTED: new Set(['SETTLING', 'UNKNOWN']),
   SETTLING: new Set(['RECONCILED', 'REFUNDED', 'UNKNOWN']),

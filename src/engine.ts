@@ -16,6 +16,7 @@ import { evaluatePolicy, quoteProfitCheck } from './policy.js';
 import { seal } from './crypto.js';
 import { z } from 'zod';
 import { cycleEconomics } from './economics.js';
+import { requireServicePayment, deliverRiskReport } from './risk-services.js';
 
 export class Engine {
   constructor(
@@ -113,6 +114,7 @@ export class Engine {
 
   private async run(job: ClaimedJob, cycle: Cycle): Promise<void> {
     const p = Proposal.parse(cycle.proposal);
+    const service = p.strategy === 'risk-assessment';
     const policy = await this.store.db.policy.findUniqueOrThrow({
       where: { mode: this.store.mode },
     });
@@ -121,6 +123,7 @@ export class Engine {
       (await this.store.db.liveLeg.count({ where: { cycleId: cycle.id } })) > 0;
     if (
       this.store.mode === 'LIVE' &&
+      !service &&
       !this.store.config.LIVE_ARBITRAGE_ENABLED &&
       !cycle.submission &&
       !hasLiveOperation &&
@@ -144,7 +147,9 @@ export class Engine {
         return;
       }
       const q = Quote.parse(await this.providers.quote(cycle.id, p));
-      const reasons = evaluatePolicy(policy, p, q, null);
+      const reasons = evaluatePolicy(policy, p, q, null).filter(
+        (reason) => !service || reason !== 'INSUFFICIENT_NET_PROFIT',
+      );
       if (reasons.length) {
         await this.reject(job, cycle, reasons, false, {
           quote: q,
@@ -168,6 +173,7 @@ export class Engine {
         await this.store.retry(job, 'TREASURY_PAUSED', 2000);
         return;
       }
+      if (service) await requireServicePayment(this.store, cycle.id);
       const result = await this.providers.assess(cycle.id, p, q);
       const assessment = Assessment.parse(result.assessment);
       const proof = result.proof;
@@ -177,7 +183,9 @@ export class Engine {
           'UNVERIFIED_INFERENCE',
           'Inference evidence does not satisfy execution mode',
         );
-      const reasons = evaluatePolicy(policy, p, q, assessment);
+      const reasons = evaluatePolicy(policy, p, q, assessment).filter(
+        (reason) => !service || reason === 'ASSESSMENT_BINDING_MISMATCH',
+      );
       await this.store.advance(
         job,
         'QUOTED',
@@ -215,6 +223,24 @@ export class Engine {
     }
     if (cycle.state === 'ASSESSED') {
       const assessment = Assessment.parse(cycle.assessment);
+      if (service) {
+        await this.store.advance(
+          job,
+          'ASSESSED',
+          'CLOSED',
+          {},
+          {
+            service: 'RISK_REPORT',
+            executionAuthorized: false,
+            simulated: this.store.mode === 'PAPER',
+          },
+          null,
+          async (tx) => {
+            await deliverRiskReport(tx, this.store, cycle, assessment, q);
+          },
+        );
+        return;
+      }
       const reasons = evaluatePolicy(policy, p, q, assessment);
       if (reasons.length) {
         await this.reject(job, cycle, reasons);

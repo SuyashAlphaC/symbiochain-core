@@ -18,6 +18,13 @@ import {
   cancelUnsubmittedPayout,
 } from './business-funding.js';
 import { cycleEconomics } from './economics.js';
+import { createRiskService, simulateServicePayment, riskReport } from './risk-services.js';
+import {
+  operatingStatus,
+  manualTopupTasks,
+  requestManualTopup,
+  reportManualTopup,
+} from './manual-topups.js';
 import {
   businessStatus,
   issueFeeInvoice,
@@ -117,6 +124,34 @@ export async function createApp(
   };
   const secured = { preHandler: read, schema: { security: [{ bearerAuth: [] }] } };
   const privileged = { preHandler: admin, schema: { security: [{ bearerAuth: [] }] } };
+  app.post('/api/business/services', privileged, async (req) => createRiskService(store, req.body));
+  app.post('/api/business/services/:reference/simulate-payment', privileged, async (req) => {
+    const { reference } = z
+      .object({ reference: z.string().regex(/^[a-zA-Z0-9:_-]{1,70}$/) })
+      .parse(req.params);
+    return simulateServicePayment(store, reference);
+  });
+  app.get('/api/business/services/:reference/report', privileged, async (req, reply) => {
+    const { reference } = z
+      .object({ reference: z.string().regex(/^[a-zA-Z0-9:_-]{1,70}$/) })
+      .parse(req.params);
+    reply.header('cache-control', 'private, no-store');
+    return riskReport(store, reference);
+  });
+  app.get('/api/operations/status', secured, async (_req, reply) => {
+    reply.header('cache-control', 'private, no-store');
+    return operatingStatus(store);
+  });
+  app.get('/api/business/compute-topups', privileged, async (_req, reply) => {
+    reply.header('cache-control', 'private, no-store');
+    return manualTopupTasks(store);
+  });
+  app.post('/api/business/compute-topups', privileged, async (req) =>
+    requestManualTopup(store, req.body),
+  );
+  app.post('/api/business/compute-topups/report', privileged, async (req) =>
+    reportManualTopup(store, req.body),
+  );
   app.get('/api/business/funding', secured, async (_req, reply) => {
     reply.header('cache-control', 'private, no-store');
     return fundingStatus(store);

@@ -103,6 +103,11 @@ export class Store {
     if (this.mode === 'REPLAY')
       throw new DomainError('READ_ONLY_MODE', 'Replay mode cannot create transactions', 403);
     const p = Proposal.parse(input);
+    if (p.strategy === 'risk-assessment')
+      throw new DomainError(
+        'SERVICE_ORDER_REQUIRED',
+        'Create prepaid assessments through the service-order endpoint',
+      );
     if (Date.parse(p.expiresAt) <= Date.now())
       throw new DomainError('EXPIRED', 'Proposal has expired', 400);
     if (Date.parse(p.expiresAt) > Date.now() + 60 * 60 * 1000)
