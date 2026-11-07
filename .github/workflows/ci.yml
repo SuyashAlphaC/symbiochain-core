@@ -32,16 +32,20 @@ jobs:
       - run: npm run check
       - name: Build release image
         run: docker build -t symbiochain-core:ci .
-      - name: Verify packaged rehearsal evidence
+      - name: Verify packaged rehearsal and quarantine evidence
         run: |
           docker run --rm --entrypoint node symbiochain-core:ci --input-type=module -e '
             import assert from "node:assert/strict";
-            import { readdir } from "node:fs/promises";
+            import { readdir, readFile } from "node:fs/promises";
             import { readTestnetReport } from "./dist/testnet-report.js";
             const report = await readTestnetReport();
             assert.ok(report.runId);
             assert.equal(report.profile, "TESTNET_REHEARSAL");
-            assert.deepEqual(await readdir("artifacts"), ["testnet-rehearsal.json"]);
+            assert.deepEqual((await readdir("artifacts")).sort(), ["brave-cli-verification.json", "testnet-rehearsal.json"]);
+            const audit = JSON.parse(await readFile("artifacts/brave-cli-verification.json", "utf8"));
+            assert.equal(audit.deploymentApproved, false);
+            assert.equal(audit.signedModelResponseVerified, false);
+            assert.equal(audit.paidInferenceRequests, 0);
           '
       - run: npm run db:harden
       # Integration fixtures deliberately leave pending recovery jobs in this isolated database.
