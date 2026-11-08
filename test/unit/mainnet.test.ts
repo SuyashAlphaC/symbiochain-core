@@ -28,9 +28,11 @@ const config = loadConfig(env);
 const manifest = { ...record };
 function fixture(chain = 'mainnet', failedReceipt = false) {
   const requests: { method: string; params: Record<string, unknown> }[] = [];
-  const fetch: Fetch = async (_url, init) => {
+  const endpoints: string[] = [];
+  const fetch: Fetch = async (url, init) => {
     const r = JSON.parse(String(init?.body));
     requests.push(r);
+    endpoints.push(String(url));
     let result: unknown;
     if (r.method === 'status') result = { chain_id: chain };
     else if (r.method === 'block')
@@ -94,7 +96,7 @@ function fixture(chain = 'mainnet', failedReceipt = false) {
     else throw Error('UNEXPECTED_RPC_WRITE_OR_METHOD');
     return Response.json({ result });
   };
-  return { fetch, requests };
+  return { fetch, requests, endpoints };
 }
 describe('disarmed production', () => {
   it('serves LIVE observation without signing keys, but refuses every enabled spending switch', () => {
@@ -180,5 +182,25 @@ describe('public mainnet observation', () => {
       new MainnetReader(config, f.fetch, manifest).transaction('1'.repeat(43)),
     ).rejects.toMatchObject({ code: 'TRANSACTION_NOT_RECORDED' });
     expect(f.requests).toHaveLength(0);
+  });
+  it('reads recorded historical receipts from the mainnet archive without widening the hash allowlist', async () => {
+    const f = fixture();
+    const result = await new MainnetReader(config, f.fetch, manifest).transaction(
+      record.transactions[0].hash,
+    );
+    expect(result).toMatchObject({
+      final: true,
+      succeeded: true,
+      classification: 'DEPLOYMENT_NOT_REVENUE',
+    });
+    const transaction = f.requests.findIndex((r) => r.method === 'tx');
+    expect(f.endpoints[transaction]).toBe('https://archival-rpc.mainnet.near.org');
+    expect(f.requests[transaction]?.params.sender_account_id).toBe(record.transactions[0].signerId);
+    expect(
+      f.requests.some(
+        (r, i) =>
+          r.method === 'status' && f.endpoints[i] === 'https://archival-rpc.mainnet.near.org',
+      ),
+    ).toBe(true);
   });
 });

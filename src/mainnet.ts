@@ -80,10 +80,11 @@ export class MainnetReader {
   private async rpc(
     method: 'query' | 'status' | 'block' | 'EXPERIMENTAL_protocol_config' | 'tx',
     params: unknown,
+    endpoint = this.c.NEAR_RPC_URL,
   ) {
     const raw = z.object({ result: z.unknown().optional(), error: z.unknown().optional() }).parse(
       await httpJson(
-        this.c.NEAR_RPC_URL,
+        endpoint,
         {
           method: 'POST',
           headers: { 'content-type': 'application/json' },
@@ -335,6 +336,13 @@ export class MainnetReader {
         404,
       );
     await this.block();
+    // Recorded deployment receipts can outlive the regular node's transaction cache.
+    const archive = 'https://archival-rpc.mainnet.near.org';
+    const archiveIdentity = z
+      .object({ chain_id: z.string() })
+      .parse(await this.rpc('status', [], archive));
+    if (archiveIdentity.chain_id !== 'mainnet')
+      throw new DomainError('CHAIN_ID_MISMATCH', 'Archive RPC is not NEAR mainnet', 503);
     const outcomeStatus = z.union([
       z.object({ SuccessValue: z.string() }).strict(),
       z.object({ SuccessReceiptId: z.string() }).strict(),
@@ -351,11 +359,15 @@ export class MainnetReader {
         transaction_outcome: z.object({ block_hash: z.string() }),
       })
       .parse(
-        await this.rpc('tx', {
-          tx_hash: hash,
-          sender_account_id: known.signerId,
-          wait_until: 'FINAL',
-        }),
+        await this.rpc(
+          'tx',
+          {
+            tx_hash: hash,
+            sender_account_id: known.signerId,
+            wait_until: 'FINAL',
+          },
+          archive,
+        ),
       );
     if (
       tx.transaction.hash !== hash ||
