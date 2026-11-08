@@ -1,0 +1,219 @@
+{
+  "checkedAt": "2026-11-07T12:10:48.250Z",
+  "scope": "LIVE_MAINNET_OBSERVATION_EXECUTION_DISARMED",
+  "backend": {
+    "repository": "SuyashAlphaC/symbiochain-core",
+    "revision": "2982e8bc2510da5d82243bb2203c491b26c32cfc",
+    "applicationRevision": "87589b09f0debf3b74161a2c33eb7c286e933697",
+    "url": "https://symbiochain-core.onrender.com",
+    "serviceId": "srv-dbgd7u4s728c738qjstg",
+    "deploymentId": "dep-dbnh8sh5efls73bb8um0",
+    "deploymentStatus": "live"
+  },
+  "frontend": {
+    "repository": "AviraL0013/SymbioChain",
+    "revision": "451e8a29e1e02e9a5ebba277650ae6bcb5483d9e",
+    "applicationRevision": "ed735bdc089724bff784a6b633ac72cfe380c435",
+    "url": "https://symbiochain.vercel.app",
+    "project": "avirals-projects-27965510/symbiochain",
+    "deploymentId": "dpl_FuMWsBTGTLz9Snm6kx2ofxvjyRoY",
+    "environment": "production",
+    "identitySource": "/api/release"
+  },
+  "runtime": {
+    "contractVersion": 1,
+    "mode": "LIVE",
+    "executionEnabled": false,
+    "network": "mainnet",
+    "mainnetAvailable": true
+  },
+  "snapshot": {
+    "finalizedBlock": {
+      "height": "223464465",
+      "hash": "AEYPAcRZVNtQGqPVAYyYJ7WSirJZqpu1JNgAvtog3oLH",
+      "timestamp": "2026-11-07T12:10:37.673Z"
+    },
+    "treasury": "treasury.symbio-fcef733893.near",
+    "paused": true,
+    "codeMatches": true,
+    "accountCount": 6,
+    "disabledWorkerCount": 3,
+    "temporaryDeploymentKeyRevoked": true,
+    "nftSupply": "0",
+    "revenueShareBps": 0,
+    "allNativeBalancesUnchanged": true
+  },
+  "credentialValuesPrinted": false,
+  "protectedSettingsPreserved": true,
+  "signingKeysLoaded": false,
+  "database": {
+    "migrations": 8,
+    "hardenedTables": 19,
+    "dataApiTableGrants": 0,
+    "paperCyclesBefore": 3,
+    "paperCyclesAfter": 3,
+    "paperIdsPreserved": true,
+    "liveCycles": 0,
+    "liveJobs": 0,
+    "inferenceAttempts": 0,
+    "workerHeartbeatScope": "GLOBAL_HISTORICAL_PAPER",
+    "workerHeartbeats": [
+      {
+        "role": "BRAIN",
+        "paused": false,
+        "heartbeat": "2026-11-07T12:07:56.125Z"
+      },
+      {
+        "role": "HAND",
+        "paused": false,
+        "heartbeat": "2026-11-07T12:07:56.129Z"
+      },
+      {
+        "role": "SCOUT",
+        "paused": false,
+        "heartbeat": "2026-11-07T12:07:56.121Z"
+      }
+    ],
+    "workerProcessesExpected": 0,
+    "workerHeartbeatUnchangedDuringBrowserVerification": true
+  },
+  "compute": {
+    "source": "LOCAL_BUDGET",
+    "limitUsdMicros": "1000000",
+    "committedUsdMicros": "0",
+    "availableUsdMicros": "1000000",
+    "halted": false,
+    "providerBalanceVerified": false,
+    "maxRequestUsdMicros": "100000",
+    "model": "z-ai/glm-5.3-flash",
+    "approval": "QUARANTINED",
+    "automaticCreditPurchase": false,
+    "budgetIdentityPreserved": true
+  },
+  "probes": [
+    {
+      "base": "BACKEND",
+      "path": "/readyz",
+      "authenticated": false,
+      "status": 200
+    },
+    {
+      "base": "BACKEND",
+      "path": "/api/mainnet/snapshot",
+      "authenticated": false,
+      "status": 401
+    },
+    {
+      "base": "BACKEND",
+      "path": "/api/runtime",
+      "authenticated": true,
+      "status": 200
+    },
+    {
+      "base": "BACKEND",
+      "path": "/api/mainnet/snapshot",
+      "authenticated": true,
+      "status": 200
+    },
+    {
+      "base": "BACKEND",
+      "path": "/api/viewer/snapshot",
+      "authenticated": true,
+      "status": 403
+    },
+    {
+      "base": "FRONTEND",
+      "path": "/api/release",
+      "authenticated": false,
+      "status": 200
+    },
+    {
+      "base": "FRONTEND",
+      "path": "/api/swarm/runtime",
+      "authenticated": false,
+      "status": 200
+    },
+    {
+      "base": "FRONTEND",
+      "path": "/api/swarm/mainnet",
+      "authenticated": false,
+      "status": 200
+    },
+    {
+      "base": "FRONTEND",
+      "path": "/api/swarm/mainnet/transaction?hash=2ZmseYGugRhj5dUbPBXnMHPa7fixn9G78f1YZNtLoRWa",
+      "authenticated": false,
+      "status": 200
+    },
+    {
+      "base": "FRONTEND",
+      "path": "/api/swarm/mainnet/wallet?accountId=solidvideo4090.near",
+      "authenticated": false,
+      "status": 200
+    },
+    {
+      "base": "FRONTEND",
+      "path": "/api/operator/state",
+      "authenticated": false,
+      "status": 401
+    }
+  ],
+  "paidInferenceRequests": 0,
+  "blockchainTransactionsSubmitted": 0,
+  "realTradingEnabled": false,
+  "externalRevenueProven": false,
+  "businessFundedNftDistributionProven": false,
+  "fullBusinessRunway": null,
+  "hackathonSubmissionConfirmed": false,
+  "browser": {
+    "checkedAt": "2026-11-07T12:11:59.790Z",
+    "target": "https://symbiochain.vercel.app",
+    "scope": "READ_ONLY_PRODUCTION_BROWSER",
+    "dashboard": true,
+    "finalizedMainnetData": true,
+    "pausedAndDisarmedLabels": true,
+    "knownReceiptLookup": true,
+    "walletDialog": true,
+    "realExtensionLoginPerformed": false,
+    "localWalletFixtureCoveredSeparately": true,
+    "staleRecoveryViaInterception": true,
+    "routeCount": 8,
+    "mobileWidth": 390,
+    "mobileOverflow": false,
+    "directBrowserBackendRequests": 0,
+    "credentialExposures": 0,
+    "pageErrors": 0,
+    "inspectedResponses": 202,
+    "paidInferenceRequests": 0,
+    "blockchainTransactionsSubmitted": 0
+  },
+  "localValidation": {
+    "backendCheck": "PASSED",
+    "databaseIntegrationTests": 81,
+    "frontendTests": 25,
+    "frontendCheck": "PASSED",
+    "localMainnetBrowser": {
+      "result": "PASSED",
+      "publicRealMainnetReads": true,
+      "wallet": "EXPLICIT_INJECTED_FIXTURE",
+      "signInNetwork": "mainnet",
+      "accessKeyRequested": false,
+      "transactionsRequested": 0,
+      "connectAndDisconnect": true
+    },
+    "releaseImagePackaging": "PASSED",
+    "backendCiRun": "https://github.com/SuyashAlphaC/symbiochain-core/actions/runs/42369348836",
+    "backendUnitTests": 135
+  },
+  "tee": {
+    "deploymentApproved": false,
+    "paidCompletions": 0,
+    "latestHardwareProbeAt": "2026-11-07T07:53:28.907Z",
+    "latestHardwareSubchecksPassed": true,
+    "latestLauncherProbeAt": "2026-11-07T08:00:21.475Z",
+    "launcherProvenanceVerified": false,
+    "launcherRebuildExemptionDoesNotWaiveProvenance": true
+  },
+  "latestConfirmedAt": "2026-11-07T12:13:19.800Z",
+  "evidenceRevisionPolicy": "FROZEN_OBSERVATION_AT_CHECKED_AT_SUBSEQUENT_DOCUMENTATION_COMMITS_DO_NOT_CHANGE_EXECUTION_EVIDENCE"
+}
