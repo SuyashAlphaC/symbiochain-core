@@ -22,6 +22,11 @@ For the testnet entry, start with the [judge walkthrough](docs/TESTNET_SUBMISSIO
 It includes real Sepolia/Solana transaction links, the resumable agent runner,
 worker recovery, budget limits and the remaining TEE approval gate.
 
+The [controlled demonstration](docs/CONTROLLED_DEMO.md) records a separate,
+owner-signed 0.001 NEAR mainnet funding call while paused and rechecks the
+historical faucet-funded testnet distribution/claim. Its 10% testnet allocation
+is not a mainnet revenue split. No AI credit was spent.
+
 ## Business evidence
 
 The current paired release includes the service, accounting and funding implementations. Exact deployed revisions are in [the production record](artifacts/mainnet-production-verification.json); [earlier service candidates](artifacts/service-loop-release-manifest.json) remain historical evidence. Deployment does not establish that disabled execution paths have completed a real-money cycle.

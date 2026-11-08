@@ -229,6 +229,12 @@ export async function createApp(
     reply.header('cache-control', 'private, no-store');
     return readTestnetReport();
   });
+  // This immutable historical report has its own TESTNET_REHEARSAL schema.
+  // It is independent of the runtime ledger and never relabels PAPER rows as LIVE.
+  app.get('/api/evidence/testnet', secured, async (_req, reply) => {
+    reply.header('cache-control', 'private, no-store');
+    return readTestnetReport();
+  });
   app.get('/api/viewer/cycles', secured, async (req, reply) => {
     const { cursor } = z.object({ cursor: idSchema.optional() }).strict().parse(req.query);
     reply.header('cache-control', 'private, no-store');

@@ -1,0 +1,52 @@
+{
+  "checkedAt": "2026-11-08T08:13:12.509Z",
+  "scope": "HISTORICAL_TESTNET_FAUCET_FUNDED_DISTRIBUTION",
+  "network": "testnet",
+  "source": "https://archival-rpc.testnet.near.org",
+  "transactions": [
+    {
+      "operation": "fixture-distribution",
+      "hash": "2Asero1kxG7xfM633fuahR4Xuk3izeRvWnrTLevkLR4c",
+      "signer": "books.sc-rehearsal-1bb69cb2.testnet",
+      "receiver": "treasury.sc-rehearsal-1bb69cb2.testnet",
+      "final": true,
+      "allReceiptsSucceeded": true,
+      "events": [
+        {
+          "standard": "symbiochain",
+          "version": "1.0.0",
+          "event": "revenue_distributed",
+          "data": [
+            {
+              "reference": "testnet-fixture:010389f3-a004-49d1-b7c7-fa0607bdfffc",
+              "deposited": "10000000000000000000000",
+              "allocated": "1000000000000000000000",
+              "unallocated": "9000000000000000000000"
+            }
+          ]
+        }
+      ],
+      "url": "https://testnet.nearblocks.io/txns/2Asero1kxG7xfM633fuahR4Xuk3izeRvWnrTLevkLR4c"
+    },
+    {
+      "operation": "claim-fixture-dividend",
+      "hash": "98bpz1Bt5GnMBEa1bW2b1VHANqKda2sNWTnPNN6ihbZT",
+      "signer": "sc-rehearsal-1bb69cb2.testnet",
+      "receiver": "treasury.sc-rehearsal-1bb69cb2.testnet",
+      "final": true,
+      "allReceiptsSucceeded": true,
+      "events": [],
+      "url": "https://testnet.nearblocks.io/txns/98bpz1Bt5GnMBEa1bW2b1VHANqKda2sNWTnPNN6ihbZT"
+    }
+  ],
+  "depositedTestNear": "0.01",
+  "allocatedTestNear": "0.001",
+  "shareBps": 1000,
+  "claimVerified": true,
+  "capitalSource": "FAUCET_TEST_TOKENS",
+  "underlyingSettlement": "SIMULATED_ACCOUNTANT_FIXTURE",
+  "businessRevenueProven": false,
+  "mainnetDistributionPerformed": false,
+  "newTransactionsSubmitted": 0,
+  "paidInferenceRequests": 0
+}

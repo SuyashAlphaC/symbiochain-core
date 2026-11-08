@@ -1,0 +1,58 @@
+{
+  "checkedAt": "2026-11-08T08:11:04.205Z",
+  "scope": "PAUSED_MAINNET_TEAM_FUNDING_DEMO",
+  "transaction": {
+    "hash": "BUAMQU1darHsDvDesZVE8U8bnPm7pwMNvGyszczNxQej",
+    "blockHash": "DtD7YJrSY6aN2GygBYP5xBQexPaW2aATy4SPLnsqVaJ3",
+    "signerId": "solidvideo4090.near",
+    "receiverId": "treasury.symbio-fcef733893.near",
+    "method": "fund",
+    "depositYocto": "1000000000000000000000",
+    "actualFeeYocto": "226852716054800000000",
+    "classification": "TEAM_FUNDED_TREASURY_CAPITAL_NOT_REVENUE",
+    "final": true,
+    "succeeded": true,
+    "url": "https://nearblocks.io/txns/BUAMQU1darHsDvDesZVE8U8bnPm7pwMNvGyszczNxQej"
+  },
+  "before": {
+    "estimatedFeeYocto": "2600000000000000000000",
+    "block": {
+      "height": "223589063",
+      "hash": "2BJTzBooQ2yqqRBNPVCtgRKJcW3VnTevmCGCmn7CUq6s",
+      "timestamp": "2026-11-08T08:10:40.227Z"
+    },
+    "treasuryBalanceYocto": "6100000000000000000000000",
+    "checkedAt": "2026-11-08T08:10:47.519Z",
+    "paused": true,
+    "workersDisabled": true,
+    "executionEnabled": false,
+    "ownerAvailableYocto": "1244063934901607545387790",
+    "gasPriceYocto": "100000000"
+  },
+  "after": {
+    "estimatedFeeYocto": "2600000000000000000000",
+    "block": {
+      "height": "223589094",
+      "hash": "UeMCsFuq2bJ5Sp8VJCG4B8qe1VuVtrYPn6hf6cbmbXC",
+      "timestamp": "2026-11-08T08:10:58.066Z"
+    },
+    "treasuryBalanceYocto": "6101000000000000000000000",
+    "checkedAt": "2026-11-08T08:11:04.205Z",
+    "paused": true,
+    "workersDisabled": true,
+    "executionEnabled": false,
+    "ownerAvailableYocto": "1242837082185552745387790",
+    "gasPriceYocto": "100000000"
+  },
+  "treasuryStayedPaused": true,
+  "workersStayedDisabled": true,
+  "executionStayedDisarmed": true,
+  "paidInferenceRequests": 0,
+  "customerRevenueProven": false,
+  "nftDistributionPerformed": false,
+  "computeCreditsPurchased": false,
+  "totalOwnerDebitYocto": "1226852716054800000000",
+  "treasuryBalanceIncreaseYocto": "1000000000000000000000",
+  "ownerKeyExported": false,
+  "receiptVerification": "INDEPENDENT_FINAL_RPC_ALL_RECEIPTS_AND_FUNDED_EVENT"
+}
