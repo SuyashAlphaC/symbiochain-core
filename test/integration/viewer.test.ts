@@ -185,6 +185,20 @@ it('requires read authorization for separate testnet evidence and refuses other 
     const other = await createApp(new Store(db, { ...config, EXECUTION_MODE: mode }));
     try {
       expect((await other.inject({ url: '/api/viewer/testnet', headers })).statusCode).toBe(403);
+      expect((await other.inject('/api/evidence/testnet')).statusCode).toBe(401);
+      const historical = await other.inject({ url: '/api/evidence/testnet', headers });
+      expect(historical.statusCode).toBe(200);
+      expect(historical.headers['cache-control']).toBe('private, no-store');
+      expect(TestnetReport.parse(historical.json())).toMatchObject({
+        profile: 'TESTNET_REHEARSAL',
+        network: 'testnet',
+        mainnetTransactions: 0,
+        paidInferenceRequests: 0,
+        settlement: 'SIMULATED',
+        economics: 'SIMULATED',
+      });
+      expect(historical.body).not.toContain(config.READ_TOKEN);
+      expect(historical.body).not.toContain(config.ADMIN_TOKEN);
     } finally {
       await other.close();
     }
