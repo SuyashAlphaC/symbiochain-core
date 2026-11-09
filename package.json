@@ -37,6 +37,7 @@
     "format:check": "prettier --check src scripts test docs README.md HACKATHON.md '.railway/*.{ts,md,json}' '*.json' '*.ts'",
     "probe:tee": "tsx scripts/probe-tee.ts",
     "probe:launcher": "tsx scripts/probe-launcher.ts",
+    "mainnet:acceptance": "npm run build && node scripts/mainnet-acceptance.mjs",
     "testnet:rehearse": "tsx scripts/testnet-rehearsal.ts",
     "testnet:tee": "tsx scripts/testnet-tee.ts",
     "testnet:swarm": "tsx scripts/testnet-swarm.ts",

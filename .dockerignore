@@ -12,5 +12,6 @@ artifacts/*
 !artifacts/testnet-rehearsal.json
 !artifacts/brave-cli-verification.json
 !artifacts/mainnet-paused-deployment.json
+!artifacts/mainnet-acceptance.json
 coverage
 *.log
