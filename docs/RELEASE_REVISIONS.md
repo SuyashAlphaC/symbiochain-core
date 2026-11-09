@@ -1,6 +1,14 @@
 # Deployment, candidate and submission revisions
 
-## Current production — mainnet observer
+## Current production — bounded mainnet activation
+
+The [November 9 bounded release record](../artifacts/mainnet-bounded-release.json)
+identifies the deployed backend/frontend revisions and their existing Render and
+Vercel deployment IDs. Seven mainnet receipts establish owner activation; runtime
+monitoring and paid inference remain explicitly separate. This record supersedes
+the earlier paused-state release below without rewriting its dated observations.
+
+## Earlier November 9 mainnet observer
 
 The [production verification record](../artifacts/mainnet-acceptance-release.json)
 supersedes the historical deployment tables below. It identifies the exact

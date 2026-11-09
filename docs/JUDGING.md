@@ -4,6 +4,16 @@
 
 SymbioChain explores whether a three-agent treasury can cover its operating costs through cross-chain activity under enforceable limits. Its distinguishing mechanic is the connection between measurable resource pressure, paid agent cooperation, constrained signing and durable accounting. It does not force a trade to make an animation say ALIVE.
 
+## Mainnet first
+
+Open [Execution evidence](https://symbiochain.vercel.app/evidence). Confirm owner
+activation ACTIVE, seven finalized receipts and 0.05-USDC / 0.10-USDC contract
+limits. Verify that runtime execution remains DISARMED and TEE QUARANTINED.
+Monitor-only heartbeats establish liveness of monitoring, not an AI business.
+The [paired release record](../artifacts/mainnet-bounded-release.json) identifies
+source revisions, deployments and read-only production checks. The dated paused
+foundation and service-escrow audit remain historical observations.
+
 ## Five-minute review
 
 1. Run the README PAPER setup and `npm run demo`. Confirm `CLOSED`, zero active reservation, mode `PAPER`, and explicit synthetic evidence.
@@ -30,7 +40,7 @@ SymbioChain explores whether a three-agent treasury can cover its operating cost
 - **SANDBOX:** actual local NEAR execution; invalid-signature MPC stub and synthetic reported P&L. Proves contract behavior, not external trading.
 - **DRY QUOTES:** real public 1Click responses and manager-signature checks, with no deposits or fills.
 - **PUBLIC GATEWAY:** real Intel Trust Authority gateway token checked against pinned Intel keys, issuer, freshness, nonce and platform claims. No approved application measurement, model completion, production DCAP run or funded trade is established. A captured token expires; its verification result is historical.
-- **LIVE:** reserved for actual provider/RPC evidence under explicitly armed configuration. No completed funded live run is included yet.
+- **LIVE:** actual mainnet RPC observations and finalized infrastructure/activation receipts. LIVE observation mode does not imply an armed execution engine or an approved AI workflow. No completed funded agent trading run is included.
 - **REPLAY:** historical archive with original mode retained. Checksum verification is not fresh hardware or chain verification.
 
 Do not count seed capital, compute grants, service transfers or test escrow payouts as business revenue. The repository deliberately avoids the proposed “send 0.1 NEAR, receive 0.11 NEAR” fallback as a profitability claim.

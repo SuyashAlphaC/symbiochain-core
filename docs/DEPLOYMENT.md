@@ -6,9 +6,10 @@ The selected demo stack is Supabase PostgreSQL, a Render Docker web service, and
 
 The existing [Render service](https://symbiochain-core.onrender.com/docs) and
 [Vercel application](https://symbiochain.vercel.app/dashboard) now serve LIVE
-mainnet observations with `EXECUTION_ENABLED=false`. The treasury stays paused,
-workers are not started, mutations are refused and no wallet recovery key is
-loaded. The [current verification artifact](../artifacts/mainnet-production-verification.json)
+mainnet observations with `EXECUTION_ENABLED=false`. The owner has activated
+the bounded contract policy and worker permissions; monitor-only heartbeats run
+without an execution engine or signer. API mutations remain refused and no owner
+recovery key is loaded. The [bounded release record](../artifacts/mainnet-bounded-release.json)
 identifies exact revisions and deployment IDs. [Mainnet operation and rollback](MAINNET_PRODUCTION.md)
 describes the independent requirements for paid inference and funded execution.
 

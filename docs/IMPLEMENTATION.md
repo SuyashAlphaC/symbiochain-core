@@ -1,11 +1,13 @@
 # Implementation and acceptance ledger
 
 **Current hosted profile: LIVE mainnet observation, execution DISARMED.** The
-[production record](../artifacts/mainnet-production-verification.json) verifies
-the paired release, real finalized balances, code identity, paused policy,
-disabled on-chain workers and known deployment receipts. Render starts only the
-API. No paid inference, new chain transaction or customer revenue was produced
-by this rollout. [Remaining activation requirements](MAINNET_PRODUCTION.md).
+[bounded release record](../artifacts/mainnet-bounded-release.json) identifies
+the paired release. Seven owner-reviewed mainnet receipts establish registered
+Intents keys, the active bounded policy and enabled worker permissions. Render
+publishes monitor-only heartbeats; execution and paid inference remain disarmed.
+Current balances and permissions come from finalized mainnet reads. The earlier
+paused-state audit retains its original date and is not current activation state.
+[Remaining execution requirements](MAINNET_PRODUCTION.md).
 
 November 5 testnet additions are detailed in the [submission walkthrough](TESTNET_SUBMISSION.md):
 confirmed Sepolia and Solana devnet execution fixtures, their NEAR MPC request
@@ -57,7 +59,7 @@ These boundaries are part of the acceptance record, not successful live demonstr
 
 ## External prerequisites
 
-The paused mainnet accounts and scoped runtime keys now exist, with offline owner recovery and a separate private mainnet profile. Operational treasury policy, trading reserves, derived EVM/Solana balances/gas, registered/funded Intents agent balances, NEAR AI inference and credit-balance credentials, and independently approved measurements are required for funded external validation. A 1Click partner JWT is optional; unauthenticated access uses the provider's applicable fee schedule. No original Meteor private key was exported.
+The mainnet accounts, scoped runtime keys, registered Intents keys and active bounded treasury policy now exist, with wallet-held owner recovery. Actual funded execution still needs separately approved trading capital and native gas, funded derived/Intents balances and independently approved TEE measurements. Organization-bound Cloud credentials and the durable application budget are configured; that does not establish a paid inference or provider-funded compute loop. A 1Click partner JWT is optional; unauthenticated access uses the provider's applicable fee schedule. No original Meteor private key was exported.
 
 The earlier live preflight recorded 16 missing dedicated settings. Its PAPER stack used Supabase PostgreSQL plus Render, with an optional cron-job.org readiness check. Historical Render deployment, Supabase migrations/TLS/RLS, HTTPS/WSS, all three workers and a complete PAPER cycle passed. See [that dated evidence](../artifacts/hosted-paper-verification.json). The current mainnet observer preserves those records, starts no workers and uses the same hosting projects. Eight migrations and protection of 19 backend tables were verified. The five-minute readiness monitor remains configured. Railway provisioning was rejected; its alternative three-resource plan remains unapplied. See [current deployment status](DEPLOYMENT.md). Passing checks do not resolve the external execution prerequisites or missing compute-purchase protocol.
 
