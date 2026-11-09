@@ -70,7 +70,7 @@ export function fixture() {
       checkedAt: new Date().toISOString(),
       snapshot: {
         block: { height: String(100 + executed * 10) },
-        paused: executed < 5,
+        paused: executed < 6,
         accounts: [
           OWNER,
           TREASURY,
@@ -80,16 +80,18 @@ export function fixture() {
           'scout.' + OWNER,
         ].map((accountId, i) => ({
           accountId,
-          availableYocto: '50000000000000000000000',
+          availableYocto: i === 1 ? '300000000000000000000000' : '50000000000000000000000',
+          balanceYocto:
+            i === 0 && executed >= 5 ? '70000000000000000000000' : '50000000000000000000000',
           storageYocto: '0',
-          workerEnabled: [2, 3, 4].includes(i) ? executed >= 5 : null,
+          workerEnabled: [2, 3, 4].includes(i) ? executed >= 6 : null,
         })),
       },
       keys: {
         brain: { installed: executed >= 1, registered: executed >= 2 },
         hand: { installed: executed >= 3, registered: executed >= 4 },
       },
-      policy: executed >= 5 ? plan.policy : {},
+      policy: executed >= 6 ? plan.policy : {},
       gasPriceYocto: '100000000',
     }),
     readTransaction: async (hash) => {
@@ -108,13 +110,13 @@ test('activation binds the deployed namespace, USDC limits, restricted keys and 
   assert.equal(plan.newTreasuryCapitalYocto, '0');
   assert.equal(plan.policy.max_trade_atoms, '50000');
   assert.equal(plan.policy.max_daily_atoms, '100000');
-  assert.equal(plan.transactions.length, 6);
+  assert.equal(plan.transactions.length, 7);
   assert.ok(!JSON.stringify(plan).includes('secretKey'));
   assert.deepEqual(
-    plan.transactions[4].actions.map((a) => a.params.methodName),
+    plan.transactions[5].actions.map((a) => a.params.methodName),
     ['set_policy', 'set_worker_enabled', 'set_worker_enabled', 'set_worker_enabled', 'set_paused'],
   );
-  assert.equal(plan.transactions[5].actions[0].params.deposit, '0');
+  assert.equal(plan.transactions[6].actions[0].params.deposit, '0');
   const r = receipt(plan.transactions[0], 0);
   assert.equal(
     verifyActivationReceipt(r, r.transaction.hash, plan.transactions[0]).succeeded,
@@ -123,15 +125,15 @@ test('activation binds the deployed namespace, USDC limits, restricted keys and 
   const full = structuredClone(r);
   full.transaction.actions[0].AddKey.access_key.permission = 'FullAccess';
   assert.throws(() => verifyActivationReceipt(full, full.transaction.hash, plan.transactions[0]));
-  const unpause = receipt(plan.transactions[4], 4);
+  const unpause = receipt(plan.transactions[5], 5);
   unpause.transaction.actions[0].FunctionCall.deposit = '1';
   assert.throws(() =>
-    verifyActivationReceipt(unpause, unpause.transaction.hash, plan.transactions[4]),
+    verifyActivationReceipt(unpause, unpause.transaction.hash, plan.transactions[5]),
   );
-  const failed = receipt(plan.transactions[4], 4);
+  const failed = receipt(plan.transactions[5], 5);
   failed.receipts_outcome[0].outcome.status = { Failure: {} };
   assert.throws(() =>
-    verifyActivationReceipt(failed, failed.transaction.hash, plan.transactions[4]),
+    verifyActivationReceipt(failed, failed.transaction.hash, plan.transactions[5]),
   );
 });
 test('activation portal requires explicit sequential signatures, reconciles once, and holds unknown outcomes', async () => {
@@ -153,7 +155,7 @@ test('activation portal requires explicit sequential signatures, reconciles once
       403,
     );
     const body = { planDigest: plan.digest };
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 7; i++) {
       assert.equal(
         (await app.inject({ method: 'POST', url: '/begin', headers, payload: body })).statusCode,
         200,
@@ -174,12 +176,12 @@ test('activation portal requires explicit sequential signatures, reconciles once
         200,
       );
     }
-    assert.equal(f.reads, 6);
+    assert.equal(f.reads, 7);
     assert.equal((await app.inject({ url: '/state', headers })).json().complete, true);
     const complete = JSON.parse(await readFile(join(dir, 'complete.json')));
     assert.equal(complete.treasuryTopupYocto, '0');
     assert.equal(complete.paidInferenceRequests, 0);
-    assert.equal(complete.transactions.length, 6);
+    assert.equal(complete.transactions.length, 7);
   } finally {
     await app.close();
     await rm(dir, { recursive: true, force: true });

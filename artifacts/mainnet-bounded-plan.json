@@ -6,7 +6,9 @@
   "owner": "symbio-fcef733893.near",
   "treasury": "treasury.symbio-fcef733893.near",
   "wasmSha256": "39f034e6ae16ddb9cf253ac977c4146989a0fee1fa7c33ba0944092bf41de3d5",
-  "feeAndStoragePlanningCeilingYocto": "30000000000000000000000",
+  "feeAndStoragePlanningCeilingYocto": "10000000000000000000000",
+  "ownerGasReserveReallocationYocto": "20000000000000000000000",
+  "totalPlanningCeilingYocto": "30000000000000000000000",
   "perTransactionFeeAllowanceYocto": "10000000000000000000000",
   "newTreasuryCapitalYocto": "0",
   "intentsPublicKeys": {
@@ -114,6 +116,24 @@
       ]
     },
     {
+      "id": "owner_gas_reserve",
+      "signerId": "symbio-fcef733893.near",
+      "receiverId": "treasury.symbio-fcef733893.near",
+      "actions": [
+        {
+          "type": "FunctionCall",
+          "params": {
+            "methodName": "withdraw_funds",
+            "args": {
+              "amount": "20000000000000000000000"
+            },
+            "gas": "5000000000000",
+            "deposit": "0"
+          }
+        }
+      ]
+    },
+    {
       "id": "activate",
       "signerId": "symbio-fcef733893.near",
       "receiverId": "treasury.symbio-fcef733893.near",
@@ -143,7 +163,7 @@
                 ]
               }
             },
-            "gas": "10000000000000",
+            "gas": "5000000000000",
             "deposit": "0"
           }
         },
@@ -155,7 +175,7 @@
               "worker": "brain.symbio-fcef733893.near",
               "enabled": true
             },
-            "gas": "10000000000000",
+            "gas": "5000000000000",
             "deposit": "0"
           }
         },
@@ -167,7 +187,7 @@
               "worker": "hand.symbio-fcef733893.near",
               "enabled": true
             },
-            "gas": "10000000000000",
+            "gas": "5000000000000",
             "deposit": "0"
           }
         },
@@ -179,7 +199,7 @@
               "worker": "books.symbio-fcef733893.near",
               "enabled": true
             },
-            "gas": "10000000000000",
+            "gas": "5000000000000",
             "deposit": "0"
           }
         },
@@ -190,7 +210,7 @@
             "args": {
               "paused": false
             },
-            "gas": "10000000000000",
+            "gas": "5000000000000",
             "deposit": "0"
           }
         }
@@ -225,5 +245,5 @@
     "intentsKeysAuthorizeThatAgentsIntentsBalances": true,
     "ownerCustodyUnchanged": true
   },
-  "digest": "7b394eb3b4f66de550798b2dea84b5af12ed692f38196875c6f0602225db4ee6"
+  "digest": "510c77ad7708ec82c1f9d51b18b3baa9902b23a9db7b948a7872631fdcfce86a"
 }

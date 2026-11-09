@@ -35,8 +35,8 @@ async function refresh() {
   current = s;
   sign.disabled = busy || !wallet || s.pending || s.complete;
   document.querySelector('#next').textContent = s.next
-    ? `Next: ${s.index + 1}/6 ${s.next.id}. Select ${s.next.signerId} in Meteor.`
-    : 'All six receipts verified.';
+    ? `Next: ${s.index + 1}/${plan.transactions.length} ${s.next.id}. Select ${s.next.signerId} in Meteor.`
+    : 'All seven receipts verified.';
   if (s.complete)
     status.textContent =
       'COMPLETE. Scoped Intents keys registered, bounded on-chain policy active, worker permissions enabled. AI remains quarantined and automated spending is disabled. No treasury top-up or paid inference occurred.';
@@ -82,6 +82,19 @@ function checkTransaction(t) {
       a.params.gas !== '20000000000000'
     )
       throw Error('REGISTRATION_PLAN_CHANGED');
+  } else if (t.id === 'owner_gas_reserve') {
+    const a = t.actions[0];
+    if (
+      t.signerId !== owner ||
+      t.receiverId !== treasury ||
+      t.actions.length !== 1 ||
+      a.type !== 'FunctionCall' ||
+      a.params.methodName !== 'withdraw_funds' ||
+      a.params.deposit !== '0' ||
+      a.params.gas !== '5000000000000' ||
+      a.params.args.amount !== '20000000000000000000000'
+    )
+      throw Error('GAS_RESERVE_REALLOCATION_CHANGED');
   } else if (t.id === 'activate') {
     if (
       t.signerId !== owner ||
@@ -89,9 +102,7 @@ function checkTransaction(t) {
       t.actions.length !== 5 ||
       t.actions.some(
         (a) =>
-          a.type !== 'FunctionCall' ||
-          a.params.deposit !== '0' ||
-          a.params.gas !== '10000000000000',
+          a.type !== 'FunctionCall' || a.params.deposit !== '0' || a.params.gas !== '5000000000000',
       )
     )
       throw Error('ACTIVATION_PLAN_CHANGED');
@@ -135,7 +146,7 @@ function checkTransaction(t) {
 try {
   plan = await read('/plan');
   if (
-    plan.transactions.length !== 6 ||
+    plan.transactions.length !== 7 ||
     plan.treasury !== 'treasury.symbio-fcef733893.near' ||
     plan.newTreasuryCapitalYocto !== '0'
   )

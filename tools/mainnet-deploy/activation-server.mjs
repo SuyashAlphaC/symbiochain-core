@@ -6,7 +6,12 @@ import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { MainnetReader } from '../../dist/mainnet.js';
 import { rpc, RPC, WASM_SHA256 } from './plan.mjs';
-import { makeActivationPlan, verifyActivationReceipt, FEE_CEILING } from './activation-plan.mjs';
+import {
+  makeActivationPlan,
+  verifyActivationReceipt,
+  FEE_CEILING,
+  OWNER_GAS_RESERVE,
+} from './activation-plan.mjs';
 const PORT = 3420,
   ARCHIVE = 'https://archival-rpc.mainnet.fastnear.com';
 async function optional(file) {
@@ -104,6 +109,7 @@ export async function createActivationApp({
   readTransaction = (hash, signer) =>
     rpc('tx', { tx_hash: hash, sender_account_id: signer, wait_until: 'FINAL' }, ARCHIVE),
   readBlock = (hash) => rpc('block', { block_id: hash }),
+  port = PORT,
 } = {}) {
   assert.deepEqual(plan, makeActivationPlan(plan.intentsPublicKeys), 'ACTIVATION_PLAN_CHANGED');
   await mkdir(stateDir, { recursive: true, mode: 0o700 });
@@ -115,9 +121,9 @@ export async function createActivationApp({
         `<li>${i + 1}. <strong>${t.id}</strong> — signer <code>${t.signerId}</code>, receiver <code>${t.receiverId}</code></li>`,
     )
     .join('');
-  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="activation-token" content="${token}"><title>SymbioChain bounded owner activation</title><style>body{font:16px system-ui;background:#111c22;color:#e7f0f3;max-width:1000px;margin:30px auto;padding:0 20px;line-height:1.6}section{border:1px solid #50626a;border-radius:14px;padding:20px;margin:20px 0}button,input{padding:12px;margin:8px 8px 8px 0}pre,code{white-space:pre-wrap;overflow-wrap:anywhere}input[type=text]{width:90%}a{color:#77e7bb}</style></head><body><h1>Bounded owner activation · AI quarantined</h1><p>No treasury top-up. No owner recovery key is loaded by this server. Only the selected wallet signs.</p><section><h2>What this authorizes</h2><p>Install two receiver-scoped keys (Intents <code>execute_intents</code> only, 0.005 NEAR gas allowance each), register those public keys on Intents, then atomically set the treasury policy, enable its three worker roles and unpause. The final <code>fund({})</code> probe attaches <strong>zero NEAR</strong>.</p><p>Trade authorization limits: <strong>0.05 USDC per authorization, 0.10 USDC per day</strong>, on Base USDC only. Native reserve: <strong>0.10 NEAR</strong>; MPC signing deposit limit: <strong>1 yoctoNEAR</strong>. These caps do not bound every fund-moving path or the owner's recovery authority. Registered Intents keys can authorize the corresponding agent's Intents balances.</p><p>Combined fee and new-key storage planning ceiling: <strong>0.03 NEAR</strong> across all six signatures. Per-transaction network-fee allowance: 0.01 NEAR. Fees are paid by the named signers' existing balances. Gas estimates are rechecked; NEAR transactions do not encode a maximum gas-price field. Review Meteor's displayed fees.</p><p>Inference stays blocked by application-level TEE workload measurement policy. Automated trading, service spending, NFT minting and credit purchases remain disabled. Running monitor heartbeats do not establish AI execution or revenue.</p><ol>${rows}</ol><p>Switch Meteor to each named signer as prompted. They use your existing recovery custody; this page does not import keys.</p><details><summary>Full public transaction plan</summary><pre>${JSON.stringify(plan, null, 2)}</pre></details></section><section><pre id="preflight">Reading finalized state…</pre><p id="next"></p><button id="connect">Connect selected Meteor account</button><label><input id="reviewed" type="checkbox">I reviewed the next transaction, scoped keys, USDC limits and fee planning ceiling.</label><button id="sign" disabled>Sign next reviewed transaction</button><button id="refresh">Refresh state</button><pre id="status" role="status"></pre></section><section><h2>Reconcile an existing signature</h2><p>Unknown outcomes stop another signature. Paste the existing hash; do not repeat the operation.</p><input id="hash" type="text" aria-label="Existing transaction hash" autocomplete="off"><button id="verify">Verify existing receipt</button><p><a href="https://symbiochain.vercel.app/evidence" target="_blank" rel="noopener noreferrer">Public mainnet evidence</a></p></section><script type="module" src="/client.js"></script></body></html>`;
+  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="activation-token" content="${token}"><title>SymbioChain bounded owner activation</title><style>body{font:16px system-ui;background:#111c22;color:#e7f0f3;max-width:1000px;margin:30px auto;padding:0 20px;line-height:1.6}section{border:1px solid #50626a;border-radius:14px;padding:20px;margin:20px 0}button,input{padding:12px;margin:8px 8px 8px 0}pre,code{white-space:pre-wrap;overflow-wrap:anywhere}input[type=text]{width:90%}a{color:#77e7bb}</style></head><body><h1>Bounded owner activation · AI quarantined</h1><p>No treasury top-up. No owner recovery key is loaded by this server. Only the selected wallet signs.</p><section><h2>What this authorizes</h2><p>Install two receiver-scoped keys (Intents <code>execute_intents</code> only, 0.005 NEAR gas allowance each), register those public keys on Intents, reallocate 0.02 NEAR from the paused treasury to its existing owner for gas, then atomically set the treasury policy, enable its three worker roles and unpause. The final <code>fund({})</code> probe attaches <strong>zero NEAR</strong>.</p><p>Trade authorization limits: <strong>0.05 USDC per authorization, 0.10 USDC per day</strong>, on Base USDC only. Native reserve: <strong>0.10 NEAR</strong>; MPC signing deposit limit: <strong>1 yoctoNEAR</strong>. These caps do not bound every fund-moving path or the owner's recovery authority. Registered Intents keys can authorize the corresponding agent's Intents balances.</p><p>Combined planning ceiling: <strong>0.03 NEAR</strong> across seven signatures: 0.02 NEAR is reallocated from the paused treasury to its owner for gas, while total network fees and new-key storage have a 0.01 NEAR planning allowance. No new funds enter the treasury. Per-transaction network-fee allowance: 0.01 NEAR. Fees are paid by the named signers' existing balances. Gas estimates are rechecked; NEAR transactions do not encode a maximum gas-price field. Review Meteor's displayed fees.</p><p>Inference stays blocked by application-level TEE workload measurement policy. Automated trading, service spending, NFT minting and credit purchases remain disabled. Running monitor heartbeats do not establish AI execution or revenue.</p><ol>${rows}</ol><p>Switch Meteor to each named signer as prompted. They use your existing recovery custody; this page does not import keys.</p><details><summary>Full public transaction plan</summary><pre>${JSON.stringify(plan, null, 2)}</pre></details></section><section><pre id="preflight">Reading finalized state…</pre><p id="next"></p><button id="connect">Connect selected Meteor account</button><label><input id="reviewed" type="checkbox">I reviewed the next transaction, scoped keys, USDC limits and fee planning ceiling.</label><button id="sign" disabled>Sign next reviewed transaction</button><button id="refresh">Refresh state</button><pre id="status" role="status"></pre></section><section><h2>Reconcile an existing signature</h2><p>Unknown outcomes stop another signature. Paste the existing hash; do not repeat the operation.</p><input id="hash" type="text" aria-label="Existing transaction hash" autocomplete="off"><button id="verify">Verify existing receipt</button><p><a href="https://symbiochain.vercel.app/evidence" target="_blank" rel="noopener noreferrer">Public mainnet evidence</a></p></section><script type="module" src="/client.js"></script></body></html>`;
   app.addHook('onRequest', async (req, reply) => {
-    const hosts = [`localhost:${PORT}`, `127.0.0.1:${PORT}`];
+    const hosts = [`localhost:${port}`, `127.0.0.1:${port}`];
     if (!hosts.includes(req.headers.host))
       return reply.code(403).send({ code: 'HOST_NOT_ALLOWED' });
     if (req.headers.origin && !hosts.map((h) => 'http://' + h).includes(req.headers.origin))
@@ -167,7 +173,7 @@ export async function createActivationApp({
     const s = await state();
     assert.ok(s.next && !s.pending, 'COMPLETE_OR_PENDING_RECONCILE');
     const before = await inspect();
-    if (s.index < 5) {
+    if (s.next.id !== 'owner_probe') {
       assert.equal(before.snapshot.paused, true, 'TREASURY_STATE_CHANGED');
       assert.equal(
         before.snapshot.accounts.filter((a) => a.workerEnabled === true).length,
@@ -180,6 +186,19 @@ export async function createActivationApp({
     }
     const signer = before.snapshot.accounts.find((a) => a.accountId === s.next.signerId);
     assert.ok(signer, 'SIGNER_NOT_RECORDED');
+    if (s.next.id === 'owner_gas_reserve') {
+      const treasury = before.snapshot.accounts.find((a) => a.accountId === plan.treasury);
+      assert.ok(
+        BigInt(treasury.availableYocto) >=
+          OWNER_GAS_RESERVE + BigInt(plan.policy.min_reserve_yocto),
+        'TREASURY_RESERVE_PROTECTED',
+      );
+    }
+    if (s.next.id === 'activate')
+      assert.ok(
+        BigInt(signer.availableYocto) >= 30000000000000000000000n,
+        'OWNER_WALLET_GAS_RESERVE_REQUIRED',
+      );
     const gas = s.next.actions.reduce(
       (n, a) => n + (a.type === 'FunctionCall' ? BigInt(a.params.gas) : 0n),
       10000000000000n,
@@ -269,6 +288,17 @@ export async function createActivationApp({
           after.keys[role][s.next.id.endsWith('_key') ? 'installed' : 'registered'],
           'EXPECTED_KEY_STATE_MISSING',
         );
+      } else if (s.next.id === 'owner_gas_reserve') {
+        assert.ok(after.snapshot.paused, 'RESERVE_ALLOCATION_MUST_REMAIN_PAUSED');
+        const ownerBefore = attempt.before.snapshot.accounts.find(
+          (a) => a.accountId === plan.owner,
+        );
+        const ownerAfter = after.snapshot.accounts.find((a) => a.accountId === plan.owner);
+        assert.ok(
+          BigInt(ownerAfter.balanceYocto) >
+            BigInt(ownerBefore.balanceYocto) + OWNER_GAS_RESERVE - 10000000000000000000000n,
+          'OWNER_GAS_RESERVE_NOT_RECEIVED',
+        );
       } else {
         assert.ok(!after.snapshot.paused, 'ACTIVATION_NOT_OBSERVED');
         assert.equal(
@@ -343,7 +373,7 @@ if (process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.m
   console.log(
     JSON.stringify({
       portal: 'http://localhost:' + PORT,
-      stages: 6,
+      stages: 7,
       treasuryTopupYocto: '0',
       ownerSignaturesRequired: true,
       serverHoldsWalletKeys: false,

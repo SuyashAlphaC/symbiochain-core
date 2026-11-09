@@ -2,7 +2,8 @@ import assert from 'node:assert/strict';
 import { UNIT, ROOT, WASM_SHA256, planDigest } from './plan.mjs';
 export const OWNER = 'symbio-fcef733893.near';
 export const TREASURY = 'treasury.' + OWNER;
-export const FEE_CEILING = (UNIT * 3n) / 100n;
+export const FEE_CEILING = UNIT / 100n;
+export const OWNER_GAS_RESERVE = UNIT / 50n;
 export const INTENTS_ALLOWANCE = UNIT / 200n;
 const call = (methodName, args, gas = '10000000000000', deposit = '0') => ({
   type: 'FunctionCall',
@@ -55,15 +56,23 @@ export function makeActivationPlan(publicKeys) {
     });
   }
   transactions.push({
+    id: 'owner_gas_reserve',
+    signerId: OWNER,
+    receiverId: TREASURY,
+    actions: [
+      call('withdraw_funds', { amount: OWNER_GAS_RESERVE.toString() }, '5000000000000', '0'),
+    ],
+  });
+  transactions.push({
     id: 'activate',
     signerId: OWNER,
     receiverId: TREASURY,
     actions: [
-      call('set_policy', { policy }),
+      call('set_policy', { policy }, '5000000000000'),
       ...['brain', 'hand', 'books'].map((name) =>
-        call('set_worker_enabled', { worker: name + '.' + OWNER, enabled: true }),
+        call('set_worker_enabled', { worker: name + '.' + OWNER, enabled: true }, '5000000000000'),
       ),
-      call('set_paused', { paused: false }),
+      call('set_paused', { paused: false }, '5000000000000'),
     ],
   });
   transactions.push({
@@ -81,6 +90,8 @@ export function makeActivationPlan(publicKeys) {
     treasury: TREASURY,
     wasmSha256: WASM_SHA256,
     feeAndStoragePlanningCeilingYocto: FEE_CEILING.toString(),
+    ownerGasReserveReallocationYocto: OWNER_GAS_RESERVE.toString(),
+    totalPlanningCeilingYocto: (FEE_CEILING + OWNER_GAS_RESERVE).toString(),
     perTransactionFeeAllowanceYocto: (UNIT / 100n).toString(),
     newTreasuryCapitalYocto: '0',
     intentsPublicKeys: publicKeys,
