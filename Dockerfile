@@ -21,6 +21,7 @@ COPY --from=build --chown=node:node /app/artifacts/testnet-rehearsal.json ./arti
 COPY --from=build --chown=node:node /app/artifacts/brave-cli-verification.json ./artifacts/brave-cli-verification.json
 COPY --from=build --chown=node:node /app/artifacts/mainnet-paused-deployment.json ./artifacts/mainnet-paused-deployment.json
 COPY --from=build --chown=node:node /app/artifacts/mainnet-acceptance.json ./artifacts/mainnet-acceptance.json
+COPY --from=build --chown=node:node /app/artifacts/mainnet-bounded-activation.json ./artifacts/mainnet-bounded-activation.json
 USER node
 EXPOSE 3001
 CMD ["node","dist/main.js"]

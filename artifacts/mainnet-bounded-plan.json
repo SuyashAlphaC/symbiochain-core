@@ -1,0 +1,249 @@
+{
+  "contractVersion": 1,
+  "network": "mainnet",
+  "profile": "BOUNDED_OWNER_ACTIVATION_TEE_QUARANTINED",
+  "root": "solidvideo4090.near",
+  "owner": "symbio-fcef733893.near",
+  "treasury": "treasury.symbio-fcef733893.near",
+  "wasmSha256": "39f034e6ae16ddb9cf253ac977c4146989a0fee1fa7c33ba0944092bf41de3d5",
+  "feeAndStoragePlanningCeilingYocto": "10000000000000000000000",
+  "ownerGasReserveReallocationYocto": "20000000000000000000000",
+  "totalPlanningCeilingYocto": "30000000000000000000000",
+  "perTransactionFeeAllowanceYocto": "10000000000000000000000",
+  "newTreasuryCapitalYocto": "0",
+  "intentsPublicKeys": {
+    "brain": "ed25519:E5Vp6NUrMdNWULxghEUU8M65AKKeRQ6vGvfAGVxHx174",
+    "hand": "ed25519:2oXDdTBTVD43FTpYPGKcZTzTvZgwtC7sm4C4VWGqwUK9"
+  },
+  "policy": {
+    "max_trade_atoms": "50000",
+    "max_daily_atoms": "100000",
+    "min_reserve_yocto": "100000000000000000000000",
+    "max_signing_cost_yocto": "1",
+    "max_slippage_bps": 0,
+    "allowed_chain_ids": [
+      8453
+    ],
+    "allowed_token_contracts": [
+      "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
+    ],
+    "token_max_trade_atoms": [
+      "50000"
+    ],
+    "token_max_daily_atoms": [
+      "100000"
+    ]
+  },
+  "transactions": [
+    {
+      "id": "brain_key",
+      "signerId": "brain.symbio-fcef733893.near",
+      "receiverId": "brain.symbio-fcef733893.near",
+      "actions": [
+        {
+          "type": "AddKey",
+          "params": {
+            "publicKey": "ed25519:E5Vp6NUrMdNWULxghEUU8M65AKKeRQ6vGvfAGVxHx174",
+            "accessKey": {
+              "permission": {
+                "receiverId": "intents.near",
+                "methodNames": [
+                  "execute_intents"
+                ],
+                "allowance": "5000000000000000000000"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "brain_register",
+      "signerId": "brain.symbio-fcef733893.near",
+      "receiverId": "intents.near",
+      "actions": [
+        {
+          "type": "FunctionCall",
+          "params": {
+            "methodName": "add_public_key",
+            "args": {
+              "public_key": "ed25519:E5Vp6NUrMdNWULxghEUU8M65AKKeRQ6vGvfAGVxHx174"
+            },
+            "gas": "20000000000000",
+            "deposit": "1"
+          }
+        }
+      ]
+    },
+    {
+      "id": "hand_key",
+      "signerId": "hand.symbio-fcef733893.near",
+      "receiverId": "hand.symbio-fcef733893.near",
+      "actions": [
+        {
+          "type": "AddKey",
+          "params": {
+            "publicKey": "ed25519:2oXDdTBTVD43FTpYPGKcZTzTvZgwtC7sm4C4VWGqwUK9",
+            "accessKey": {
+              "permission": {
+                "receiverId": "intents.near",
+                "methodNames": [
+                  "execute_intents"
+                ],
+                "allowance": "5000000000000000000000"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "hand_register",
+      "signerId": "hand.symbio-fcef733893.near",
+      "receiverId": "intents.near",
+      "actions": [
+        {
+          "type": "FunctionCall",
+          "params": {
+            "methodName": "add_public_key",
+            "args": {
+              "public_key": "ed25519:2oXDdTBTVD43FTpYPGKcZTzTvZgwtC7sm4C4VWGqwUK9"
+            },
+            "gas": "20000000000000",
+            "deposit": "1"
+          }
+        }
+      ]
+    },
+    {
+      "id": "owner_gas_reserve",
+      "signerId": "symbio-fcef733893.near",
+      "receiverId": "treasury.symbio-fcef733893.near",
+      "actions": [
+        {
+          "type": "FunctionCall",
+          "params": {
+            "methodName": "withdraw_funds",
+            "args": {
+              "amount": "20000000000000000000000"
+            },
+            "gas": "5000000000000",
+            "deposit": "0"
+          }
+        }
+      ]
+    },
+    {
+      "id": "activate",
+      "signerId": "symbio-fcef733893.near",
+      "receiverId": "treasury.symbio-fcef733893.near",
+      "actions": [
+        {
+          "type": "FunctionCall",
+          "params": {
+            "methodName": "set_policy",
+            "args": {
+              "policy": {
+                "max_trade_atoms": "50000",
+                "max_daily_atoms": "100000",
+                "min_reserve_yocto": "100000000000000000000000",
+                "max_signing_cost_yocto": "1",
+                "max_slippage_bps": 0,
+                "allowed_chain_ids": [
+                  8453
+                ],
+                "allowed_token_contracts": [
+                  "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
+                ],
+                "token_max_trade_atoms": [
+                  "50000"
+                ],
+                "token_max_daily_atoms": [
+                  "100000"
+                ]
+              }
+            },
+            "gas": "5000000000000",
+            "deposit": "0"
+          }
+        },
+        {
+          "type": "FunctionCall",
+          "params": {
+            "methodName": "set_worker_enabled",
+            "args": {
+              "worker": "brain.symbio-fcef733893.near",
+              "enabled": true
+            },
+            "gas": "5000000000000",
+            "deposit": "0"
+          }
+        },
+        {
+          "type": "FunctionCall",
+          "params": {
+            "methodName": "set_worker_enabled",
+            "args": {
+              "worker": "hand.symbio-fcef733893.near",
+              "enabled": true
+            },
+            "gas": "5000000000000",
+            "deposit": "0"
+          }
+        },
+        {
+          "type": "FunctionCall",
+          "params": {
+            "methodName": "set_worker_enabled",
+            "args": {
+              "worker": "books.symbio-fcef733893.near",
+              "enabled": true
+            },
+            "gas": "5000000000000",
+            "deposit": "0"
+          }
+        },
+        {
+          "type": "FunctionCall",
+          "params": {
+            "methodName": "set_paused",
+            "args": {
+              "paused": false
+            },
+            "gas": "5000000000000",
+            "deposit": "0"
+          }
+        }
+      ]
+    },
+    {
+      "id": "owner_probe",
+      "signerId": "symbio-fcef733893.near",
+      "receiverId": "treasury.symbio-fcef733893.near",
+      "actions": [
+        {
+          "type": "FunctionCall",
+          "params": {
+            "methodName": "fund",
+            "args": {},
+            "gas": "10000000000000",
+            "deposit": "0"
+          }
+        }
+      ]
+    }
+  ],
+  "disclosure": {
+    "tradeAsset": "USDC",
+    "tradeDecimals": 6,
+    "universalNativeSpendingCap": false,
+    "executionEngineEnabled": false,
+    "paidInferenceAllowed": false,
+    "automaticTradingAllowed": false,
+    "externalRevenueProven": false,
+    "automaticCreditPurchaseImplemented": false,
+    "intentsKeysAuthorizeThatAgentsIntentsBalances": true,
+    "ownerCustodyUnchanged": true
+  },
+  "digest": "510c77ad7708ec82c1f9d51b18b3baa9902b23a9db7b948a7872631fdcfce86a"
+}

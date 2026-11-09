@@ -10,7 +10,7 @@ public Vercel revision and deployment ID. Both repositories are public.
 The artifact is frozen at its check time; later documentation-only deployments
 can have a newer frontend Git revision. Consult `/api/release` for current identity.
 
-The treasury is paused and no worker is started by the observer. Mainnet native
+The November 9 bounded activation supersedes the earlier paused foundation: the treasury is unpaused, three worker permissions are enabled and both scoped Intents keys are registered. The runtime remains disarmed with monitor-only heartbeats. [Seven finalized activation receipts](../artifacts/mainnet-bounded-activation.json) and the [activation guide](BOUNDED_MAINNET_ACTIVATION.md) record the exact scope. Mainnet native
 balances and recorded deployment transactions are real; PAPER economics, testnet
 accounting and local wallet fixtures retain their explicit scope. Paid inference,
 funded trading, external revenue, automatic credit purchasing and business-funded
@@ -60,7 +60,7 @@ settlement economics and positive NFT accounting fixtures are simulated.
 New business accounting is implementation-tested, including finalized-receipt
 parsing with injected RPC responses. The earlier invoice probe timed out; a later independent wNEAR-credit parser
 check passed against a public third-party receipt, not project revenue. No actual customer fee, profitable mainnet round
-trip, AI-credit purchase or business-funded NFT payment was performed. The November 7 owner funding update below supersedes the earlier unfunded status. Trading caps and operational funding remain undecided. Provider purchase
+trip, AI-credit purchase or business-funded NFT payment was performed. The November 7 owner funding update below supersedes the earlier unfunded status. The later November 9 activation sets the bounded contract policy; separate funded trading validation remains incomplete. Provider purchase
 integration remains blocked under the public-interface-only requirement. Earned-proceeds
 NFT conversion, withdrawal, allocation and recovery are implemented and tested,
 but disabled without funded validation; see [funding scope](BUSINESS_FUNDING.md).

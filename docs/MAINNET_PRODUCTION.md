@@ -3,7 +3,7 @@
 The permanent application uses the existing Render backend and Vercel frontend.
 `LIVE` identifies the source of chain observations. `EXECUTION_ENABLED=false`
 disarms the execution plane. It does not mean the swarm is trading, purchasing
-inference or earning revenue. The [production verification record](../artifacts/mainnet-production-verification.json)
+inference or earning revenue. The [release revisions](RELEASE_REVISIONS.md)
 records the deployed revisions and checks; historical PAPER/testnet artifacts
 retain their original scope.
 
@@ -27,8 +27,10 @@ deployment receipts are labelled as infrastructure, not customer revenue.
 The treasury is `treasury.symbio-fcef733893.near`, owned by
 `symbio-fcef733893.near`. Its reviewed executable remains
 `39f034e6ae16ddb9cf253ac977c4146989a0fee1fa7c33ba0944092bf41de3d5`.
-The treasury is paused, three worker permissions are disabled and the temporary
-deployment key remains revoked. No owner recovery key is loaded by Render.
+The November 9 owner activation unpaused the treasury and enabled all three
+worker permissions under 0.05-USDC per-authorization / 0.10-USDC daily limits.
+Both dedicated Intents keys are registered. The temporary deployment key remains
+revoked. See [the seven confirmed activation receipts](../artifacts/mainnet-bounded-activation.json). No owner recovery key is loaded by Render.
 
 Meteor and MyNearWallet connection requests use pinned wallet executors and
 request account access without adding a key. Connection is not operator
@@ -38,7 +40,10 @@ parameters; an actual user must still complete their wallet's login UI.
 ## Disarmed runtime
 
 `scripts/start-render.sh` applies additive migrations and database protection,
-then starts only the API when execution is disabled. No worker loop is started.
+then starts the API and, when `MONITOR_ONLY_WORKERS=true`, a monitor-only worker.
+This branch publishes three heartbeats without constructing an execution engine,
+provider, wallet signer or funding runner. With that flag off, disarmed mode
+starts only the API.
 Worker entry, cycle admission, engine execution and administrative mutations
 independently reject disarmed execution. The public frontend offers no LIVE
 arming endpoint. Legacy PAPER publication remains mode-bound and refuses LIVE.
@@ -55,11 +60,11 @@ is not a provider balance. No paid completion is required to serve chain reads.
 - Independently approve the entire current TEE deployment and serving identity.
   Missing launcher signed provenance still closes this gate. Hardware subchecks
   alone do not authorize paid inference. See [the approval handoff](TEE_APPROVAL_HANDOFF.md).
-- Obtain explicit numeric trading and gas caps. The deployed on-chain limits
-  are defensive placeholders; runtime trading limits are zero. Fund only the
-  reviewed routes, derived wallets and required native gas after authorization.
-- Review owner-signed worker permissions and contract policy before unpausing.
-  Load only receiver-scoped agent keys, never the owner's recovery key.
+- The owner has approved and applied the bounded contract policy and worker
+  permissions. Scoped treasury/Intents keys are configured. Runtime spending
+  remains disabled independently. Actual trading still requires separate approved
+  capital and gas funding for reviewed routes and derived wallets; this activation
+  did not fund those paths. Never load the owner's recovery key into Render.
 - Establish a genuinely profitable executable route before any trade. A losing
   10-USDC preview remains rejected; deployment does not create arbitrage.
 - Validate real customer delivery, final Intents settlement and complete costs

@@ -1,0 +1,14 @@
+{
+  "checkedAt": "2026-11-09T12:40:42.576Z",
+  "scope": "UNSIGNED_OWNER_GAS_RESERVE_BROWSER_FIXTURE",
+  "signer": "symbio-fcef733893.near",
+  "receiver": "treasury.symbio-fcef733893.near",
+  "method": "withdraw_funds",
+  "reserveReallocationYocto": "20000000000000000000000",
+  "attachedGas": "5000000000000",
+  "attachedDepositYocto": "0",
+  "signatureDeliberatelyRejected": true,
+  "actualMainnetTransactions": 0,
+  "paidInferenceRequests": 0,
+  "walletErrorRetained": true
+}

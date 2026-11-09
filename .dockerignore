@@ -13,5 +13,6 @@ artifacts/*
 !artifacts/brave-cli-verification.json
 !artifacts/mainnet-paused-deployment.json
 !artifacts/mainnet-acceptance.json
+!artifacts/mainnet-bounded-activation.json
 coverage
 *.log

@@ -1,0 +1,17 @@
+{
+  "checkedAt": "2026-11-09T12:28:52.857Z",
+  "scope": "LOCAL_SANDBOX_ACTIVATION_GAS_REHEARSAL",
+  "wasmSha256": "39f034e6ae16ddb9cf253ac977c4146989a0fee1fa7c33ba0944092bf41de3d5",
+  "gasPerFunctionCall": "5000000000000",
+  "functionCalls": 5,
+  "totalAttachedGas": "25000000000000",
+  "ownerBalanceBeforeReserveYocto": "12554762262500000000000",
+  "gasReserveReallocatedYocto": "20000000000000000000000",
+  "ownerBalanceBeforeYocto": "32292288721355000000000",
+  "sandboxGasPrice": "100000000",
+  "success": true,
+  "observedSandboxFeeYocto": "1031246650766600000000",
+  "mainnetTransactionsSubmitted": 0,
+  "paidInferenceRequests": 0,
+  "disclosure": "Local gas sufficiency rehearsal only; not a mainnet activation or a wallet fee guarantee."
+}

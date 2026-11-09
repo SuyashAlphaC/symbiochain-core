@@ -115,17 +115,43 @@ export class MainnetReader {
       })
       .parse(block).header;
   }
-  private async view(contract: string, method: string, block: string) {
+  private async view(contract: string, method: string, block: string, args: object = {}) {
     const r = z.object({ result: z.array(z.number().int().min(0).max(255)).max(100000) }).parse(
       await this.rpc('query', {
         request_type: 'call_function',
         block_id: block,
         account_id: contract,
         method_name: method,
-        args_base64: 'e30=',
+        args_base64: Buffer.from(JSON.stringify(args)).toString('base64'),
       }),
     );
     return JSON.parse(Buffer.from(r.result).toString());
+  }
+  async intentKeyRegistered(account: string, publicKey: string, block: string) {
+    this.requireMainnet();
+    return z.boolean().parse(
+      await this.view(this.c.INTENTS_CONTRACT_ID, 'has_public_key', block, {
+        account_id: accountId.parse(account),
+        public_key: publicKey,
+      }),
+    );
+  }
+  async activationPolicy(block: string) {
+    this.requireMainnet();
+    return z
+      .object({
+        max_trade_atoms: atoms,
+        max_daily_atoms: atoms,
+        min_reserve_yocto: atoms,
+        max_signing_cost_yocto: atoms,
+        max_slippage_bps: z.number().int(),
+        allowed_chain_ids: z.array(z.number().int()).max(8),
+        allowed_token_contracts: z.array(z.string()).max(16),
+        token_max_trade_atoms: z.array(atoms).max(16),
+        token_max_daily_atoms: z.array(atoms).max(16),
+      })
+      .strict()
+      .parse(await this.view(this.c.NEAR_CONTRACT_ID, 'get_policy', block));
   }
   async snapshot() {
     this.requireMainnet();
@@ -250,7 +276,7 @@ export class MainnetReader {
         : []),
       ...(distribution.paused ? ['The treasury is paused on-chain.'] : []),
       ...(placeholderLimits ? ['Trading and gas spending caps are not configured.'] : []),
-      'TEE deployment provenance is not approved; paid inference is quarantined.',
+      'Inference blocked by application-level TEE workload measurement policy.',
       'Funded trading routes and a profitable settlement have not been demonstrated.',
       'Automatic AI credit purchasing has no supported provider payment integration.',
       ...(observedHash !== expectedHash
