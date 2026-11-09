@@ -1,11 +1,56 @@
 {
   "contractVersion": 1,
   "profile": "BOUNDED_OWNER_ACTIVATION_TEE_QUARANTINED",
-  "status": "PENDING",
-  "checkedAt": null,
-  "transactions": [],
-  "totalFeeYocto": "0",
-  "newStorageYocto": "0",
+  "status": "COMPLETE",
+  "requiredTransactions": 7,
+  "checkedAt": "2026-11-09T13:00:41.685Z",
+  "transactions": [
+    {
+      "hash": "Fh3StZwjzH8nW17hNapGDmJWASe8TdnA7Wdv725yEiKX",
+      "step": "brain_key",
+      "url": "https://nearblocks.io/txns/Fh3StZwjzH8nW17hNapGDmJWASe8TdnA7Wdv725yEiKX",
+      "actualFeeYocto": "42061586059200000000"
+    },
+    {
+      "hash": "3XA4JPQyLWoPp6nd9z4Woz82StvKi51xquYQ6otRcfpb",
+      "step": "brain_register",
+      "url": "https://nearblocks.io/txns/3XA4JPQyLWoPp6nd9z4Woz82StvKi51xquYQ6otRcfpb",
+      "actualFeeYocto": "371860623184700000000"
+    },
+    {
+      "hash": "8p5Qwxox3oWAnbRx6eJ2vS3bnDj7tA174VCig7rh2XHf",
+      "step": "hand_key",
+      "url": "https://nearblocks.io/txns/8p5Qwxox3oWAnbRx6eJ2vS3bnDj7tA174VCig7rh2XHf",
+      "actualFeeYocto": "42061586059200000000"
+    },
+    {
+      "hash": "GoVomht8KioYRA7bF9NigqNUdYTYRCdu86gmttwBTrxi",
+      "step": "hand_register",
+      "url": "https://nearblocks.io/txns/GoVomht8KioYRA7bF9NigqNUdYTYRCdu86gmttwBTrxi",
+      "actualFeeYocto": "371961547818200000000"
+    },
+    {
+      "hash": "GuiyZmHvu6dUaW4mM2CkqNSDdqnGQq72jCKyfQwsyFEs",
+      "step": "owner_gas_reserve",
+      "url": "https://nearblocks.io/txns/GuiyZmHvu6dUaW4mM2CkqNSDdqnGQq72jCKyfQwsyFEs",
+      "actualFeeYocto": "267433738265300000000"
+    },
+    {
+      "hash": "CQo99h6Rm5U1Tr9Tp9P8KMpKpectY3XFz3e5UnBTTnNk",
+      "step": "activate",
+      "url": "https://nearblocks.io/txns/CQo99h6Rm5U1Tr9Tp9P8KMpKpectY3XFz3e5UnBTTnNk",
+      "actualFeeYocto": "1053486381430200000000"
+    },
+    {
+      "hash": "45TUshKZ2wUXsBtmU3NxsBX2JY8nEBqdjNdBcP454AFq",
+      "step": "owner_probe",
+      "url": "https://nearblocks.io/txns/45TUshKZ2wUXsBtmU3NxsBX2JY8nEBqdjNdBcP454AFq",
+      "actualFeeYocto": "226313395158900000000"
+    }
+  ],
+  "totalFeeYocto": "2375178857975700000000",
+  "newStorageYocto": "3080000000000000000000",
+  "ownerGasReserveReallocatedYocto": "20000000000000000000000",
   "treasuryTopupYocto": "0",
   "paidInferenceRequests": 0,
   "externalRevenueProven": false

@@ -81,6 +81,25 @@ it('distinguishes active owner policy, monitor heartbeats and the closed AI exec
   expect(() =>
     MainnetActivation.parse({ ...r, limits: { ...r.limits, universalNativeSpendingCap: true } }),
   ).toThrow();
+  expect(() =>
+    MainnetActivation.parse({
+      ...r,
+      proof: { ...r.proof, ownerGasReserveReallocatedYocto: '1' },
+    }),
+  ).toThrow();
+  if (r.proof.transactions.length)
+    expect(() =>
+      MainnetActivation.parse({
+        ...r,
+        proof: {
+          ...r.proof,
+          transactions: r.proof.transactions.map((t) => ({
+            ...t,
+            url: 'https://nearblocks.io/txns/' + 'A'.repeat(43),
+          })),
+        },
+      }),
+    ).toThrow();
   paused = true;
   expect((await mainnetActivation(store, reader)).ownerActivation).toBe('PARTIAL');
 });

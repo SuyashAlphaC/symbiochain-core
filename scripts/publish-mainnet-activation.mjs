@@ -41,11 +41,20 @@ for (const stage of plan.transactions) {
 const proof = MainnetActivationProof.parse({
   contractVersion: 1,
   profile: 'BOUNDED_OWNER_ACTIVATION_TEE_QUARANTINED',
-  status: transactions.length === 6 ? 'COMPLETE' : transactions.length ? 'PARTIAL' : 'PENDING',
+  status:
+    transactions.length === plan.transactions.length
+      ? 'COMPLETE'
+      : transactions.length
+        ? 'PARTIAL'
+        : 'PENDING',
+  requiredTransactions: 7,
   checkedAt: transactions.length ? new Date().toISOString() : null,
   transactions,
   totalFeeYocto: transactions.reduce((n, t) => n + BigInt(t.actualFeeYocto), 0n).toString(),
   newStorageYocto: storage.toString(),
+  ownerGasReserveReallocatedYocto: transactions.some((t) => t.step === 'owner_gas_reserve')
+    ? plan.ownerGasReserveReallocationYocto
+    : '0',
   treasuryTopupYocto: '0',
   paidInferenceRequests: 0,
   externalRevenueProven: false,

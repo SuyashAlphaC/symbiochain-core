@@ -5,6 +5,7 @@ export const MainnetActivationProof = z
     contractVersion: z.literal(1),
     profile: z.literal('BOUNDED_OWNER_ACTIVATION_TEE_QUARANTINED'),
     status: z.enum(['PENDING', 'PARTIAL', 'COMPLETE']),
+    requiredTransactions: z.literal(7).default(7),
     checkedAt: z.iso.datetime().nullable(),
     transactions: z
       .array(
@@ -16,6 +17,7 @@ export const MainnetActivationProof = z
               'brain_register',
               'hand_key',
               'hand_register',
+              'owner_gas_reserve',
               'activate',
               'owner_probe',
             ]),
@@ -24,9 +26,10 @@ export const MainnetActivationProof = z
           })
           .strict(),
       )
-      .max(6),
+      .max(7),
     totalFeeYocto: atoms,
     newStorageYocto: atoms,
+    ownerGasReserveReallocatedYocto: atoms.default('0'),
     treasuryTopupYocto: z.literal('0'),
     paidInferenceRequests: z.literal(0),
     externalRevenueProven: z.literal(false),
@@ -35,8 +38,8 @@ export const MainnetActivationProof = z
   .superRefine((r, ctx) => {
     if (
       (r.status === 'PENDING' && r.transactions.length !== 0) ||
-      (r.status === 'PARTIAL' && (!r.transactions.length || r.transactions.length === 6)) ||
-      (r.status === 'COMPLETE' && r.transactions.length !== 6)
+      (r.status === 'PARTIAL' && (!r.transactions.length || r.transactions.length === 7)) ||
+      (r.status === 'COMPLETE' && r.transactions.length !== 7)
     )
       ctx.addIssue({
         code: 'custom',
@@ -51,6 +54,13 @@ export const MainnetActivationProof = z
       BigInt(r.totalFeeYocto) !== r.transactions.reduce((n, t) => n + BigInt(t.actualFeeYocto), 0n)
     )
       ctx.addIssue({ code: 'custom', message: 'Activation fees must reconcile' });
+    if (r.transactions.some((t) => t.url !== `https://nearblocks.io/txns/${t.hash}`))
+      ctx.addIssue({ code: 'custom', message: 'Receipt links must identify the verified hash' });
+    const reserve = r.transactions.some((t) => t.step === 'owner_gas_reserve')
+      ? '20000000000000000000000'
+      : '0';
+    if (r.ownerGasReserveReallocatedYocto !== reserve)
+      ctx.addIssue({ code: 'custom', message: 'Gas allocation must match receipt coverage' });
   });
 export const MainnetActivation = z
   .object({
