@@ -2,7 +2,7 @@
 
 ## Current production — mainnet observer
 
-The [production verification record](../artifacts/mainnet-production-verification.json)
+The [production verification record](../artifacts/mainnet-acceptance-release.json)
 supersedes the historical deployment tables below. It identifies the exact
 frontend and backend revisions, existing hosting projects, sanitized checks and
 the LIVE/disarmed runtime. The frontend's `/api/release` independently exposes its

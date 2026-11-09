@@ -1,0 +1,147 @@
+{
+  "checkedAt": "2026-11-09T05:30:55.587Z",
+  "scope": "MAINNET_ACCEPTANCE_PUBLICATION_EXECUTION_DISARMED",
+  "backend": {
+    "repository": "SuyashAlphaC/symbiochain-core",
+    "url": "https://symbiochain-core.onrender.com",
+    "serviceId": "srv-dbgd7u4s728c738qjstg",
+    "revision": "72334dd6ba4dcd4b06b0bf7c4637e811dc127816",
+    "deploymentId": "dep-dbolhnvf3r2c73bi4dfg",
+    "status": "live"
+  },
+  "frontend": {
+    "repository": "AviraL0013/SymbioChain",
+    "url": "https://symbiochain.vercel.app",
+    "project": "avirals-projects-27965510/symbiochain",
+    "revision": "bcc2fdff5f75fc7fbb05fb21374895a2e7eb5568",
+    "deploymentId": "dpl_GeirR6Ld6vV63ELpQV4kNoHVg9V7",
+    "environment": "production",
+    "identitySource": "/api/release"
+  },
+  "runtime": {
+    "contractVersion": 1,
+    "mode": "LIVE",
+    "executionEnabled": false,
+    "network": "mainnet",
+    "mainnetAvailable": true
+  },
+  "snapshot": {
+    "finalizedBlock": {
+      "height": "223722822",
+      "hash": "CpKZBjSziDZR9B7NhJHSUNuPWzMXw7inDchmPtMhxesi",
+      "timestamp": "2026-11-09T05:26:00.656Z"
+    },
+    "treasury": "treasury.symbio-fcef733893.near",
+    "paused": true,
+    "codeMatches": true,
+    "disabledWorkers": 3,
+    "nftSupply": "0",
+    "revenueShareBps": 0
+  },
+  "acceptance": {
+    "capturedAt": "2026-11-09T05:15:08.388Z",
+    "summary": {
+      "passed": 13,
+      "blocked": 11,
+      "notRun": 1,
+      "complete": false
+    },
+    "verifiedMainnetTransactions": 12,
+    "serviceRoundTrip": {
+      "checkedAt": "2026-11-09T05:05:29.132Z",
+      "depositedYocto": "2000000000000000000000",
+      "returnedYocto": "1200000000000000000000",
+      "storageCollateralYocto": "800000000000000000000",
+      "totalFeeYocto": "778514481693400000000",
+      "totalOwnerCostYocto": "1578514481693400000000",
+      "walletBalanceReconciled": true,
+      "depositHash": "5TJYtz6mgKmLCUtm671nad5yLiUCGE3c7exe91WXgtiN",
+      "withdrawalHash": "8yY6i69VtQgknNxzTEz3qR9uxWEyUojCAiQi3HzbLEAC"
+    }
+  },
+  "backendProbes": [
+    {
+      "path": "/api/evidence/mainnet",
+      "authenticated": false,
+      "status": 401,
+      "cacheControl": null
+    },
+    {
+      "path": "/api/evidence/mainnet",
+      "authenticated": true,
+      "status": 200,
+      "cacheControl": "private, no-store"
+    },
+    {
+      "path": "/api/runtime",
+      "authenticated": true,
+      "status": 200,
+      "cacheControl": "private, no-store"
+    },
+    {
+      "path": "/api/mainnet/snapshot",
+      "authenticated": true,
+      "status": 200,
+      "cacheControl": "private, no-store"
+    }
+  ],
+  "publicProxy": {
+    "path": "/api/swarm/mainnet/acceptance",
+    "status": 200,
+    "cacheControl": "private, no-store"
+  },
+  "browser": {
+    "checkedAt": "2026-11-09T05:29:57.130Z",
+    "target": "https://symbiochain.vercel.app",
+    "scope": "READ_ONLY_PRODUCTION_BROWSER",
+    "mainnetAcceptance": true,
+    "serviceDepositAndWithdrawalProofs": true,
+    "mainnetOnlyEvidence": true,
+    "legacyTestnetRedirect": true,
+    "staleReportHandling": true,
+    "mutatingApiRequests": 0,
+    "credentialTypesInspected": 10,
+    "dashboard": true,
+    "finalizedMainnetData": true,
+    "pausedAndDisarmedLabels": true,
+    "knownReceiptLookup": true,
+    "walletDialog": true,
+    "realExtensionLoginPerformed": false,
+    "localWalletFixtureCoveredSeparately": true,
+    "staleRecoveryViaInterception": true,
+    "routeCount": 8,
+    "mobileWidth": 390,
+    "mobileOverflow": false,
+    "directBrowserBackendRequests": 0,
+    "credentialExposures": 0,
+    "pageErrors": 0,
+    "inspectedResponses": 223,
+    "paidInferenceRequests": 0,
+    "blockchainTransactionsSubmitted": 0
+  },
+  "validation": {
+    "backendUnitTests": 137,
+    "isolatedPostgresIntegrationTests": 81,
+    "ownerToolTests": 12,
+    "frontendTests": 26,
+    "backendCheck": "PASSED",
+    "frontendCheck": "PASSED",
+    "localMainnetBrowserTests": 2,
+    "localWalletSignIn": "INJECTED_FIXTURE_WITHOUT_KEY_GRANT_OR_PAYMENT",
+    "backendCi": "https://github.com/SuyashAlphaC/symbiochain-core/actions/runs/42566509474",
+    "frontendCi": "https://github.com/AviraL0013/SymbioChain/actions/runs/42567368679",
+    "contractCi": "PASSED",
+    "releaseImagePackaging": "PASSED"
+  },
+  "protectedEnvironmentUnchanged": true,
+  "recordedMainnetTransactions": 12,
+  "publicationTransactionsSubmitted": 0,
+  "paidInferenceRequests": 0,
+  "earnedRevenueProven": false,
+  "mainnetIntentsSettlementProven": false,
+  "mainnetNftDistributionProven": false,
+  "automaticCreditPurchaseImplemented": false,
+  "fullBusinessRunway": null,
+  "hackathonSubmissionConfirmed": false,
+  "evidenceRevisionPolicy": "FROZEN_OBSERVATION_AT_CHECKED_AT_LATER_DOCUMENTATION_COMMITS_DO_NOT_CHANGE_RECORDED_DEPLOYMENT_IDENTITIES"
+}

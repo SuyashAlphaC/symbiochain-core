@@ -12,7 +12,7 @@ Paid inference remains gated; we have not changed trust pins to force a pass. [C
 
 The backend includes TypeScript/Fastify, PostgreSQL/Prisma, durable workers, a Rust NEAR treasury/NFT contract, EVM and native Solana transfer adapters, encrypted evidence, replayable WebSocket events, and Docker/CI configuration.
 
-**Current production:** the [permanent frontend](https://symbiochain.vercel.app/dashboard) and [backend](https://symbiochain-core.onrender.com/docs) serve **LIVE mainnet observations with execution DISARMED**. Finalized balances, storage collateral, permissions, executable identity and known deployment receipts are real blockchain data. The API starts no worker, and mutations are disabled. [Exact release revisions and verification](artifacts/mainnet-production-verification.json); [activation and rollback runbook](docs/MAINNET_PRODUCTION.md).
+**Current production:** the [permanent frontend](https://symbiochain.vercel.app/dashboard) and [backend](https://symbiochain-core.onrender.com/docs) serve **LIVE mainnet observations with execution DISARMED**. Finalized balances, storage collateral, permissions, executable identity and known deployment receipts are real blockchain data. The API starts no worker, and mutations are disabled. [Exact release revisions and verification](artifacts/mainnet-acceptance-release.json); [activation and rollback runbook](docs/MAINNET_PRODUCTION.md).
 
 **Mainnet acceptance — November 9:** the [current evidence page](https://symbiochain.vercel.app/evidence) presents mainnet-only acceptance results: **13 passed, 11 blocked, 1 not run**, with 12 independently rechecked finalized transaction receipts. See the [machine-readable report](artifacts/mainnet-acceptance.json) and [scope and reproduction guide](docs/MAINNET_ACCEPTANCE.md). Passing an observation check does not establish a successful AI, signing or settlement cycle.
 
@@ -22,7 +22,7 @@ Testnet artifacts remain dated historical regression evidence in Git; the curren
 
 ## Business evidence
 
-The current paired release includes the service, accounting and funding implementations. Exact deployed revisions are in [the production record](artifacts/mainnet-production-verification.json); [earlier service candidates](artifacts/service-loop-release-manifest.json) remain historical evidence. Deployment does not establish that disabled execution paths have completed a real-money cycle.
+The current paired release includes the service, accounting and funding implementations. Exact deployed revisions are in [the production record](artifacts/mainnet-acceptance-release.json); [earlier service candidates](artifacts/service-loop-release-manifest.json) remain historical evidence. Deployment does not establish that disabled execution paths have completed a real-money cycle.
 
 The [human-in-the-loop metabolic bridge](docs/SERVICE_LOOP.md#human-in-the-loop-metabolic-bridge) turns eligible reported net proceeds into a durable manual-purchase task. Optional Discord alerts and operator confirmation do not purchase or verify provider credits. The dashboard distinguishes **QUARANTINED**, **HUMAN IN THE LOOP** and **UNPROVEN revenue**. Local PAPER reports have no enclave or TEE signature. No organic demand or guaranteed profit is claimed.
 

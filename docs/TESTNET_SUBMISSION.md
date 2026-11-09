@@ -1,8 +1,6 @@
-# Testnet submission and judge walkthrough
+# Historical testnet walkthrough
 
-SymbioChain is a policy-controlled agent treasury prototype. The deployed dashboard
-runs PAPER. Separate public testnet evidence records real contract and MPC
-operations. It does not demonstrate a self-funding business.
+This document records the earlier PAPER/testnet release. Current production serves LIVE mainnet observations with execution disarmed; see [mainnet acceptance](MAINNET_ACCEPTANCE.md). The legacy `/testnet` page redirects to `/evidence`. The historical contract and MPC operations below retain their original networks and do not demonstrate a self-funding business.
 
 ## Evidence boundaries
 

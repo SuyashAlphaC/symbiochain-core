@@ -1,6 +1,6 @@
-# Controlled mainnet funding and historical testnet distribution
+# Historical controlled funding and testnet distribution
 
-This walkthrough demonstrates real mainnet deployment and funding, a closed
+This dated walkthrough is superseded for the current demo by [mainnet acceptance](MAINNET_ACCEPTANCE.md), including the completed service-balance round trip. It records real mainnet deployment and funding, a closed
 inference gate, and separately recorded testnet distribution mechanics. It does
 not claim customer revenue, profitable trading, a mainnet NFT payout or purchased
 AI credits.
