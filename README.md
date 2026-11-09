@@ -20,6 +20,10 @@ The backend includes TypeScript/Fastify, PostgreSQL/Prisma, durable workers, a R
 
 Testnet artifacts remain dated historical regression evidence in Git; the current public evidence view does not count them as mainnet results. The legacy `/testnet` page redirects to `/evidence`. Mainnet agent payments, MPC execution, Intents settlement, profit-backed NFTs, business-funded distributions and verified paid AI remain blocked or unexecuted. No synthetic mainnet profit is used to fill those gaps. Automatic provider credit purchasing remains unsupported.
 
+## Bounded owner activation
+
+The [activation guide](docs/BOUNDED_MAINNET_ACTIVATION.md) describes the receiver-scoped Render configuration and six owner-reviewed transactions, with no treasury top-up. The live [evidence panel](https://symbiochain.vercel.app/evidence) reports observed policy/permissions, Intents registration, monitor heartbeats and confirmed receipt coverage. Authorized cross-chain limits use **USDC atoms**, not NEAR; they do not establish a universal native spending cap. Monitor-only workers leave the execution engine and paid inference disarmed. Prepared signatures are never described as completed activation.
+
 ## Business evidence
 
 The current paired release includes the service, accounting and funding implementations. Exact deployed revisions are in [the production record](artifacts/mainnet-acceptance-release.json); [earlier service candidates](artifacts/service-loop-release-manifest.json) remain historical evidence. Deployment does not establish that disabled execution paths have completed a real-money cycle.
