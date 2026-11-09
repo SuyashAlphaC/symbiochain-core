@@ -2,11 +2,11 @@
 
 ## Submission status
 
-Testnet prototype with a [verified hosted PAPER demonstration](artifacts/hosted-paper-verification.json), a real NEAR testnet treasury, MPC-authorized Sepolia and Solana devnet transfers, contract safeguards and testnet NFT mechanics. The integrated runner currently stops at the private-inference deployment gate. See the [testnet judge walkthrough](docs/TESTNET_SUBMISSION.md) for reproducible steps, transaction links and exact boundaries. Funded mainnet trading, verified model inference and automatic compute purchases remain incomplete; financial self-sufficiency is not claimed.
+The public [mainnet evidence page](https://symbiochain.vercel.app/evidence) shows finalized treasury data and seven confirmed owner-reviewed activation transactions. Both scoped Intents keys are registered, three worker permissions are enabled and the treasury policy allows at most 0.05 USDC per cross-chain authorization and 0.10 USDC per day. Runtime execution remains DISARMED; monitor heartbeats establish monitoring only. See the [activation proof](artifacts/mainnet-bounded-activation.json) and [release revisions](docs/RELEASE_REVISIONS.md). No submission receipt has been recorded.
 
 ## Idea-field pitch
 
-SymbioChain coordinates Scout, Brain and Hand behind treasury spending limits and durable execution records on NEAR. Its testnet prototype demonstrates contract safeguards, agent service payments, real MPC-authorized Sepolia and Solana devnet transfers, and NFT distribution mechanics. A resumable workflow links scouting, verified private inference, constrained execution and receipts; its real run currently stops at the documented deployment-provenance gate. Market settlement and positive testnet P&L are explicit simulations. The project demonstrates safeguards and recovery, not a proven self-funding trading business.
+SymbioChain is a policy-controlled AI agent treasury deployed on NEAR mainnet. Its contract supports owner-signed spending limits, revocable agent permissions and constrained cross-chain signing. Dedicated receiver-scoped keys separate treasury operations from Intents settlement. Our public evidence distinguishes finalized mainnet transactions, configuration readiness and monitor heartbeats from autonomous AI execution. Hardware TEE verification has passed, while our application-level workload measurement policy currently keeps inference quarantined. External revenue, profitable settlement, business-funded NFT distributions and automatic AI-credit purchasing remain unproven. Reproducible tests, exact deployment revisions and transaction receipts make these boundaries auditable.
 
 ## Entry point and startup
 
@@ -63,13 +63,13 @@ Track names are the proposed submission mapping; confirm eligibility against the
 
 ## Released evidence and unfinished business claims
 
-The frontend repository is public. PR #3 is merged, `/testnet` is live in the existing Vercel project, and operator configuration/login/logout checks are complete. The PAPER backend and readiness monitor are deployed. See [release revisions](docs/RELEASE_REVISIONS.md) for exact verified application commits; later feature commits are not silently called deployed or submitted. No hackathon form receipt has been recorded.
+Both repositories are public and use the existing Vercel and Render projects. The mainnet deployment and bounded owner activation are complete. Current application release identities are recorded separately from dated historical observations in [release revisions](docs/RELEASE_REVISIONS.md). The legacy `/testnet` route redirects to `/evidence`. No hackathon form receipt has been recorded.
 
 The NEAR testnet treasury, real MPC signatures and Sepolia/Solana devnet transfers are complete as authorization fixtures. The integrated runner remains blocked at TEE deployment approval. Its market data, quotes, settlement economics and positive NFT accounting fixture remain simulated. Testnet NFT deposits prove distribution mechanics, not business revenue.
 
 The new [business accounting source](docs/BUSINESS_ACCOUNTING.md) separates invoices from finalized external receipts, records accountant-reported operating costs and reserves proceeds only after recorded loss recovery. Fixture tests validate those rules. No customer revenue or realized business profitability is proven.
 
-Mainnet deployment and funded 1Click/Intents settlement still need a dedicated funded account, signing configuration, hard spending limits and a viable route. The owner currently has no mainnet funds. The existing losing preview remains rejected. The contract is already deployed on testnet; this is not a pending testnet deployment.
+The mainnet treasury, dedicated owner/agents, scoped signing configuration, registered Intents keys and bounded contract policy are complete. Real funded 1Click/Intents settlement still needs separate approved trading/gas capital, TEE approval and a viable route. The losing preview remains rejected. Neither the activation probe nor internally funded service escrow establishes revenue or a completed agent trade.
 
 Automatic NEAR AI purchases remain unimplemented pending a provider-approved payment-to-credit protocol. Proceeds-funded NFT conversion, distribution and exact-identity recovery are [implemented and locally tested](docs/BUSINESS_FUNDING.md), but disabled without funded mainnet proof. No reservation, balance sync, faucet token or internal payment is presented as either completed cash flow.
 

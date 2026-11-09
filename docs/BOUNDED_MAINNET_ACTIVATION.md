@@ -35,16 +35,17 @@ The worker process can now run a monitor-only branch. It updates the three exist
 
 The keyless local portal is **http://localhost:3420**. It is loopback-only, checks Host and Origin and requires its per-process session token on control routes. The reviewed public plan is [mainnet-bounded-plan.json](../artifacts/mainnet-bounded-plan.json).
 
-Six sequential signatures are requested:
+Seven sequential signatures were confirmed on November 9, 2026:
 
 1. Brain adds a function-call key restricted to `intents.near.execute_intents`, with a 0.005 NEAR gas allowance.
 2. Brain registers that public key with Intents, attaching 1 yoctoNEAR.
 3. Hand adds its separate key with the same scope and allowance.
 4. Hand registers its public key, attaching 1 yoctoNEAR.
-5. The contract owner atomically sets the reviewed policy, enables Brain/Hand/accountant and unpauses the treasury.
-6. The owner calls `fund({})` with **zero deposit** as a control probe. This adds no treasury capital and proves no revenue or trade.
+5. While paused, the owner withdraws 0.02 NEAR from existing treasury funds to the same owner account for gas. The 0.10 NEAR native reserve remains protected.
+6. The contract owner atomically sets the reviewed policy, enables Brain/Hand/accountant and unpauses the treasury. Five synchronous calls use 5 TGas each (25 TGas total).
+7. The owner calls `fund({})` with **zero deposit** as a control probe. This adds no treasury capital and proves no revenue or trade.
 
-There is **no treasury top-up**. Each named signer pays fees from its existing balance. Combined network fees and new key storage have a 0.03 NEAR planning ceiling; per-transaction network fee allowance is 0.01 NEAR. Preflight rechecks finalized code/custody, permissions, gas price and signer reserves. Actual fees and storage changes are reconciled after confirmation.
+There was **no treasury top-up**. The combined planning ceiling was 0.03 NEAR: 0.02 NEAR reallocated internally for owner gas and 0.01 NEAR allowed for network fees and new key storage. Per-transaction network fee allowance was 0.01 NEAR. The original higher-gas owner batch was rejected by Meteor before submission; the reduced-gas batch and reserve allocation were rehearsed locally before the owner reviewed the revised plan. No rejected transaction was silently repeated. Preflight rechecks finalized code/custody, permissions, gas price and signer reserves. Actual fees and storage changes are reconciled after confirmation.
 
 Meteor must select the named signer, rather than `solidvideo4090.near`. If those accounts are missing, use Meteor's own account discovery/recovery UI with the original recovery custody. [Meteor's official guide](https://help.meteorwallet.app/en/articles/4-how-to-import-an-existing-wallet-into-meteor-wallet). Enter recovery material only inside the wallet's own UI; never in this portal, backend environment or chat.
 
@@ -52,6 +53,6 @@ An unknown signing result blocks another signature. Reconcile its existing hash.
 
 ## Evidence and limits
 
-[Bounded activation proof](../artifacts/mainnet-bounded-activation.json) explicitly records PENDING, PARTIAL or COMPLETE coverage. Pending artifacts contain no invented transaction. The live panel may observe a changed policy before all receipts have been published; it keeps observed state separate from recorded coverage.
+[Bounded activation proof](../artifacts/mainnet-bounded-activation.json) records COMPLETE coverage for all seven finalized receipts, independently rechecked against archival mainnet RPC. It reconciles fees and added storage separately from the 0.02 NEAR owner gas allocation. The owner policy is active and all three on-chain worker permissions are enabled. Runtime monitoring remains separate from execution. The schema also supports PENDING and PARTIAL coverage for future runs. Pending artifacts contain no invented transaction. The live panel may observe a changed policy before all receipts have been published; it keeps observed state separate from recorded coverage.
 
 Inference remains blocked by application-level TEE workload measurement policy. Hardware evidence and software acceptance remain different checks. No returned hash is automatically trusted. External revenue, profitable market settlement, mainnet revenue-share distributions and automatic provider credit purchasing remain unproven. The activation is not a proof of an earning business.
