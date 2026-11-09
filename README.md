@@ -14,18 +14,11 @@ The backend includes TypeScript/Fastify, PostgreSQL/Prisma, durable workers, a R
 
 **Current production:** the [permanent frontend](https://symbiochain.vercel.app/dashboard) and [backend](https://symbiochain-core.onrender.com/docs) serve **LIVE mainnet observations with execution DISARMED**. Finalized balances, storage collateral, permissions, executable identity and known deployment receipts are real blockchain data. The API starts no worker, and mutations are disabled. [Exact release revisions and verification](artifacts/mainnet-production-verification.json); [activation and rollback runbook](docs/MAINNET_PRODUCTION.md).
 
-**Evidence status:** PostgreSQL recovery tests, real local/testnet contract calls, public signed quotes and authenticated TEE hardware audits have run. Hardware evidence, deployment approval and signed inference remain separate gates; no funded mainnet round trip or verified paid completion is claimed. The [testnet rehearsal](docs/TESTNET_REHEARSAL.md) records its own actual checks and explicit simulations. This repository does not claim that an arbitrage opportunity exists or that the swarm has achieved financial self-sufficiency. See [implementation status](docs/IMPLEMENTATION.md).
+**Mainnet acceptance — November 9:** the [current evidence page](https://symbiochain.vercel.app/evidence) presents mainnet-only acceptance results: **13 passed, 11 blocked, 1 not run**, with 12 independently rechecked finalized transaction receipts. See the [machine-readable report](artifacts/mainnet-acceptance.json) and [scope and reproduction guide](docs/MAINNET_ACCEPTANCE.md). Passing an observation check does not establish a successful AI, signing or settlement cycle.
 
-**Mainnet foundation — November 7:** [treasury.symbio-fcef733893.near](https://nearblocks.io/address/treasury.symbio-fcef733893.near) is deployed and **paused**, with four funded agent accounts and disabled workers. The dedicated owner is `symbio-fcef733893.near`, controlled by the funding wallet’s existing Meteor recovery key; the temporary deployment key is revoked. [Final on-chain verification](artifacts/mainnet-paused-deployment.json) records nine successful known transactions, balances and the pinned executable. Hosted observation does not unpause this infrastructure or establish TEE-approved execution, trading, external revenue or compute purchases.
+**Mainnet foundation:** [treasury.symbio-fcef733893.near](https://nearblocks.io/address/treasury.symbio-fcef733893.near) is deployed and paused, with four funded agent accounts and disabled workers. The dedicated owner is `symbio-fcef733893.near`; its Meteor recovery key remains in control and the temporary deployment key is revoked. Nine deployment transactions, a separate 0.001 NEAR treasury capital deposit, and a 0.002 NEAR service deposit/withdrawal are confirmed. The service test returned 0.0012 NEAR, retained 0.0008 NEAR as storage collateral and incurred 0.0007785144816934 NEAR in combined fees. The service balance is zero. These are self-funded mechanics, not earned revenue.
 
-For the testnet entry, start with the [judge walkthrough](docs/TESTNET_SUBMISSION.md).
-It includes real Sepolia/Solana transaction links, the resumable agent runner,
-worker recovery, budget limits and the remaining TEE approval gate.
-
-The [controlled demonstration](docs/CONTROLLED_DEMO.md) records a separate,
-owner-signed 0.001 NEAR mainnet funding call while paused and rechecks the
-historical faucet-funded testnet distribution/claim. Its 10% testnet allocation
-is not a mainnet revenue split. No AI credit was spent.
+Testnet artifacts remain dated historical regression evidence in Git; the current public evidence view does not count them as mainnet results. The legacy `/testnet` page redirects to `/evidence`. Mainnet agent payments, MPC execution, Intents settlement, profit-backed NFTs, business-funded distributions and verified paid AI remain blocked or unexecuted. No synthetic mainnet profit is used to fill those gaps. Automatic provider credit purchasing remains unsupported.
 
 ## Business evidence
 
