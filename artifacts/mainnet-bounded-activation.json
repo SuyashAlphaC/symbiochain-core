@@ -1,0 +1,12 @@
+{
+  "contractVersion": 1,
+  "profile": "BOUNDED_OWNER_ACTIVATION_TEE_QUARANTINED",
+  "status": "PENDING",
+  "checkedAt": null,
+  "transactions": [],
+  "totalFeeYocto": "0",
+  "newStorageYocto": "0",
+  "treasuryTopupYocto": "0",
+  "paidInferenceRequests": 0,
+  "externalRevenueProven": false
+}

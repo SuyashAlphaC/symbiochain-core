@@ -39,6 +39,7 @@ import { readFile } from 'node:fs/promises';
 import { viewerSnapshot, viewerProof, requirePaperViewer } from './viewer.js';
 import { readTestnetReport } from './testnet-report.js';
 import { readMainnetAcceptance } from './mainnet-acceptance.js';
+import { mainnetActivation } from './mainnet-activation.js';
 import { viewerStatus, viewerCycles, viewerCycle, viewerEvents } from './viewer-details.js';
 import { MainnetReader } from './mainnet.js';
 import { RuntimeStatus } from './mainnet-contract.js';
@@ -143,6 +144,10 @@ export async function createApp(
   app.get('/api/mainnet/snapshot', secured, async (_req, reply) => {
     reply.header('cache-control', 'private, no-store');
     return mainnet.snapshot();
+  });
+  app.get('/api/mainnet/activation', secured, async (_req, reply) => {
+    reply.header('cache-control', 'private, no-store');
+    return mainnetActivation(store, mainnet);
   });
   app.get('/api/mainnet/wallet', secured, async (req, reply) => {
     const { accountId } = z

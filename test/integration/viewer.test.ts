@@ -61,6 +61,7 @@ it('keeps PAPER records private and rejects all privileged writes when LIVE is d
     });
     expect((await app.inject({ url: '/api/viewer/snapshot', headers })).statusCode).toBe(403);
     expect((await app.inject('/api/evidence/mainnet')).statusCode).toBe(401);
+    expect((await app.inject('/api/mainnet/activation')).statusCode).toBe(401);
     const acceptance = await app.inject({ url: '/api/evidence/mainnet', headers });
     expect(acceptance.statusCode).toBe(200);
     expect(MainnetAcceptance.parse(acceptance.json())).toMatchObject({
