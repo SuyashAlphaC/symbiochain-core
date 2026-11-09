@@ -276,7 +276,7 @@ export class MainnetReader {
         : []),
       ...(distribution.paused ? ['The treasury is paused on-chain.'] : []),
       ...(placeholderLimits ? ['Trading and gas spending caps are not configured.'] : []),
-      'TEE deployment provenance is not approved; paid inference is quarantined.',
+      'Inference blocked by application-level TEE workload measurement policy.',
       'Funded trading routes and a profitable settlement have not been demonstrated.',
       'Automatic AI credit purchasing has no supported provider payment integration.',
       ...(observedHash !== expectedHash

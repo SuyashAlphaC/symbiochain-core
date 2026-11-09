@@ -241,6 +241,11 @@ export async function createActivationApp({
     assert.ok(!observing, 'OBSERVATION_RUNNING');
     observing = true;
     try {
+      await writeFile(
+        `${stateDir}/${s.next.id}-observed-hash.json`,
+        JSON.stringify({ at: new Date().toISOString(), hash, scope: 'UNVERIFIED_WALLET_RESULT' }),
+        { mode: 0o600 },
+      );
       const attempt = await optional(`${stateDir}/${s.next.id}-attempt.json`);
       const transaction = verifyActivationReceipt(
         await readTransaction(hash, s.next.signerId),

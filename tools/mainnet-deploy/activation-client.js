@@ -7,7 +7,8 @@ const token = document.querySelector('meta[name="activation-token"]').content,
 let plan,
   wallet,
   busy = false,
-  current;
+  current,
+  walletMessage = '';
 async function read(path, body) {
   const r = await fetch(path, {
     method: body ? 'POST' : 'GET',
@@ -24,6 +25,13 @@ async function read(path, body) {
 }
 async function refresh() {
   const s = await read('/state');
+  if (current && current.index !== s.index) {
+    walletMessage = '';
+    document.querySelector('#reviewed').checked = false;
+    if (s.next)
+      document.querySelector('#preflight').textContent =
+        `Next signer: ${s.next.signerId}. Finalized state and fees are rechecked before signing.`;
+  }
   current = s;
   sign.disabled = busy || !wallet || s.pending || s.complete;
   document.querySelector('#next').textContent = s.next
@@ -34,7 +42,8 @@ async function refresh() {
       'COMPLETE. Scoped Intents keys registered, bounded on-chain policy active, worker permissions enabled. AI remains quarantined and automated spending is disabled. No treasury top-up or paid inference occurred.';
   else if (s.pending)
     status.textContent =
-      'A signature outcome is pending. Reconcile its existing hash; do not sign again.';
+      'A signature outcome is pending. Reconcile its existing hash; do not sign again.' +
+      (walletMessage ? ` Wallet result: ${walletMessage}` : '');
   return s;
 }
 async function preflight() {
@@ -185,6 +194,7 @@ sign.addEventListener('click', async () => {
     checkTransaction(t);
     if ((await wallet.getAccounts())[0]?.accountId !== t.signerId)
       throw Error('SELECT_NAMED_SIGNER');
+    walletMessage = '';
     await read('/begin', {});
     status.textContent = 'Review ' + t.id + ' in Meteor. No owner key is exported.';
     const result = await wallet.signAndSendTransactions({
@@ -206,6 +216,7 @@ sign.addEventListener('click', async () => {
     const after = await refresh();
     if (after.next?.signerId !== t.signerId) wallet = null;
   } catch (e) {
+    walletMessage = e.message;
     status.textContent =
       'Held: ' + e.message + '. Reconcile any approved transaction hash before retrying.';
   } finally {
