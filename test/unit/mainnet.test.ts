@@ -194,12 +194,12 @@ describe('public mainnet observation', () => {
       classification: 'DEPLOYMENT_NOT_REVENUE',
     });
     const transaction = f.requests.findIndex((r) => r.method === 'tx');
-    expect(f.endpoints[transaction]).toBe('https://archival-rpc.mainnet.near.org');
+    expect(f.endpoints[transaction]).toBe('https://archival-rpc.mainnet.fastnear.com');
     expect(f.requests[transaction]?.params.sender_account_id).toBe(record.transactions[0].signerId);
     expect(
       f.requests.some(
         (r, i) =>
-          r.method === 'status' && f.endpoints[i] === 'https://archival-rpc.mainnet.near.org',
+          r.method === 'status' && f.endpoints[i] === 'https://archival-rpc.mainnet.fastnear.com',
       ),
     ).toBe(true);
   });

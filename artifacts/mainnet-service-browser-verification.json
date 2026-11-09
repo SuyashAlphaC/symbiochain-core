@@ -1,0 +1,21 @@
+{
+  "checkedAt": "2026-11-09T04:59:05.649Z",
+  "scope": "LOCAL_UNSIGNED_SERVICE_BALANCE_DEPOSIT_FIXTURE",
+  "realWalletUsed": false,
+  "ownerSignInWithoutKeyGrant": true,
+  "transactionsEncoded": 1,
+  "method": "fund_services",
+  "depositYocto": "2000000000000000000000",
+  "gas": "10000000000000",
+  "extraActions": 0,
+  "unpauseRequested": false,
+  "keyGrants": 0,
+  "signatureDeliberatelyRejected": true,
+  "pendingAttemptPreventsSecondSend": true,
+  "foreignOriginRejected": true,
+  "protectedRoutes": true,
+  "pageErrors": 0,
+  "mobileOverflow": false,
+  "actualMainnetTransactions": 0,
+  "paidInferenceRequests": 0
+}

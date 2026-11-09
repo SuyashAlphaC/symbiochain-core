@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "build:service": "esbuild service-roundtrip-client.js --bundle --platform=browser --format=esm --define:global=globalThis --define:process.env.NODE_ENV=\"'production'\" --inject:./globals.js --outfile=../../.data/mainnet-service-roundtrip/client.js",
     "build:funding": "esbuild funding-client.js --bundle --platform=browser --format=esm --define:global=globalThis --define:process.env.NODE_ENV=\"'production'\" --inject:./globals.js --outfile=../../.data/mainnet-funding/client.js",
     "build": "esbuild client.js --bundle --platform=browser --format=esm --define:global=globalThis --define:process.env.NODE_ENV=\"'production'\" --inject:./globals.js --outfile=../../.data/mainnet-deployment/client.js"
   },

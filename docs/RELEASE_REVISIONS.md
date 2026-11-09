@@ -1,6 +1,6 @@
 # Deployment, candidate and submission revisions
 
-## Current production — November 7 mainnet observer
+## Current production — mainnet observer
 
 The [production verification record](../artifacts/mainnet-production-verification.json)
 supersedes the historical deployment tables below. It identifies the exact
@@ -16,6 +16,10 @@ accounting and local wallet fixtures retain their explicit scope. Paid inference
 funded trading, external revenue, automatic credit purchasing and business-funded
 NFT distributions remain unproven. No hackathon form submission is confirmed.
 See [activation requirements and rollback](MAINNET_PRODUCTION.md).
+
+## November 9 mainnet acceptance
+
+The [mainnet acceptance report](../artifacts/mainnet-acceptance.json) and [scope guide](MAINNET_ACCEPTANCE.md) add 12 rechecked mainnet transaction proofs and the completed self-funded service-balance deposit/withdrawal. This is mainnet mechanics evidence, not a profitable business cycle. The public evidence view excludes testnet results; the old route redirects. The release verification record identifies the exact paired revisions after publication.
 
 ## Historical release records
 

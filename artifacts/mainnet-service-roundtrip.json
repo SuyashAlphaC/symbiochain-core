@@ -1,0 +1,80 @@
+{
+  "checkedAt": "2026-11-09T05:05:29.132Z",
+  "scope": "MAINNET_SELF_FUNDED_SERVICE_BALANCE_TEST",
+  "transaction": {
+    "hash": "8yY6i69VtQgknNxzTEz3qR9uxWEyUojCAiQi3HzbLEAC",
+    "step": "withdraw",
+    "signerId": "solidvideo4090.near",
+    "receiverId": "treasury.symbio-fcef733893.near",
+    "method": "withdraw_service_balance",
+    "attachedYocto": "0",
+    "withdrawalYocto": "1200000000000000000000",
+    "actualFeeYocto": "525847661975500000000",
+    "blockHash": "2eSSkeoE3m6iLSiStrsL8hijLei1cEcufsRW9QiphYqN",
+    "final": true,
+    "succeeded": true,
+    "url": "https://nearblocks.io/txns/8yY6i69VtQgknNxzTEz3qR9uxWEyUojCAiQi3HzbLEAC"
+  },
+  "before": {
+    "estimatedFeeYocto": "2600000000000000000000",
+    "block": {
+      "height": "223720471",
+      "hash": "EEHYASps7XGrHDVbJe9ETBf22Wmr44C9Sb4favcxonmq",
+      "timestamp": "2026-11-09T05:03:43.833Z"
+    },
+    "treasuryBalanceYocto": "6103000000000000000000000",
+    "checkedAt": "2026-11-09T05:03:51.524Z",
+    "paused": true,
+    "workersDisabled": true,
+    "executionEnabled": false,
+    "ownerAvailableYocto": "1240584415365834845387790",
+    "gasPriceYocto": "100000000",
+    "serviceBalanceYocto": "1200000000000000000000",
+    "serviceLiabilityYocto": "1200000000000000000000",
+    "estimatedCombinedFeeYocto": "9200000000000000000000"
+  },
+  "after": {
+    "estimatedFeeYocto": "2600000000000000000000",
+    "block": {
+      "height": "223720647",
+      "hash": "FjT4Mirncws84h6VPYygeufnhESunhnsib8RnenY545s",
+      "timestamp": "2026-11-09T05:05:23.251Z"
+    },
+    "treasuryBalanceYocto": "6101800000000000000000000",
+    "checkedAt": "2026-11-09T05:05:29.132Z",
+    "paused": true,
+    "workersDisabled": true,
+    "executionEnabled": false,
+    "ownerAvailableYocto": "1241258567703859345387790",
+    "gasPriceYocto": "100000000",
+    "serviceBalanceYocto": "0",
+    "serviceLiabilityYocto": "0",
+    "estimatedCombinedFeeYocto": "9200000000000000000000"
+  },
+  "treasuryStayedPaused": true,
+  "workersStayedDisabled": true,
+  "paidInferenceRequests": 0,
+  "agentToAgentPayment": false,
+  "intentsSettlement": false,
+  "externalRevenue": false,
+  "depositTransaction": {
+    "hash": "5TJYtz6mgKmLCUtm671nad5yLiUCGE3c7exe91WXgtiN",
+    "step": "deposit",
+    "signerId": "solidvideo4090.near",
+    "receiverId": "treasury.symbio-fcef733893.near",
+    "method": "fund_services",
+    "attachedYocto": "2000000000000000000000",
+    "withdrawalYocto": "0",
+    "actualFeeYocto": "252666819717900000000",
+    "blockHash": "EQjCVixErkPRJx4rHHVHymgXFp8StSvtD4HLViLveGuF",
+    "final": true,
+    "succeeded": true,
+    "url": "https://nearblocks.io/txns/5TJYtz6mgKmLCUtm671nad5yLiUCGE3c7exe91WXgtiN"
+  },
+  "returnedYocto": "1200000000000000000000",
+  "storageCollateralYocto": "800000000000000000000",
+  "totalFeeYocto": "778514481693400000000",
+  "totalOwnerCostYocto": "1578514481693400000000",
+  "observedOwnerDebitYocto": "1578514481693400000000",
+  "walletBalanceReconciled": true
+}

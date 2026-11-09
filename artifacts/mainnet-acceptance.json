@@ -1,0 +1,339 @@
+{
+  "contractVersion": 1,
+  "profile": "MAINNET_ACCEPTANCE",
+  "network": "mainnet",
+  "capturedAt": "2026-11-09T05:15:08.388Z",
+  "block": {
+    "height": "223721506",
+    "hash": "3yXvGTXQYZthERUGqvLTjUiUfGbpNDqymWS6oouGxv63"
+  },
+  "summary": {
+    "passed": 13,
+    "blocked": 11,
+    "notRun": 1,
+    "complete": false
+  },
+  "checks": [
+    {
+      "id": "network",
+      "label": "Mainnet network and finality",
+      "status": "PASSED",
+      "scope": "ON_CHAIN_STATE",
+      "detail": "Read finalized NEAR mainnet block 223721506.",
+      "links": [
+        "https://nearblocks.io/address/treasury.symbio-fcef733893.near"
+      ]
+    },
+    {
+      "id": "deployment",
+      "label": "Deployed executable identity",
+      "status": "PASSED",
+      "scope": "ON_CHAIN_STATE",
+      "detail": "Observed treasury code 4uAgNJesg7U8amwmUDAd2LzQ4U7gyg6M7hrwows1G23e; compared with the reviewed WASM digest.",
+      "links": [
+        "https://nearblocks.io/address/treasury.symbio-fcef733893.near"
+      ]
+    },
+    {
+      "id": "accounts",
+      "label": "Mainnet owner and agent accounts",
+      "status": "PASSED",
+      "scope": "ON_CHAIN_STATE",
+      "detail": "Owner, treasury, Scout, Brain, Hand and accountant accounts exist on mainnet.",
+      "links": [
+        "https://nearblocks.io/address/treasury.symbio-fcef733893.near"
+      ]
+    },
+    {
+      "id": "custody",
+      "label": "Recovery custody and temporary-key revocation",
+      "status": "PASSED",
+      "scope": "ON_CHAIN_STATE",
+      "detail": "Reviewed recovery key is present on all six accounts; no temporary deployment full-access key remains.",
+      "links": [
+        "https://nearblocks.io/address/treasury.symbio-fcef733893.near"
+      ]
+    },
+    {
+      "id": "roles",
+      "label": "Deployed worker permission state",
+      "status": "PASSED",
+      "scope": "ON_CHAIN_STATE",
+      "detail": "Three execution worker permissions are disabled. This observes deployed permissions; it is not a positive agent-authorization test.",
+      "links": [
+        "https://nearblocks.io/address/treasury.symbio-fcef733893.near"
+      ]
+    },
+    {
+      "id": "pause",
+      "label": "On-chain paused state",
+      "status": "PASSED",
+      "scope": "ON_CHAIN_STATE",
+      "detail": "Treasury remains paused on mainnet. No unpause is requested by this acceptance runner.",
+      "links": [
+        "https://nearblocks.io/address/treasury.symbio-fcef733893.near"
+      ]
+    },
+    {
+      "id": "policy_read",
+      "label": "Read deployed spending policy",
+      "status": "PASSED",
+      "scope": "ON_CHAIN_STATE",
+      "detail": "Read caps 1/1 atomic units and reserve 100000000000000000000000 yoctoNEAR. Placeholder caps are not permission to trade.",
+      "links": [
+        "https://nearblocks.io/address/treasury.symbio-fcef733893.near"
+      ]
+    },
+    {
+      "id": "runtime",
+      "label": "Hosted execution gate",
+      "status": "PASSED",
+      "scope": "ON_CHAIN_STATE",
+      "detail": "Hosted runtime is LIVE/mainnet with execution explicitly disarmed.",
+      "links": [
+        "https://nearblocks.io/address/treasury.symbio-fcef733893.near"
+      ]
+    },
+    {
+      "id": "deployment_receipts",
+      "label": "Final deployment transaction receipts",
+      "status": "PASSED",
+      "scope": "FINAL_MAINNET_TRANSACTION",
+      "detail": "Independently rechecked 9 known deployment transactions and all returned receipt outcomes.",
+      "links": [
+        "https://nearblocks.io/txns/2ZmseYGugRhj5dUbPBXnMHPa7fixn9G78f1YZNtLoRWa",
+        "https://nearblocks.io/txns/9Ubhe7onpNyLRoX3GgSAU9qzEzhL2XPKtB2sx14G8WD4",
+        "https://nearblocks.io/txns/BiN87LG8nUbu3Uf7jJ6K4Da91F64vWvnm4AnNQ6v29Xp",
+        "https://nearblocks.io/txns/Bayyt3EwWSDs7wLZN6yJy9gvvU6bWwsPMUmVZ14BoN66",
+        "https://nearblocks.io/txns/CvqJAmSBo2B2wT1ymfnp5HVnvqwZizjRf17sqfc8VUrv",
+        "https://nearblocks.io/txns/EYxUtK2bZf3ZYvyfmRhHvP61rCDziQvqicG9JHRhTUz8",
+        "https://nearblocks.io/txns/Esrw5KwT6UfUfPcvgWMBXFBXhJKuZU4oMMtJntHCEgM",
+        "https://nearblocks.io/txns/AySvbKtjxRrzrnxcE8m4GzTn8XLifi3fgSx368q3qxwW",
+        "https://nearblocks.io/txns/4y3sshd8FBdLCsuVTRUdKKEh3t7LKFg48AcYUwVzdHCM"
+      ]
+    },
+    {
+      "id": "funding",
+      "label": "Actual mainnet treasury funding",
+      "status": "PASSED",
+      "scope": "FINAL_MAINNET_TRANSACTION",
+      "detail": "Verified fund({}) deposit 1000000000000000000000 yoctoNEAR and fee 226852716054800000000 yoctoNEAR. This is team capital, not customer revenue.",
+      "links": [
+        "https://nearblocks.io/txns/BUAMQU1darHsDvDesZVE8U8bnPm7pwMNvGyszczNxQej"
+      ]
+    },
+    {
+      "id": "service_balance",
+      "label": "Mainnet service-balance deposit and withdrawal",
+      "status": "PASSED",
+      "scope": "FINAL_MAINNET_TRANSACTION",
+      "detail": "Deposit credited after storage, payout callback succeeded and own service balance returned to zero. It is a self-funded escrow test, not agent-to-agent payment or an Intents settlement. Wallet cost reconciliation: true.",
+      "links": [
+        "https://nearblocks.io/txns/5TJYtz6mgKmLCUtm671nad5yLiUCGE3c7exe91WXgtiN",
+        "https://nearblocks.io/txns/8yY6i69VtQgknNxzTEz3qR9uxWEyUojCAiQi3HzbLEAC"
+      ]
+    },
+    {
+      "id": "tee_hardware",
+      "label": "Production provider hardware attestation",
+      "status": "PASSED",
+      "scope": "PRODUCTION_ATTESTATION",
+      "detail": "Authenticated free audit 2026-11-09T04:50:08.374Z: gateway/model hardware accepted. Hardware subchecks do not approve the complete application deployment. No completion was purchased.",
+      "links": []
+    },
+    {
+      "id": "tee_deployment",
+      "label": "Complete TEE deployment approval",
+      "status": "BLOCKED",
+      "scope": "NOT_EXECUTED",
+      "detail": "Independently approved software provenance/measurements and deployment actions are still missing. Mainnet funds do not open this gate.",
+      "links": []
+    },
+    {
+      "id": "inference",
+      "label": "Verified paid AI response",
+      "status": "BLOCKED",
+      "scope": "NOT_EXECUTED",
+      "detail": "No completion may be purchased before full deployment approval. Existing application limits remain USD 1 total and USD 0.10 per request.",
+      "links": []
+    },
+    {
+      "id": "profit_guard",
+      "label": "Signed production quotes and profit admission",
+      "status": "PASSED",
+      "scope": "SIGNED_MARKET_PREVIEW",
+      "detail": "Signed dry quote at 2026-11-09T04:50:11.180Z: input 10000000, conservative output 9842872, preview net -357128 USDC atoms; profit floor passed: false. These are indicative terms, not a funded swap or realized P&L.",
+      "links": []
+    },
+    {
+      "id": "authorization",
+      "label": "Positive authorization and spending-limit enforcement",
+      "status": "BLOCKED",
+      "scope": "NOT_EXECUTED",
+      "detail": "Workers are revoked and the treasury is paused. A valid Brain-authorized AI cycle is required; a synthetic mainnet authorization will not substitute for it.",
+      "links": []
+    },
+    {
+      "id": "agent_payment",
+      "label": "Actual agent-to-agent service settlement",
+      "status": "BLOCKED",
+      "scope": "NOT_EXECUTED",
+      "detail": "A funded service-balance round trip does not exercise agent-to-agent payments. Actual settlement requires enabled roles and a valid approved cycle.",
+      "links": []
+    },
+    {
+      "id": "evm_signature",
+      "label": "Treasury-controlled mainnet EVM signature",
+      "status": "BLOCKED",
+      "scope": "NOT_EXECUTED",
+      "detail": "Treasury signature requests require authorized workers and a valid cycle. No unrelated-account signing fixture is substituted.",
+      "links": []
+    },
+    {
+      "id": "solana_signature",
+      "label": "Treasury-controlled mainnet Solana signature",
+      "status": "BLOCKED",
+      "scope": "NOT_EXECUTED",
+      "detail": "Treasury signing remains gated; mainnet derived-wallet funding and native gas require separate limits.",
+      "links": []
+    },
+    {
+      "id": "cross_chain",
+      "label": "Funded cross-chain execution and Intents settlement",
+      "status": "BLOCKED",
+      "scope": "NOT_EXECUTED",
+      "detail": "Trading/gas caps and target-chain funding are unset, TEE execution is unapproved and the current route fails its profit floor. No loss trade is executed to obtain a receipt.",
+      "links": []
+    },
+    {
+      "id": "nft",
+      "label": "Mainnet profit receipt NFT",
+      "status": "BLOCKED",
+      "scope": "NOT_EXECUTED",
+      "detail": "A genuinely reconciled profitable cycle and settlement-bound accounting approval are required. Mainnet synthetic positive P&L is not used to mint a receipt.",
+      "links": []
+    },
+    {
+      "id": "dividends",
+      "label": "Mainnet NFT distribution and holder claim",
+      "status": "BLOCKED",
+      "scope": "NOT_EXECUTED",
+      "detail": "Mainnet supply is 0 and revenue shares total 0 bps. No business-funded distribution or holder claim has occurred.",
+      "links": []
+    },
+    {
+      "id": "business",
+      "label": "External revenue and complete operating profit",
+      "status": "BLOCKED",
+      "scope": "NOT_EXECUTED",
+      "detail": "Funding and self-funded escrow prove mechanics, not external demand or earned revenue. Complete realized operating costs remain unverified.",
+      "links": []
+    },
+    {
+      "id": "compute_purchase",
+      "label": "Automatic earned-proceeds AI credit purchase",
+      "status": "BLOCKED",
+      "scope": "NOT_EXECUTED",
+      "detail": "A publicly supported customer payment-to-credit API is still unavailable. Manual/operator reports cannot be presented as automatic purchased credits.",
+      "links": []
+    },
+    {
+      "id": "worker_recovery",
+      "label": "Recovery during actual mainnet agent execution",
+      "status": "NOT_RUN",
+      "scope": "NOT_EXECUTED",
+      "detail": "Production workers are intentionally stopped. A read-only server restart does not establish recovery of an active signing or settlement job.",
+      "links": []
+    }
+  ],
+  "transactions": [
+    {
+      "hash": "2ZmseYGugRhj5dUbPBXnMHPa7fixn9G78f1YZNtLoRWa",
+      "label": "fund-dedicated-deployment-wallet",
+      "classification": "DEPLOYMENT_NOT_REVENUE",
+      "url": "https://nearblocks.io/txns/2ZmseYGugRhj5dUbPBXnMHPa7fixn9G78f1YZNtLoRWa"
+    },
+    {
+      "hash": "9Ubhe7onpNyLRoX3GgSAU9qzEzhL2XPKtB2sx14G8WD4",
+      "label": "install-owner-recovery",
+      "classification": "DEPLOYMENT_NOT_REVENUE",
+      "url": "https://nearblocks.io/txns/9Ubhe7onpNyLRoX3GgSAU9qzEzhL2XPKtB2sx14G8WD4"
+    },
+    {
+      "hash": "BiN87LG8nUbu3Uf7jJ6K4Da91F64vWvnm4AnNQ6v29Xp",
+      "label": "create-treasury",
+      "classification": "DEPLOYMENT_NOT_REVENUE",
+      "url": "https://nearblocks.io/txns/BiN87LG8nUbu3Uf7jJ6K4Da91F64vWvnm4AnNQ6v29Xp"
+    },
+    {
+      "hash": "Bayyt3EwWSDs7wLZN6yJy9gvvU6bWwsPMUmVZ14BoN66",
+      "label": "create-brain",
+      "classification": "DEPLOYMENT_NOT_REVENUE",
+      "url": "https://nearblocks.io/txns/Bayyt3EwWSDs7wLZN6yJy9gvvU6bWwsPMUmVZ14BoN66"
+    },
+    {
+      "hash": "CvqJAmSBo2B2wT1ymfnp5HVnvqwZizjRf17sqfc8VUrv",
+      "label": "create-hand",
+      "classification": "DEPLOYMENT_NOT_REVENUE",
+      "url": "https://nearblocks.io/txns/CvqJAmSBo2B2wT1ymfnp5HVnvqwZizjRf17sqfc8VUrv"
+    },
+    {
+      "hash": "EYxUtK2bZf3ZYvyfmRhHvP61rCDziQvqicG9JHRhTUz8",
+      "label": "create-accountant",
+      "classification": "DEPLOYMENT_NOT_REVENUE",
+      "url": "https://nearblocks.io/txns/EYxUtK2bZf3ZYvyfmRhHvP61rCDziQvqicG9JHRhTUz8"
+    },
+    {
+      "hash": "Esrw5KwT6UfUfPcvgWMBXFBXhJKuZU4oMMtJntHCEgM",
+      "label": "create-scout",
+      "classification": "DEPLOYMENT_NOT_REVENUE",
+      "url": "https://nearblocks.io/txns/Esrw5KwT6UfUfPcvgWMBXFBXhJKuZU4oMMtJntHCEgM"
+    },
+    {
+      "hash": "AySvbKtjxRrzrnxcE8m4GzTn8XLifi3fgSx368q3qxwW",
+      "label": "refund-excess-to-meteor",
+      "classification": "DEPLOYMENT_NOT_REVENUE",
+      "url": "https://nearblocks.io/txns/AySvbKtjxRrzrnxcE8m4GzTn8XLifi3fgSx368q3qxwW"
+    },
+    {
+      "hash": "4y3sshd8FBdLCsuVTRUdKKEh3t7LKFg48AcYUwVzdHCM",
+      "label": "revoke-temporary-deployer",
+      "classification": "DEPLOYMENT_NOT_REVENUE",
+      "url": "https://nearblocks.io/txns/4y3sshd8FBdLCsuVTRUdKKEh3t7LKFg48AcYUwVzdHCM"
+    },
+    {
+      "hash": "BUAMQU1darHsDvDesZVE8U8bnPm7pwMNvGyszczNxQej",
+      "label": "Paused treasury capital funding",
+      "classification": "TEAM_FUNDED_TREASURY_CAPITAL_NOT_REVENUE",
+      "url": "https://nearblocks.io/txns/BUAMQU1darHsDvDesZVE8U8bnPm7pwMNvGyszczNxQej"
+    },
+    {
+      "hash": "5TJYtz6mgKmLCUtm671nad5yLiUCGE3c7exe91WXgtiN",
+      "label": "Service-balance deposit",
+      "classification": "SELF_FUNDED_SERVICE_BALANCE_TEST",
+      "url": "https://nearblocks.io/txns/5TJYtz6mgKmLCUtm671nad5yLiUCGE3c7exe91WXgtiN"
+    },
+    {
+      "hash": "8yY6i69VtQgknNxzTEz3qR9uxWEyUojCAiQi3HzbLEAC",
+      "label": "Return of service credit",
+      "classification": "SELF_FUNDED_SERVICE_BALANCE_TEST",
+      "url": "https://nearblocks.io/txns/8yY6i69VtQgknNxzTEz3qR9uxWEyUojCAiQi3HzbLEAC"
+    }
+  ],
+  "serviceRoundTrip": {
+    "checkedAt": "2026-11-09T05:05:29.132Z",
+    "depositedYocto": "2000000000000000000000",
+    "returnedYocto": "1200000000000000000000",
+    "storageCollateralYocto": "800000000000000000000",
+    "totalFeeYocto": "778514481693400000000",
+    "totalOwnerCostYocto": "1578514481693400000000",
+    "walletBalanceReconciled": true,
+    "depositHash": "5TJYtz6mgKmLCUtm671nad5yLiUCGE3c7exe91WXgtiN",
+    "withdrawalHash": "8yY6i69VtQgknNxzTEz3qR9uxWEyUojCAiQi3HzbLEAC"
+  },
+  "runner": {
+    "paidInferenceRequests": 0,
+    "transactionsSubmitted": 0,
+    "readOnly": true
+  }
+}

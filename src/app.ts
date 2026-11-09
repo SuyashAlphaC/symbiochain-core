@@ -38,6 +38,7 @@ import { dashboardHtml, dashboardCss } from './dashboard-page.js';
 import { readFile } from 'node:fs/promises';
 import { viewerSnapshot, viewerProof, requirePaperViewer } from './viewer.js';
 import { readTestnetReport } from './testnet-report.js';
+import { readMainnetAcceptance } from './mainnet-acceptance.js';
 import { viewerStatus, viewerCycles, viewerCycle, viewerEvents } from './viewer-details.js';
 import { MainnetReader } from './mainnet.js';
 import { RuntimeStatus } from './mainnet-contract.js';
@@ -234,6 +235,10 @@ export async function createApp(
   app.get('/api/evidence/testnet', secured, async (_req, reply) => {
     reply.header('cache-control', 'private, no-store');
     return readTestnetReport();
+  });
+  app.get('/api/evidence/mainnet', secured, async (_req, reply) => {
+    reply.header('cache-control', 'private, no-store');
+    return readMainnetAcceptance();
   });
   app.get('/api/viewer/cycles', secured, async (req, reply) => {
     const { cursor } = z.object({ cursor: idSchema.optional() }).strict().parse(req.query);
