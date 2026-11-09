@@ -10,13 +10,29 @@ import { LiveProviders } from './providers/live.js';
 import { scout } from './scout.js';
 import { refreshComputeCredits } from './providers/compute-credits.js';
 import { colocatedPaperFaults } from './paper-faults.js';
+import { monitorWorkers } from './monitor-workers.js';
 
 const config = loadConfig();
-if (!config.EXECUTION_ENABLED)
+if (!config.EXECUTION_ENABLED && !config.MONITOR_ONLY_WORKERS)
   throw new Error('Execution is disarmed; start the production API without workers');
 const db = createDatabase(config.DATABASE_URL, config.DATABASE_POOL_MAX);
 const store = new Store(db, config);
 await store.initialize();
+// Importing provider modules does not construct them. This branch never creates
+// an Engine, signer, inference client, quote client or funding runner.
+if (config.MONITOR_ONLY_WORKERS) {
+  let monitoring = true;
+  for (const signal of ['SIGTERM', 'SIGINT'] as const)
+    process.on(signal, () => {
+      monitoring = false;
+    });
+  await monitorWorkers(
+    (role) => db.workerControl.update({ where: { role }, data: { heartbeat: new Date() } }),
+    () => monitoring,
+  );
+  await db.$disconnect();
+  process.exit(0);
+}
 if (config.EXECUTION_MODE === 'REPLAY')
   throw new Error('REPLAY is read-only; use the evidence replay command');
 const providers =

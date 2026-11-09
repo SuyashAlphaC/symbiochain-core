@@ -13,6 +13,8 @@ const Schema = z.object({
   EXECUTION_MODE: Mode.default('PAPER'),
   // LIVE can serve verified mainnet reads while its execution plane is disarmed.
   EXECUTION_ENABLED: bool.prefault('true'),
+  // Heartbeats may run while every provider/signing engine remains disarmed.
+  MONITOR_ONLY_WORKERS: bool.prefault('false'),
   DATABASE_URL: z.string().min(1),
   DATABASE_POOL_MAX: z.coerce.number().int().min(1).max(20).default(10),
   HOST: z.string().default('127.0.0.1'),
@@ -106,6 +108,15 @@ const Schema = z.object({
 export type Config = z.infer<typeof Schema>;
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
   const c = Schema.parse(env);
+  if (
+    c.MONITOR_ONLY_WORKERS &&
+    (c.EXECUTION_MODE !== 'LIVE' ||
+      c.EXECUTION_ENABLED ||
+      c.LIVE_TRADING_ENABLED ||
+      c.LIVE_ARBITRAGE_ENABLED ||
+      c.BUSINESS_PAYOUTS_ENABLED)
+  )
+    throw new Error('Monitor-only workers require disarmed LIVE with all spending disabled');
   if (c.EXECUTION_MODE === 'LIVE') {
     if (
       c.EVIDENCE_ENCRYPTION_KEY ===
