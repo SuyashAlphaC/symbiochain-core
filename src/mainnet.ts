@@ -337,7 +337,7 @@ export class MainnetReader {
       );
     await this.block();
     // Recorded deployment receipts can outlive the regular node's transaction cache.
-    const archive = 'https://archival-rpc.mainnet.near.org';
+    const archive = 'https://archival-rpc.mainnet.fastnear.com';
     const archiveIdentity = z
       .object({ chain_id: z.string() })
       .parse(await this.rpc('status', [], archive));

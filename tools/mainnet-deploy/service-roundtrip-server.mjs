@@ -16,7 +16,7 @@ import {
 } from './service-roundtrip-plan.mjs';
 
 const PORT = 3419,
-  ARCHIVE = 'https://archival-rpc.mainnet.near.org';
+  ARCHIVE = 'https://archival-rpc.mainnet.fastnear.com';
 async function optional(path) {
   try {
     return JSON.parse(await readFile(path, 'utf8'));
