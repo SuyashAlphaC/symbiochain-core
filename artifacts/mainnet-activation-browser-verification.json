@@ -1,0 +1,15 @@
+{
+  "checkedAt": "2026-11-09T09:49:43.635Z",
+  "scope": "UNSIGNED_OWNER_ACTIVATION_KEY_FIXTURE",
+  "actualMainnetTransactions": 0,
+  "paidInferenceRequests": 0,
+  "signInWithoutKeyGrant": true,
+  "signer": "brain.symbio-fcef733893.near",
+  "onlyScopedIntentsKey": true,
+  "keyGasAllowanceYocto": "5000000000000000000000",
+  "signatureDeliberatelyRejected": true,
+  "pendingPreventsSecondSignature": true,
+  "foreignOriginRejected": true,
+  "pageErrors": 0,
+  "mobileOverflow": false
+}
