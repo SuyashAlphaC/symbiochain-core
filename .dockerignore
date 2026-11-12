@@ -17,5 +17,6 @@ artifacts/*
 !artifacts/mainnet-intents-settlement.json
 !artifacts/mainnet-wallet-provisioning.json
 !artifacts/mainnet-owned-execution.json
+!artifacts/manual-ai-probe.json
 coverage
 *.log

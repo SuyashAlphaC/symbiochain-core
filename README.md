@@ -2,11 +2,11 @@
 
 ## Supply chain trust boundary: fail-closed policy
 
-**TEE execution status: QUARANTINED. The inference gate is closed.** The hosted LIVE observer performs no inference. Historical PAPER inference uses local fixtures with no enclave or TEE signature.
+**TEE execution status: QUARANTINED. The automated inference gate is closed.** The hosted LIVE observer performs no inference. One explicitly authorized standalone API probe succeeded as unverified inference, separately documented below. Historical PAPER inference uses local fixtures with no enclave or TEE signature.
 
 The November 7 audit used unmodified [Brave near-verifier](https://github.com/brave/near-verifier) against `z-ai/glm-5.3-flash` in **provenance-only mode**. Intel TDX, NVIDIA and gateway TLS/binding subchecks passed. **The deployment was not approved:** the launcher had no accepted signed SLSA provenance; other image/source pins, OS measurements and required gateway services also differed from Brave's policy. Gateway, model and inference-proxy software are not claimed as fully verified. The launcher rebuild exemption does not waive signed provenance. [Raw report and audit scope](artifacts/brave-cli-verification.json).
 
-Paid inference remains gated; we have not changed trust pins to force a pass. [Compose-manager issue #64](https://github.com/nearai/compose-manager/issues/64) concerns reproducible launcher builds and does not establish provenance for our observed digest. **Mainnet economics, external revenue and automatic provider credit purchases remain unproven.** See [the exact approval handoff](docs/TEE_APPROVAL_HANDOFF.md).
+Automated paid inference remains gated; we have not changed trust pins to force a pass. [Compose-manager issue #64](https://github.com/nearai/compose-manager/issues/64) concerns reproducible launcher builds and does not establish provenance for our observed digest. **Mainnet economics, external revenue and automatic provider credit purchases remain unproven.** See [the exact approval handoff](docs/TEE_APPROVAL_HANDOFF.md).
 
 **Three agents, one treasury, measurable operating costs.** The [prepaid risk-report path](docs/SERVICE_LOOP.md) lets Scout gather quotes, Brain assess committed terms behind the unchanged TEE gate, and Hand deliver a report without trading. LIVE arbitrage admission defaults to disabled. The trading adapter retains constrained Chain Signatures, settlement reconciliation and internal Intents payments. An operational reserve and a separate inference-spending policy govern real execution.
 
@@ -39,6 +39,28 @@ Two [owner-authorized Chain Signatures fixtures](artifacts/mainnet-owned-executi
 Continuation network fees were **0.0435279283243207 NEAR**, including the expired funding attempts and subsequent permission/execution calls. Retained capital input was **0.45 NEAR**, within the **0.50-NEAR additional planning ceiling**. Destination gas is paid from the funded native assets; these figures do not establish complete USD business costs or net profit. The treasury's existing storage collateral remains separate.
 
 The database policy now matches the signed 0.25-USDC / 0.50-USDC authorization limits and bounded SOL token caps. Its PAPER defaults and zero LIVE limits were replaced while preserving its paused state. The verified 0.349281-USDC owner deposit was imported as capital through an idempotent balanced journal, not revenue. The route allowlist, Base gas limits and Solana reserve are configured. Automated execution remains disarmed; TEE approval and the unchanged profit guard remain separate requirements. No paid model request or hackathon submission occurred.
+
+## Manual API Probe (Unverified Inference)
+
+One standalone request to `https://cloud-api.near.ai/v1/chat/completions` returned
+`NEAR_AI_OK` from `z-ai/glm-5.3-flash`. The provider recorded 31 input tokens,
+6 completion tokens and a **$0.00000548** charge, reconciled using its published
+per-request billing API. The [sanitized evidence](artifacts/manual-ai-probe.json)
+records response identifiers, usage and the private raw response's SHA-256.
+
+This proves API authentication and model availability. The completion does not
+independently prove the configured organization membership, a verified response
+signature or TEE workload approval. The script made one inference request with
+no retry, never invoked the treasury or workers, used no treasury funds and left
+automated execution disarmed. Six micro-USD is reserved from the existing shared
+$1 AI allowance; the remaining automatic allowance is **$0.999994**. Historical
+zero-request reports remain dated records of their original scope.
+
+The live [evidence page](https://symbiochain.vercel.app/evidence) labels this
+**Manual API Probe (Unverified Inference)**. The one-shot diagnostic is
+`node tools/manual-ai-probe.mjs --execute-unverified-once`; it requires explicit
+authorization, saves an exclusive attempt before sending, and refuses to repeat
+an existing attempt. Reading its public evidence endpoint never runs inference.
 
 ## Business evidence
 
