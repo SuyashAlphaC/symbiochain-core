@@ -44,14 +44,19 @@ jobs:
             import assert from "node:assert/strict";
             import { readdir, readFile } from "node:fs/promises";
             import { readTestnetReport } from "./dist/testnet-report.js";
+            import { readMainnetSettlementFixture } from "./dist/mainnet-settlement.js";
             const report = await readTestnetReport();
             assert.ok(report.runId);
             assert.equal(report.profile, "TESTNET_REHEARSAL");
-            assert.deepEqual((await readdir("artifacts")).sort(), ["brave-cli-verification.json", "mainnet-acceptance.json", "mainnet-bounded-activation.json", "mainnet-paused-deployment.json", "testnet-rehearsal.json"]);
+            assert.deepEqual((await readdir("artifacts")).sort(), ["brave-cli-verification.json", "mainnet-acceptance.json", "mainnet-bounded-activation.json", "mainnet-intents-settlement.json", "mainnet-paused-deployment.json", "testnet-rehearsal.json"]);
             const audit = JSON.parse(await readFile("artifacts/brave-cli-verification.json", "utf8"));
             assert.equal(audit.deploymentApproved, false);
             assert.equal(audit.signedModelResponseVerified, false);
             assert.equal(audit.paidInferenceRequests, 0);
+            const settlement = await readMainnetSettlementFixture();
+            assert.equal(settlement.payments.length, 2);
+            assert.equal(settlement.teeApprovalClaimed, false);
+            assert.equal(settlement.externalRevenueProven, false);
           '
       - run: npm run db:harden
       # Integration fixtures deliberately leave pending recovery jobs in this isolated database.

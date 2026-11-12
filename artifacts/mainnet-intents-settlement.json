@@ -1,0 +1,114 @@
+{
+  "checkedAt": "2026-11-12T05:27:14.583Z",
+  "scope": "MAINNET_INTERNAL_INTENTS_SETTLEMENT_FIXTURE",
+  "network": "mainnet",
+  "classification": "TEAM_FUNDED_INTERNAL_TRANSFERS_NOT_REVENUE",
+  "funding": {
+    "hash": "EtMQTEso4nZsyzbhqY3f4sWmmBmaKpDLkCCJJxq7MMhx",
+    "url": "https://nearblocks.io/txns/EtMQTEso4nZsyzbhqY3f4sWmmBmaKpDLkCCJJxq7MMhx",
+    "capitalYocto": "2000000000000000000000",
+    "storageCollateralYocto": "1250000000000000000000"
+  },
+  "transactions": [
+    {
+      "hash": "DVhS7bWWj5Rk3B7TRiTCw1SYXR1RpctCSw5xzWX5FnLB",
+      "step": "brain_pays_scout",
+      "signerId": "brain.symbio-fcef733893.near",
+      "receiverId": "intents.near",
+      "actualFeeYocto": "566602347477500000000",
+      "blockHash": "2sej5ETE8qLGkmxH5k3rDxApZEA8jVcL2MbAchPScPXH",
+      "final": true,
+      "succeeded": true,
+      "url": "https://nearblocks.io/txns/DVhS7bWWj5Rk3B7TRiTCw1SYXR1RpctCSw5xzWX5FnLB"
+    },
+    {
+      "hash": "D2MwyAjVyKZFe8hYVeNX2YT6WR9dL1VRud3xaARJJneZ",
+      "step": "hand_pays_brain",
+      "signerId": "hand.symbio-fcef733893.near",
+      "receiverId": "intents.near",
+      "actualFeeYocto": "554487850606400000000",
+      "blockHash": "9krqM4BuDgC5361h2WyaZ9NzxcK6zpRxeLkKX7pAzToi",
+      "final": true,
+      "succeeded": true,
+      "url": "https://nearblocks.io/txns/D2MwyAjVyKZFe8hYVeNX2YT6WR9dL1VRud3xaARJJneZ"
+    }
+  ],
+  "payments": [
+    {
+      "checkedAt": "2026-11-12T05:27:03.219Z",
+      "payer": "brain.symbio-fcef733893.near",
+      "recipient": "scout.symbio-fcef733893.near",
+      "amountYocto": "100000000000000000000",
+      "asset": "nep141:wrap.near",
+      "nonceConfirmed": true,
+      "before": {
+        "payer": "1000000000000000000000",
+        "recipient": "0"
+      },
+      "after": {
+        "payer": "900000000000000000000",
+        "recipient": "100000000000000000000"
+      },
+      "hash": "DVhS7bWWj5Rk3B7TRiTCw1SYXR1RpctCSw5xzWX5FnLB"
+    },
+    {
+      "checkedAt": "2026-11-12T05:27:14.569Z",
+      "payer": "hand.symbio-fcef733893.near",
+      "recipient": "brain.symbio-fcef733893.near",
+      "amountYocto": "100000000000000000000",
+      "asset": "nep141:wrap.near",
+      "nonceConfirmed": true,
+      "before": {
+        "payer": "1000000000000000000000",
+        "recipient": "900000000000000000000"
+      },
+      "after": {
+        "payer": "900000000000000000000",
+        "recipient": "1000000000000000000000"
+      },
+      "hash": "D2MwyAjVyKZFe8hYVeNX2YT6WR9dL1VRud3xaARJJneZ"
+    }
+  ],
+  "totalNetworkFeesIncludingFailedAttemptYocto": "3736433464313900000000",
+  "failedFunding": {
+    "checkedAt": "2026-11-12T04:54:11.317Z",
+    "hash": "MFRCsnFFKRndiQTHhcNSTjJ7KsNcBuAUtEnmXWysx43",
+    "final": true,
+    "succeeded": false,
+    "feeYocto": "632439530461700000000",
+    "ownerNetDebitEqualsFee": true,
+    "capitalNotTransferred": true,
+    "reason": "WRAP_CALLBACK_GAS_TOO_LOW",
+    "newSubmissionPerformed": false
+  },
+  "allowanceRepairs": [
+    {
+      "hash": "8FTPHvRk5RBLmppVV6195PkE1sgEnt8d1UaFxa1G9aTh",
+      "step": "brain_intents_allowance_repair",
+      "signerId": "brain.symbio-fcef733893.near",
+      "receiverId": "brain.symbio-fcef733893.near",
+      "actualFeeYocto": "61050911059200000000",
+      "blockHash": "HwiqYoSgCr9rLsZPEscL5gjftfGh5ZxKcwgDH8efB2MG",
+      "final": true,
+      "succeeded": true,
+      "url": "https://nearblocks.io/txns/8FTPHvRk5RBLmppVV6195PkE1sgEnt8d1UaFxa1G9aTh"
+    },
+    {
+      "hash": "BrwCz7ys21e24cJJP1XGSKfQgi4bpar1ndj6ZTuisRk4",
+      "step": "hand_intents_allowance_repair",
+      "signerId": "hand.symbio-fcef733893.near",
+      "receiverId": "hand.symbio-fcef733893.near",
+      "actualFeeYocto": "61050911059200000000",
+      "blockHash": "H5LDUCTB3jkKnPcYwtRsa2w6nTXpJGo9QsGj2n9E9pNQ",
+      "final": true,
+      "succeeded": true,
+      "url": "https://nearblocks.io/txns/BrwCz7ys21e24cJJP1XGSKfQgi4bpar1ndj6ZTuisRk4"
+    }
+  ],
+  "capitalAndStoragePlanningCeilingYocto": "3250000000000000000000",
+  "totalPlanningCeilingYocto": "30000000000000000000000",
+  "paidInferenceRequests": 0,
+  "teeApprovalClaimed": false,
+  "externalRevenueProven": false,
+  "marketSwapPerformed": false
+}
