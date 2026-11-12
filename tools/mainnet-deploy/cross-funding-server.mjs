@@ -1,4 +1,5 @@
 import Fastify from 'fastify';
+import { quoteHash } from '@defuse-protocol/one-click-sdk-typescript';
 import assert from 'node:assert/strict';
 import { randomBytes, timingSafeEqual } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
@@ -130,7 +131,7 @@ export async function createCrossFundingApp({
         await readTransaction(hash),
         hash,
         plan.transactions[index],
-        UNIT / 200n,
+        UNIT / 100n,
       );
       const attempt = await optional(stateDir + '/attempt.json');
       const b = await readBlock(t.blockHash);
@@ -270,14 +271,18 @@ if (process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.m
         solSlot: String(await sol.getSlot('finalized')),
       };
     };
-    const settlement = async (p, before, after) => {
+    const settlement = async (p, before, after, receipts) => {
       const out = [];
       for (let i = 0; i < ROWS.length; i++) {
         const row = ROWS[i],
           q = p.quotes[i],
           s = await client.status(q.quote.depositAddress);
         assert.equal(s.status, 'SUCCESS', 'CROSS_CHAIN_SETTLEMENT_PENDING');
-        assert.equal(planDigest(s.quoteResponse), planDigest(q), 'SETTLEMENT_QUOTE_MISMATCH');
+        assert.ok(
+          s.swapDetails.originChainTxHashes.some((t) => t.hash === receipts[i + 1].hash),
+          'ORIGINAL_FUNDING_RECEIPT_NOT_BOUND',
+        );
+        assert.equal(quoteHash(s.quoteResponse), quoteHash(q), 'SETTLEMENT_QUOTE_MISMATCH');
         assert.ok(
           BigInt(s.swapDetails.amountOut) >= BigInt(q.quote.minAmountOut),
           'DESTINATION_MINIMUM_NOT_MET',
@@ -297,6 +302,13 @@ if (process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.m
               maxSupportedTransactionVersion: 0,
             });
             assert.ok(r && !r.meta.err, 'SOLANA_RECEIPT_NOT_FINAL');
+            if (!before.solSlot) {
+              const started = await optional(stateDir + '/attempt.json');
+              assert.ok(
+                r.blockTime >= Math.floor(Date.parse(started.at) / 1000),
+                'DESTINATION_RECEIPT_PREDATES_ATTEMPT',
+              );
+            }
           }
         }
         if (i !== 1) {
@@ -306,7 +318,7 @@ if (process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.m
             row.recipient,
             q.quote.minAmountOut,
             s.swapDetails.destinationChainTxHashes.map((t) => t.hash),
-            BigInt(i === 0 ? before.baseBlock : before.solSlot),
+            BigInt(i === 0 ? before.baseBlock : (before.solSlot ?? '0')),
           );
           assert.ok(incoming.verified, 'DESTINATION_TRANSFER_NOT_VERIFIED');
         }
