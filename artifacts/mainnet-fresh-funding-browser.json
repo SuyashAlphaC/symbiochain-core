@@ -1,0 +1,13 @@
+{
+  "checkedAt": "2026-11-12T10:37:15.287Z",
+  "scope": "UNSIGNED_STATIC_AGENT_GAS_FUNDING",
+  "signer": "solidvideo4090.near",
+  "actions": 3,
+  "capitalNear": "0.10",
+  "nativeDepositAccountsCreated": 0,
+  "priceQuotesCreatedBeforeWalletApproval": 0,
+  "noKeyGrant": true,
+  "signatureDeliberatelyRejected": true,
+  "mainnetTransactionsSubmitted": 0,
+  "paidInferenceRequests": 0
+}
