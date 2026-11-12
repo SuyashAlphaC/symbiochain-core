@@ -1,301 +1,139 @@
-# SymbioChain Core
+# SymbioChain
 
-## Supply chain trust boundary: fail-closed policy
+[Live dashboard](https://symbiochain.vercel.app/dashboard) · [Mainnet evidence](https://symbiochain.vercel.app/evidence) · [Frontend source](https://github.com/AviraL0013/SymbioChain) · [Idea draft](HACKATHON.md#idea-field-pitch)
 
-**TEE execution status: QUARANTINED. The automated inference gate is closed.** The hosted LIVE observer performs no inference. One explicitly authorized standalone API probe succeeded as unverified inference, separately documented below. Historical PAPER inference uses local fixtures with no enclave or TEE signature.
+## 1. What it is and why it matters
 
-The November 7 audit used unmodified [Brave near-verifier](https://github.com/brave/near-verifier) against `z-ai/glm-5.3-flash` in **provenance-only mode**. Intel TDX, NVIDIA and gateway TLS/binding subchecks passed. **The deployment was not approved:** the launcher had no accepted signed SLSA provenance; other image/source pins, OS measurements and required gateway services also differed from Brave's policy. Gateway, model and inference-proxy software are not claimed as fully verified. The launcher rebuild exemption does not waive signed provenance. [Raw report and audit scope](artifacts/brave-cli-verification.json).
+AI agents need spending authority without unrestricted control of a treasury.
+SymbioChain is a policy-controlled AI treasury on NEAR: Scout finds candidate
+routes, Brain assesses committed terms, and Hand requests bounded execution.
+Deterministic checks govern what an agent can authorize and sign.
 
-Automated paid inference remains gated; we have not changed trust pins to force a pass. [Compose-manager issue #64](https://github.com/nearai/compose-manager/issues/64) concerns reproducible launcher builds and does not establish provenance for our observed digest. **Mainnet economics, external revenue and automatic provider credit purchases remain unproven.** See [the exact approval handoff](docs/TEE_APPROVAL_HANDOFF.md).
+The **Metabolic Rule** has two enforcement layers. The NEAR contract protects
+native reserves and enforces roles, approved assets/chains, authorization limits
+and one-use signing. The application checks compute budgets, trading economics
+and TEE workload approval before admitting automated AI execution. A model's
+recommendation cannot override these checks.
 
-**Three agents, one treasury, measurable operating costs.** The [prepaid risk-report path](docs/SERVICE_LOOP.md) lets Scout gather quotes, Brain assess committed terms behind the unchanged TEE gate, and Hand deliver a report without trading. LIVE arbitrage admission defaults to disabled. The trading adapter retains constrained Chain Signatures, settlement reconciliation and internal Intents payments. An operational reserve and a separate inference-spending policy govern real execution.
+## 2. Live on Mainnet (Proven Mechanics)
 
-The backend includes TypeScript/Fastify, PostgreSQL/Prisma, durable workers, a Rust NEAR treasury/NFT contract, EVM and native Solana transfer adapters, encrypted evidence, replayable WebSocket events, and Docker/CI configuration.
+**Owner-initiated cross-chain execution.** Human-authorized scripts used the
+scoped Brain, Hand and Accountant keys to complete real Chain Signatures
+transfers on [Base](https://basescan.org/tx/0x671a03fd1e327cd4a6cb57d5eb668016b3625364a14eb7a7beaafaebfd24135c)
+and [Solana](https://solscan.io/tx/2WvDKWegMfxqaDDUJbsjXDgQ1CQK7aoHL7b51mNuscVG9swPC36i55pZYFNDANnEFp2E2c4hx1Hwd3vJQ3rdfxZv).
+Both contract cycles closed; eight NEAR receipts cover authorization, MPC signing,
+submission and finalization. **The AI engine did not initiate these transfers.**
 
-**Current production:** the [permanent frontend](https://symbiochain.vercel.app/dashboard) and [backend](https://symbiochain-core.onrender.com/docs) serve **LIVE mainnet observations with execution DISARMED**. Finalized balances, storage collateral, permissions, executable identity and known deployment receipts are real blockchain data. The read-only preparation worker publishes three heartbeats and checks real wallet balances, owner permissions and signed quote previews without constructing a paid execution engine or wallet signer; financial API mutations remain disabled. [Exact release revisions and verification](docs/RELEASE_REVISIONS.md); [activation and rollback runbook](docs/MAINNET_PRODUCTION.md).
+**Real Intents settlement.** [1Click gas conversions](artifacts/mainnet-fresh-gas-funding.json)
+funded the derived Base/Solana wallets, and two [internal agent payments](artifacts/mainnet-intents-settlement.json)
+settled on Intents. The direct MPC transfer fixtures and their gas-funding swaps
+are recorded separately on the [evidence page](https://symbiochain.vercel.app/evidence).
 
-**Historical mainnet acceptance — November 9, before activation:** the [current evidence page](https://symbiochain.vercel.app/evidence) presents mainnet-only acceptance results: **13 passed, 11 blocked, 1 not run**, with 12 independently rechecked finalized transaction receipts. See the [machine-readable report](artifacts/mainnet-acceptance.json) and [scope and reproduction guide](docs/MAINNET_ACCEPTANCE.md). Passing an observation check does not establish a successful AI, signing or settlement cycle.
+**Contract-enforced spending bounds.** The current owner-signed policy is:
 
-**Mainnet foundation:** [treasury.symbio-fcef733893.near](https://nearblocks.io/address/treasury.symbio-fcef733893.near) is deployed with four funded agent accounts. Its later bounded activation is recorded separately below; the original deployment snapshot remains a dated paused-state record. The dedicated owner is `symbio-fcef733893.near`; its Meteor recovery key remains in control and the temporary deployment key is revoked. Nine deployment transactions, a separate 0.001 NEAR treasury capital deposit, and a 0.002 NEAR service deposit/withdrawal are confirmed. The service test returned 0.0012 NEAR, retained 0.0008 NEAR as storage collateral and incurred 0.0007785144816934 NEAR in combined fees. The service balance is zero. These are self-funded mechanics, not earned revenue.
+| Control                | Current limit                                       |
+| ---------------------- | --------------------------------------------------- |
+| USDC authorization     | 0.25 USDC per action; 0.50 USDC per day             |
+| Native SOL transfer    | 0.004 SOL per action; 0.008 SOL per day             |
+| Protected NEAR reserve | 0.10 NEAR                                           |
+| Automatic execution    | DISARMED; on-chain worker permissions remain active |
 
-Testnet artifacts remain dated historical regression evidence in Git; the current public evidence view does not count them as mainnet results. The legacy `/testnet` page redirects to `/evidence`. Two controlled mainnet agent payments have settled inside Intents. Owner-authorized MPC transfers have completed on Base and Solana. Profitable strategy trading, profit-backed NFTs, business-funded distributions and verified paid AI remain unproven. No synthetic mainnet profit is used to fill those gaps. Automatic provider credit purchasing remains unsupported.
+The [treasury](https://nearblocks.io/address/treasury.symbio-fcef733893.near),
+dedicated agent accounts and restricted keys are deployed. The earlier
+0.05/0.10-USDC policy remains a dated activation record; the current limits above
+are shown by finalized state and the [later permission receipts](artifacts/mainnet-wallet-provisioning.json).
 
-## Bounded owner activation
+**Glossary:** _Receiver-scoped function-call keys_ can call only listed methods
+on a designated receiver contract. _Chain Signatures/MPC_ lets the NEAR contract
+request signatures for derived wallets on other chains. _1Click_ is NEAR Intents'
+API for intent-based cross-chain swaps.
 
-The [activation guide](docs/BOUNDED_MAINNET_ACTIVATION.md) records **seven confirmed owner-reviewed November 9 mainnet transactions**, with no treasury top-up. Both Intents keys were registered, the treasury was unpaused and three worker permissions were enabled under the original 0.05-USDC per-authorization / 0.10-USDC daily limits. The November 12 permission update below supersedes those limits. The owner received a 0.02-NEAR gas allocation from existing treasury funds. [Finalized activation receipts](artifacts/mainnet-bounded-activation.json) reconcile fees, storage and that internal allocation separately. The live [evidence panel](https://symbiochain.vercel.app/evidence) reports current policy/permissions, Intents registration, preparation heartbeats and confirmed receipt coverage. Authorized cross-chain limits use **USDC atoms**, not NEAR; they do not establish a universal native spending cap. Read-only preparation leaves the execution engine and paid inference disarmed. Prepared signatures are never described as completed activation.
+## 3. Verify in 5 Minutes
 
-## Mainnet preparation and internal payments
+The public dashboard and evidence page require **no login, judge token or wallet
+connection**. Operator actions use separate private credentials.
 
-The [preparation runbook](docs/MAINNET_PREPARATION.md) separates non-TEE conditions from deployment approval. The dedicated read-only worker checks finalized account identities, Base/Solana balances, owner authorization and two signed dry quotes every five minutes. Missing capital, missing SOL-return permission and an unprofitable or unavailable route remain visible as independent gates. A passing preparation check never opens execution.
+| Do this                                                                                                                                        | See this                                                                          |
+| ---------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| Open the [dashboard](https://symbiochain.vercel.app/dashboard)                                                                                 | Finalized treasury balance, current owner policy and execution state              |
+| Open [Evidence](https://symbiochain.vercel.app/evidence), expand **Mainnet MPC transfer fixtures**, then follow the Base/Solana explorer links | Two confirmed owner-initiated transfers and eight NEAR execution receipts         |
+| Expand **Manual AI API probe**                                                                                                                 | `NEAR_AI_OK`, 31 input / 6 completion tokens, provider charge **$0.00000548**     |
+| Read the [public probe record](artifacts/manual-ai-probe.json)                                                                                 | One manual request, zero automated requests, response hash and reconciled billing |
+| Check the [release record](artifacts/mainnet-rpc-recovery.json) and [verification guide](docs/VERIFICATION.md)                                 | Exact application revisions, 290 automated tests and hosted browser checks        |
 
-The [November 12 settlement evidence](artifacts/mainnet-intents-settlement.json) records two real 0.0001-wNEAR Intents payments: Brain to Scout and Hand to Brain. Final receipts, consumed nonces and exact debit/credit changes were reconciled. Total network fees, including the failed funding attempt and two same-key gas-allowance repairs, were **0.0037364334643139 NEAR**. A separate 0.002 NEAR is recoverable capital and 0.00125 NEAR is FT storage collateral, within the 0.03-NEAR test ceiling. These are team-funded internal payments; they establish neither external revenue nor AI execution, a market swap, business profit or purchased credits.
+<a id="run-locally"></a>
+<a id="verify-the-implementation"></a>
 
-## Confirmed mainnet execution — November 12
+For a local three-agent replay, use **Node 24 and Docker** in a fresh checkout.
+The first dependency installation can take longer than the hosted walkthrough.
+A separate ignored environment file keeps this PAPER demo isolated:
 
-Two [owner-authorized Chain Signatures fixtures](artifacts/mainnet-owned-execution.json) completed: a one-atom Base USDC self-transfer and a native-SOL transfer to the Scout account's derived wallet. Both destination transactions finalized and both treasury cycles closed with zero gross P&L. Their eight NEAR receipts record authorization, MPC request, submission and accountant finalization. They establish cryptographic signing and transfer mechanics, not TEE-approved AI, strategy profit or an NFT mint.
-
-[Gas funding](artifacts/mainnet-fresh-gas-funding.json) used real Intents conversions after the owner funded the agents. Two earlier gas-quote attempts expired and refunded their principal; their fees remain included. The spend-deadline guard now checks the request deadline separately from the longer deposit-address cleanup deadline. The corrected flow requests executable prices only after wallet funding confirms.
-
-Continuation network fees were **0.0435279283243207 NEAR**, including the expired funding attempts and subsequent permission/execution calls. Retained capital input was **0.45 NEAR**, within the **0.50-NEAR additional planning ceiling**. Destination gas is paid from the funded native assets; these figures do not establish complete USD business costs or net profit. The treasury's existing storage collateral remains separate.
-
-The database policy now matches the signed 0.25-USDC / 0.50-USDC authorization limits and bounded SOL token caps. Its PAPER defaults and zero LIVE limits were replaced while preserving its paused state. The verified 0.349281-USDC owner deposit was imported as capital through an idempotent balanced journal, not revenue. The route allowlist, Base gas limits and Solana reserve are configured. Automated execution remains disarmed; TEE approval and the unchanged profit guard remain separate requirements. No paid model request or hackathon submission occurred.
-
-## Manual API Probe (Unverified Inference)
-
-One standalone request to `https://cloud-api.near.ai/v1/chat/completions` returned
-`NEAR_AI_OK` from `z-ai/glm-5.3-flash`. The provider recorded 31 input tokens,
-6 completion tokens and a **$0.00000548** charge, reconciled using its published
-per-request billing API. The [sanitized evidence](artifacts/manual-ai-probe.json)
-records response identifiers, usage and the private raw response's SHA-256.
-
-This proves API authentication and model availability. The completion does not
-independently prove the configured organization membership, a verified response
-signature or TEE workload approval. The script made one inference request with
-no retry, never invoked the treasury or workers, used no treasury funds and left
-automated execution disarmed. Six micro-USD is reserved from the existing shared
-$1 AI allowance; the remaining automatic allowance is **$0.999994**. Historical
-zero-request reports remain dated records of their original scope.
-
-The live [evidence page](https://symbiochain.vercel.app/evidence) labels this
-**Manual API Probe (Unverified Inference)**. The one-shot diagnostic is
-`node tools/manual-ai-probe.mjs --execute-unverified-once`; it requires explicit
-authorization, saves an exclusive attempt before sending, and refuses to repeat
-an existing attempt. Reading its public evidence endpoint never runs inference.
-
-## Business evidence
-
-The current paired release includes the service, accounting and funding implementations. Exact deployed revisions and hosted checks are in [the controlled mainnet release record](artifacts/mainnet-controlled-release.json); [earlier service candidates](artifacts/service-loop-release-manifest.json) remain historical evidence. Deployment does not establish that disabled execution paths have completed a real-money cycle.
-
-The [human-in-the-loop metabolic bridge](docs/SERVICE_LOOP.md#human-in-the-loop-metabolic-bridge) turns eligible reported net proceeds into a durable manual-purchase task. Optional Discord alerts and operator confirmation do not purchase or verify provider credits. The dashboard distinguishes **QUARANTINED**, **HUMAN IN THE LOOP** and **UNPROVEN revenue**. Local PAPER reports have no enclave or TEE signature. No organic demand or guaranteed profit is claimed.
-
-The [business accounting feature](docs/BUSINESS_ACCOUNTING.md) adds performance-fee invoices, final Intents receipt checks, realized-cost reporting and proceeds reservations. It is a source-level addition, not evidence of a customer sale or released mainnet business. Confirmed customer revenue is unproven. The [proceeds-to-NFT workflow](docs/BUSINESS_FUNDING.md) now implements signed conversion, native withdrawal, verified treasury allocation and durable recovery; it is disabled and lacks funded mainnet proof. Automatic AI-credit purchasing remains provider-blocked and unimplemented under the public-interface-only policy. Private cost sources and customer identity are not exposed in the public status projection. Deployment revisions and evidence scope are recorded in [the release manifest](docs/RELEASE_REVISIONS.md).
-
-## Run locally
-
-Requires Node 24, npm and Docker. Rust is needed only for contract checks. PAPER requires no wallet, paid model key, or real funds.
-
-```bash
+```sh
 npm ci
-cp .env.example .env
-docker compose -p symbiochain up -d postgres
-npm run db:generate
-npm run db:migrate
-npm run demo
+cp .env.example .env.paper
+docker compose -p symbiochain up -d postgres --wait
+DOTENV_CONFIG_PATH=.env.paper npm run db:generate
+DOTENV_CONFIG_PATH=.env.paper npm run db:migrate
+DOTENV_CONFIG_PATH=.env.paper npm run demo
 ```
 
-The demo deposits simulated capital, creates a proposal, runs all three lanes, accounts for synthetic trading/inference costs, and reaches `CLOSED`. It prints a simulation disclosure and does not contact a model or transfer tokens.
+Expected result: JSON with `state: "CLOSED"`, balanced accounting and an explicit
+PAPER simulation label. It requires no wallet or paid model key. For the local
+API, use `DOTENV_CONFIG_PATH=.env.paper npm run dev`; its `/dashboard` uses the
+local tokens in `.env.paper`. Contract, isolated database and recovery checks are
+in the [judge walkthrough](docs/JUDGING.md).
 
-Start the API and workers in separate terminals:
+Source map: [workflow](src/engine.ts), [durable ledger/jobs](src/store.ts),
+[provider adapters](src/providers), [NEAR contract](contracts/treasury/src/lib.rs),
+[API/WebSocket contract](docs/API.md), [operations](docs/OPERATIONS.md),
+[deployment](docs/DEPLOYMENT.md), [demo/X-post draft](docs/DEMO_POST.md).
 
-```bash
-npm run dev
-```
+## 4. Simulated vs. Real
 
-```bash
-npm run worker
-```
+| Mode / evidence      | State                                                                                    | What it proves                                                                       |
+| -------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| LIVE mainnet         | Owner-initiated transfers finalized; AI engine DISARMED                                  | MPC signing, destination settlement, Intents payments and contract spending controls |
+| PAPER                | Simulated prices, inference and settlement; durable PostgreSQL workflow                  | Complete repeatable three-agent lifecycle, accounting and recovery                   |
+| Local NEAR sandbox   | Real local contract calls with an invalid-signature MPC stub                             | Contract roles, bounds, payload construction and receipt/distribution mechanics      |
+| Historical testnet   | Real testnet MPC plus separately confirmed Sepolia/devnet transfers; synthetic economics | Test-network signing and transfer mechanics                                          |
+| Manual unverified AI | One actual Cloud API completion with reconciled billing                                  | Key authentication, model availability and per-request cost reporting                |
 
-API: `http://127.0.0.1:3001`; Swagger: `/docs`; readiness: `/readyz`. Application endpoints require the read/admin tokens in `.env`. Replace the example tokens and encryption key before hosting.
+Detailed [testnet records](docs/TESTNET_REHEARSAL.md) retain their original dates.
+The manual AI probe used the configured Cloud key; the response does not
+independently establish its configured organization membership or a verified
+response signature.
 
-The operator panel is at `/dashboard` (also the root redirect). It shows the three agents, treasury, cycles, durable events, cost approvals and net after approved costs. Administrator controls pause/resume spending and agents. The colocated PAPER profile can crash a worker after it claims a specific job and demonstrate recovery after restart and lease expiry. See the [operator demonstration](docs/OPERATIONS.md#user-facing-fault-and-cost-demonstration). PAPER rights are simulated and never presented as an on-chain mint.
+## 5. Not Yet Proven
 
-## Architecture
+- **TEE-approved autonomous execution.** Hardware/TLS subchecks passed, but the
+  observed deployment did not satisfy the complete software provenance and
+  measurement policy. The [recorded audit](artifacts/brave-cli-verification.json)
+  leaves automated AI execution quarantined.
+- **Profitable strategy trading.** Current signed round-trip previews fail the
+  unchanged profit floor. Market economics require a viable route independently
+  of TEE approval.
+- **External service revenue and full business profitability.** Recorded funding
+  is owner capital; complete operating-cost valuation and market demand remain
+  to be established.
+- **Automatic AI-credit purchases.** The published customer payment-to-credit
+  interface needed for automation is unavailable; the [manual funding bridge](docs/SERVICE_LOOP.md#human-in-the-loop-metabolic-bridge)
+  records operator tasks.
+- **Profit-funded NFT distributions.** Conversion/allocation/recovery code is
+  implemented and tested; business-profit-backed mainnet payouts remain unproven.
 
-Service orders follow Scout quoting → prepaid Brain assessment → Hand report delivery, as described in the [service runbook](docs/SERVICE_LOOP.md). The following diagram and execution states describe the trading adapter, whose LIVE admission defaults to disabled.
+## 6. Tracks
 
-```mermaid
-flowchart LR
-  S[Scout: signed 1Click previews] --> Q[(Durable jobs + proposal digest)]
-  Q --> B[Brain: hardware checks + signed inference]
-  B --> P[Deterministic policy + reserve]
-  P --> C[NEAR treasury: construct permitted payload]
-  C --> M[Chain Signatures MPC]
-  M --> H[Hand: persist signed bytes, then broadcast]
-  H --> R[Verify settlement + incoming transfers]
-  R --> L[(Balanced journals + evidence + outbox)]
-  L --> N[Execution receipt NFT]
-  L --> F[REST + WebSocket frontend]
-```
+- **Security:** contract-enforced spending limits, restricted function-call keys,
+  one-use signing, durable recovery and fail-closed application TEE gating.
+- **DeFi:** real mainnet cross-chain signing/transfer rails, Intents settlement and
+  signed-quote admission checks.
 
-1. **Scout** reads a bounded route allowlist, obtains two signed dry quotes, and rejects routes whose conservative return after cost buffers misses the profit floor. Configure `SCOUT_ROUTES_FILE` for automatic discovery. Historical swaps are not treated as pending orders. API proposals enter the same pipeline.
-2. **Brain** purchases the signal, verifies fresh gateway/model evidence against independently approved measurements, submits one paid inference, and verifies the signature over the exact request/response bytes. A model cannot override deterministic financial limits.
-3. **Hand** purchases the assessment, reserves funds, obtains an executable quote meeting the approved minimum, and asks the contract to construct the permitted transfer. Signed material is encrypted and durable before broadcast. Recovery reconciles the existing identity.
+Implementation: TypeScript/Fastify, PostgreSQL/Prisma, Rust/NEAR, Chain Signatures,
+NEAR Intents and NEAR AI Cloud; pinned dependencies are in [package.json](package.json).
+The [frontend repository](https://github.com/AviraL0013/SymbioChain) preserves the
+teammate's interface and attribution. [MIT license](LICENSE).
 
-The live strategy is an ERC-20 on the configured EVM network → **native SOL** → the original ERC-20. Return pricing is refreshed after receipt. An unavailable or unprofitable return leaves intermediate assets held for reconciliation. This asynchronous round trip has price risk between legs; its previews are not an atomic arbitrage guarantee.
-
-A 1Click partner JWT is optional. Anonymous access uses the provider's unauthenticated fee schedule; signed-quote verification and the conservative profit gate still apply. See [live setup](docs/OPERATIONS.md).
-
-### State and recovery
-
-```text
-DISCOVERED → QUOTED → ASSESSED → RESERVED → SUBMITTED → SETTLING → RECONCILED → CLOSED
-                  ↘ REJECTED / EXPIRED         ↘ UNKNOWN → reconciliation
-```
-
-PostgreSQL job leases, fencing tokens, versioned transitions, serializable reservations, idempotent journals, and a transactional outbox preserve progress across processes/restarts. Unknown outcomes retain reserves. Unconfirmed sends can rebroadcast the same encrypted, persisted signed bytes under a durable cooldown and retry budget. No retry creates a replacement signature, nonce or target-chain transaction. Confirmed first-leg refunds also close the corresponding NEAR authorization and never mint profit rights.
-
-A paid inference attempt is stored before the POST. A lost response becomes `INFERENCE_OUTCOME_UNKNOWN`; it does not trigger another purchase. Received bytes can resume billing/signature verification after restart. Billing uses `inference-id`, not the transport correlation ID.
-
-Intents service payments use NEP-413, the verifier's current salt, a durable nonce and signed payload, and nonce-consumption reconciliation. Retrying an uncertain payment does not create a new nonce. The alternate `NEAR_LEDGER` rail settles funded service balances inside the treasury contract.
-
-## What the proofs establish
-
-| Evidence                             | Established                                                                            | Boundary                                                       |
-| ------------------------------------ | -------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| 1Click quote signature               | Approved manager signed the quote/terms                                                | Future execution and profit remain uncertain                   |
-| Intel DCAP + measurement checks      | Accepted TDX status, nonce/signer binding, compose hash, RTMR3 replay, debug rejection | Does not prove financial reasoning                             |
-| NVIDIA NRAS over authenticated HTTPS | NVIDIA accepted the GPU evidence                                                       | Offline JWT signature verification is not implemented          |
-| Model-serving response signature     | Exact request/response bytes and canonical model match a preflight identity            | Model instances can share signing identities                   |
-| Treasury payload construction        | No arbitrary EVM calldata or Solana program can be signed                              | Contract trusts the Brain role; it does not verify DCAP itself |
-| Finality/incoming-transfer checks    | Deposits and received amounts are corroborated on their chains                         | Complete dollar operating-cost valuation is separate           |
-| Receipt NFT                          | Authorized accountant recorded reconciliation                                          | Not independent proof of cross-chain profitability             |
-
-The hardware verifier uses patched `@phala/dcap-qvl`, not the vulnerable legacy Node binding. TLS connection binding and end-to-end encrypted inference transport are not implemented; proofs expose `tlsConnectionBinding: false`. Backend orchestration and function-call keys run in ordinary server processes. Chain Signatures keys remain with the MPC system.
-
-See the [private inference verification runbook](docs/PRIVATE_INFERENCE.md) for model privacy tiers, the NVIDIA verdict trust boundary, non-billable preparation, and remaining transport work.
-
-An independent cross-check uses [Brave's unmodified NEAR verifier](https://github.com/brave/near-verifier), which targets the NEAR AI Cloud backend behind Brave Leo. On November 7, its authenticated CLI returned **exit 1** in the documented provenance-only mode: CPU/GPU and TLS subchecks passed, but launcher provenance was unavailable and the live deployment differed from its source/OS/service pins. The launcher exemption skips rebuilding only after provenance verification. See the [unaltered CLI report](artifacts/brave-cli-provenance-only-report.json), [invocation and scope](artifacts/brave-cli-verification.json), and [launcher policy analysis](docs/TEE_LAUNCHER_POLICY.md). No image rebuild or paid inference was performed, and deployment approval remains false.
-
-## PAPER, LIVE and REPLAY
-
-| Mode   | Behavior                                                                         | Evidence                                        |
-| ------ | -------------------------------------------------------------------------------- | ----------------------------------------------- |
-| PAPER  | Synthetic market/model/settlement, persistent PostgreSQL                         | `SIMULATED`                                     |
-| LIVE   | Finalized mainnet reads; provider execution requires separate arming and funding | Only checks actually passed are marked verified |
-| REPLAY | Offline archived data; no new inference or transactions                          | `REPLAY` plus original source mode              |
-
-Export an administrator-only evidence bundle and replay it:
-
-```bash
-npm run evidence:export -- CYCLE_UUID /tmp/symbio-private-evidence.json
-npm run evidence:replay -- /tmp/symbio-private-evidence.json
-```
-
-Exports contain private inference evidence, use file mode `0600`, and must remain private. Their checksum checks file integrity relative to its recorded hash; it does not authenticate the exporter. Normal API/WebSocket responses omit encrypted evidence and signed transaction bytes.
-
-## Verify the implementation
-
-Create the isolated test database once, then migrate it:
-
-```bash
-docker compose -p symbiochain exec -T postgres psql -U symbio -d postgres -c 'CREATE DATABASE symbiochain_test;'
-DATABASE_URL=postgresql://symbio:symbio_local@localhost:55439/symbiochain_test npm run db:migrate
-npm run check
-npm ci --prefix .railway --ignore-scripts
-npm run infra:check
-npm run test:integration
-```
-
-Integration tests require a database name ending in `_test` and truncate that database. Set `TEST_DATABASE_URL` for another isolated PostgreSQL database/Neon branch. Do not use a shared development or production database.
-
-Contract verification on Linux x86_64:
-
-```bash
-npm run contract:test
-npm run contract:build
-bash scripts/build-mock.sh
-bash scripts/install-sandbox.sh
-npm run contract:integration
-```
-
-The sandbox checks real contract calls: role isolation, immutable authorization, payload equality against viem/web3.js, one signing request per authorization, NFT minting, revenue distribution/claim, and conserved service payments. Its MPC stub deliberately returns an invalid signature. Synthetic reported P&L is not external revenue.
-
-The build script sets `--cfg near` for near-sdk 5.27 and emits a WASM SHA-256. The sandbox is pinned to NEAR 2.13.4 with a checked download hash. Cargo pins `near-sdk-core` 4.1.0 because floating 4.1.3 introduces an incompatible native testing type version.
-
-### Public testnet rehearsal
-
-```bash
-npm run testnet:rehearse
-npm run testnet:tee
-```
-
-This separate profile uses fresh faucet-funded accounts and the real testnet MPC.
-It checks deployment, roles, policy, payments, signatures and receipt mechanics.
-Settlement and P&L are explicitly synthetic. This original rehearsal does not
-broadcast its signing fixtures. A separate `npm run testnet:execute` has now
-confirmed real MPC-authorized Sepolia test-USDC and Solana devnet transfers; their
-records appear under `executions`. `npm run testnet:swarm -- --watch` runs the
-integrated guarded workflow and currently stops at TEE deployment approval.
-The free TEE probe preserves approval gates and purchases no inference.
-See [scope, recovery and publication](docs/TESTNET_REHEARSAL.md). The frontend's
-`/testnet` page reads the separate historical report while agent operations remain PAPER.
-
-The [captured report](artifacts/testnet-rehearsal.json) includes real testnet
-deployment, EVM/Solana MPC signatures, NFT mint and test-token distribution/claim.
-Hardware verification passes; deployment approval and signed inference remain
-blocked. No mainnet funds or inference credits were spent in this rehearsal.
-
-### Real market probe
-
-```bash
-npm run probe:market
-```
-
-This verifies real **dry quote** signatures using the official SDK and writes `artifacts/market-probe.json`. The captured probe returned `9,843,777` USDC atoms for `10,000,000` input atoms before operating costs. That preview fails the profit gate. No deposit, model call, MPC signature, or realized revenue is implied.
-
-### Public gateway attestation probe
-
-```bash
-npm run probe:attestation
-```
-
-This read-only diagnostic needs no API key or model credits. It obtains a fresh public gateway token, verifies PS384 against Intel's pinned public key endpoint, and checks issuer, expiry, signed caller nonce, non-debug TDX claims and accepted platform status. `artifacts/public-attestation-probe.json` contains the public token, public keys and capture-time verification result.
-
-The observed compose hash is **unapproved**. This diagnostic does not modify allowlists, authorize LIVE, exercise the production DCAP verifier, or prove a model completion. Its short-lived token is historical evidence after expiry; rerun the command for a fresh check. See the official [public endpoint](https://docs.near.ai/api-reference/attestation/get-intel-trust-authority-attestation-token) and [Intel token profile](https://portal.trustauthority.intel.com/eat_profile.html).
-
-## Frontend contract
-
-See [API and WebSocket documentation](docs/API.md). Money is represented by integer strings in the stated asset's smallest units. `50` basis points means `0.5%`.
-
-Reads use `Authorization: Bearer READ_TOKEN`. Writes require `ADMIN_TOKEN`; `POST /api/cycles` also requires an `Idempotency-Key`. Different terms under the same key return a conflict.
-
-Connect to `/ws` and authenticate in the first frame, never a URL parameter:
-
-```json
-{ "type": "subscribe", "token": "YOUR_READ_TOKEN", "after": "0" }
-```
-
-Persist the last sequence and reconnect with it. Events replay from PostgreSQL; deduplicate by `seq`. Topics include `cycle.created`, `cycle.updated`, `agent.payment`, `new_transaction`, and treasury/worker controls.
-
-## Economics and metabolism
-
-Journals balance each asset independently and distinguish external capital, internal transfers, trading results, compute expense and chain costs. Deposits and intra-swarm payments are never business revenue.
-
-Wallet reserves and provider credits are separate resources. Live inference uses either the default organization-balance guard or an explicit [durable application budget](docs/PRIVATE_INFERENCE.md#builders-keys-and-application-budgets) for Builders-issued keys without organization access. A local budget caps this backend's admitted spending and reconciles per-request billing; it does not verify the remaining provider balance. Optional staking-credit sync refreshes an **already configured** credit source; it does not stake funds or convert trade proceeds into credits. The [provider-funding decision](docs/PROVIDER_FUNDING.md) records the published API evidence and missing purchase protocol. Full-business `survivalHours` stays `null` until hosting/funding costs and all native fees are measured and valued.
-
-Native EVM/Solana fees remain in settlement evidence. Gross trading P&L is separate from the receipt's net basis. With `NFT_SHARE_BPS=0`, receipts can use disclosed conservative cost buffers. With nonzero shares, minting waits for an immutable accountant-approved cost basis matching the exact settlement, native fee evidence and metered inference. The approval includes native/NEAR gas valuation, hosting, other costs and a receipt-gas budget. It is labeled `ACCOUNTANT_APPROVED`, not independently verified market truth. See the operations guide for the cost-approval endpoint.
-
-Rights are fixed basis points of future explicit NEAR distributions, capped at 10,000 total bps. At most 128 nonzero rights-bearing NFTs participate in bounded distribution loops. Unclaimed dividends follow the NFT; failed payouts restore credit to the original claimant. Native owner withdrawals exclude storage, service/dividend liabilities and signing reserves, and require a pause.
-
-## Guides and repository map
-
-- [Hackathon submission](HACKATHON.md): idea pitch, entry point, execution loop, evidence and remaining milestones.
-- [Operations and live setup](docs/OPERATIONS.md): accounts, derived wallets, credentials, policy and recovery.
-- [Deployment](docs/DEPLOYMENT.md): Supabase, Render, cron-job.org, Docker and hosting alternatives.
-- [Judge walkthrough](docs/JUDGING.md): reproducible proof, track mapping and boundaries.
-- [Acceptance ledger](docs/IMPLEMENTATION.md): implemented behavior and external validation still needed.
-
-```text
-src/engine.ts         Workflow and reserve enforcement
-src/store.ts          Jobs, serializable ledger, outbox
-src/providers/        1Click, NEAR AI, hardware, wallets, Intents, paper/live
-src/app.ts            REST, OpenAPI, WebSockets
-prisma/               Schema and versioned migrations
-contracts/treasury/   Policy, guarded MPC, services, NFTs, dividends
-contracts/mpc-mock/   Sandbox-only transport stub
-scripts/              Demo, export/replay, probes, contract build/tests
-test/                 Unit and PostgreSQL recovery/adapter/API tests
-```
-
-The PAPER backend is deployed with Supabase and Render. [Hosted verification](artifacts/hosted-paper-verification.json) records a closed simulated cycle, balanced journals, fresh worker heartbeats, HTTPS authorization and secure WebSocket cursor replay. No wallet funds were spent or mainnet contracts deployed.
-
-The selected hosting path uses Supabase's session pooler, a Render Docker web service, and an optional cron-job.org readiness monitor. Render deployment and Supabase migrations/TLS/RLS checks pass. The cron-job.org readiness check is enabled every five minutes. The alternative Railway IaC plan remains unapplied. Live validation also needs the dedicated credentials and approved measurements listed by `npm run live:preflight`. See [deployment status](docs/DEPLOYMENT.md) and the [acceptance ledger](docs/IMPLEMENTATION.md).
-
-## Official sources
-
-- [1Click lifecycle](https://docs.near-intents.org/integration/distribution-channels/1click-api/quickstart/introduction), [signed quotes](https://docs.near-intents.org/integration/distribution-channels/1click-api/verify-quote-signature), [SDK](https://docs.near-intents.org/integration/distribution-channels/1click-api/sdk)
-- [Intents and nonce salt](https://docs.near-intents.org/integration/verifier-contract/intent-types-and-execution), [NEP-413](https://docs.near-intents.org/integration/verifier-contract/signing-intents), [key registration](https://docs.near-intents.org/integration/verifier-contract/account-abstraction)
-- [Chain Signatures](https://docs.near.org/chain-abstraction/chain-signatures/getting-started), [access keys](https://docs.near.org/protocol/access-keys), [cargo-near flags](https://github.com/near/cargo-near)
-- [NEAR AI response signatures](https://docs.near.ai/cloud/verification/cloud-api/response-signatures), [hardware bindings](https://docs.near.ai/cloud/verification/reference/quote-nonce-signer), [verification policy](https://docs.near.ai/cloud/verification/reference/verification-policy)
-- [Request billing](https://docs.near.ai/api-reference/billing/get-costs-by-request-ids), [organization credits](https://docs.near.ai/api-reference/usage/get-organization-balance), [staking-credit sync](https://docs.near.ai/api-reference/staking-farm/sync-organization-staking-farm-credits)
-- [Patched DCAP advisory](https://github.com/advisories/GHSA-796p-j2gh-9m2q), [NEP-171](https://nomicon.io/Standards/Tokens/NonFungibleToken/Core), [Prisma 7](https://www.prisma.io/docs/guides/upgrade-prisma-orm/v7)
+Development history is retained: the initial backend was committed October 27;
+[changes after the October 30 foundation](https://github.com/SuyashAlphaC/symbiochain-core/compare/c7ebccdb471c939f02fe954177a57e2635faeef8...main)
+show the later NEAR integrations and evidence work. The application release is
+identified separately from documentation revisions. Submission remains on hold.

@@ -1,50 +1,75 @@
 # Judge walkthrough
 
-## Product claim
+[Product overview](../README.md) · [Public dashboard](https://symbiochain.vercel.app/dashboard) · [Evidence](https://symbiochain.vercel.app/evidence)
 
-SymbioChain explores whether a three-agent treasury can cover its operating costs through cross-chain activity under enforceable limits. Its distinguishing mechanic is the connection between measurable resource pressure, paid agent cooperation, constrained signing and durable accounting. It does not force a trade to make an animation say ALIVE.
+## Hosted walkthrough
 
-## Mainnet first
+No login, wallet or judge token is required for public reads. Open the dashboard
+for finalized treasury balances and current policy. On Evidence, expand
+**Mainnet MPC transfer fixtures** for the Base/Solana links and eight NEAR
+receipts. Expand **Manual AI API probe** for the recorded completion and charge;
+other groups contain Intents funding and internal payments. The human authorized the mainnet scripts; the AI
+engine did not initiate the transactions.
 
-Open [Execution evidence](https://symbiochain.vercel.app/evidence). Confirm owner
-activation ACTIVE, seven finalized receipts and 0.05-USDC / 0.10-USDC contract
-limits. Verify that runtime execution remains DISARMED and TEE QUARANTINED.
-Monitor-only heartbeats establish liveness of monitoring, not an AI business.
-The [paired release record](../artifacts/mainnet-bounded-release.json) identifies
-source revisions, deployments and read-only production checks. The dated paused
-foundation and service-escrow audit remain historical observations.
+The [release record](../artifacts/mainnet-rpc-recovery.json) identifies exact
+application deployments and hosted checks. Newer documentation-only frontend
+commits are identified by [/api/release](https://symbiochain.vercel.app/api/release).
+The consolidated [scope table](../README.md#4-simulated-vs-real) and
+[unfinished claims](../README.md#5-not-yet-proven) apply to this walkthrough.
 
-## Five-minute review
+## Local PAPER replay
 
-1. Run the README PAPER setup and `npm run demo`. Confirm `CLOSED`, zero active reservation, mode `PAPER`, and explicit synthetic evidence.
-2. Inspect `src/engine.ts`, `src/store.ts` and the PostgreSQL recovery tests. Look for persisted signed material, immutable idempotency keys, serializable reservations, fenced leases, balanced journals and durable frontend events.
-3. Run the NEAR sandbox suite. Compare EVM payloads with viem and Solana message bytes with web3.js. Confirm a second signing request and an unauthorized role are refused. Observe real local NFT distribution/claim behavior, with the mock/synthetic disclosure preserved.
-4. Inspect `src/providers/near-ai.ts` and `attestation.ts`. Verification binds hardware evidence, approved measurements, nonce, signer and exact response bytes; a paid timeout does not purchase another completion. Run `npm run probe:attestation` for a separate public gateway ITA token check requiring no API key. It verifies Intel's signature and signed nonce/platform claims, with deployment approval and model inference explicitly false.
-5. Run the public market probe. Both dry quotes are signed and checked. The checked-in probe was loss-making, so the profit floor rejects it. It is not a performed swap.
+Use Node 24 and Docker in a fresh backend checkout:
 
-## Track mapping
+```sh
+npm ci
+cp .env.example .env.paper
+docker compose -p symbiochain up -d postgres --wait
+DOTENV_CONFIG_PATH=.env.paper npm run db:generate
+DOTENV_CONFIG_PATH=.env.paper npm run db:migrate
+DOTENV_CONFIG_PATH=.env.paper npm run demo
+```
 
-| Area                | Implemented evidence                                                                   | Scope limit                                                                                |
-| ------------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| Autonomous business | Durable treasury workflow, reserve/compute-credit gates, metered inference             | Financial self-sufficiency and direct trade-profit credit purchases are not demonstrated   |
-| Swarms              | Separate Scout/Brain/Hand lanes, paid signal/assessment flow                           | Components execute a defined protocol; not an emergent negotiation market                  |
-| Agent economy       | Signed Intents service transfers, nonce-based timeout recovery                         | Internal payments are not external sales revenue                                           |
-| Privacy             | NEAR AI hardware/response verification, encrypted evidence                             | Backend host is not attested; client-to-model E2EE is not implemented                      |
-| DeFi                | Signed 1Click previews, guarded EVM/SOL deposits, settlement reconciliation            | Asynchronous return pricing; no guaranteed arbitrage                                       |
-| NFTs                | NEP-171 receipts, bounded fixed rights, explicit distributions, pull claims            | Accountant-reported reconciliation; automatic live rights wait for complete cost valuation |
-| Security            | Roles/revocation, independent token caps, one-use signing, pause/reserves, fenced jobs | Local tests are not a production security audit                                            |
+Expected output: `state: "CLOSED"`, explicit PAPER labels and balanced persistent
+accounting. The demo uses simulated model/market/settlement data. It requires no
+provider or wallet key.
 
-## Evidence labels
+## Implementation checks
 
-- **PAPER:** synthetic prices, model decisions, fills, fees and receipts. Useful for repeatable integration proof.
-- **SANDBOX:** actual local NEAR execution; invalid-signature MPC stub and synthetic reported P&L. Proves contract behavior, not external trading.
-- **DRY QUOTES:** real public 1Click responses and manager-signature checks, with no deposits or fills.
-- **PUBLIC GATEWAY:** real Intel Trust Authority gateway token checked against pinned Intel keys, issuer, freshness, nonce and platform claims. No approved application measurement, model completion, production DCAP run or funded trade is established. A captured token expires; its verification result is historical.
-- **LIVE:** actual mainnet RPC observations and finalized infrastructure/activation receipts. LIVE observation mode does not imply an armed execution engine or an approved AI workflow. No completed funded agent trading run is included.
-- **REPLAY:** historical archive with original mode retained. Checksum verification is not fresh hardware or chain verification.
+Use the separate PAPER environment for checks. Create the test database once:
 
-Do not count seed capital, compute grants, service transfers or test escrow payouts as business revenue. The repository deliberately avoids the proposed “send 0.1 NEAR, receive 0.11 NEAR” fallback as a profitability claim.
+```sh
+docker compose -p symbiochain exec -T postgres psql -U symbio -d postgres -c 'CREATE DATABASE symbiochain_test;'
+DATABASE_URL=postgresql://symbio:symbio_local@localhost:55439/symbiochain_test DOTENV_CONFIG_PATH=.env.paper npm run db:migrate
+DOTENV_CONFIG_PATH=.env.paper npm run check
+TEST_DATABASE_URL=postgresql://symbio:symbio_local@localhost:55439/symbiochain_test DOTENV_CONFIG_PATH=.env.paper npm run test:integration
+```
 
-## Submission checklist
+The integration suite truncates its isolated `_test` database. Contract checks
+use the pinned local sandbox on Linux x86_64:
 
-Record the commit, build/contract hash, network, exact test commands, provider/model, approved measurements and actual transaction links for any live evidence. Keep model prompts and credentials private. Show unresolved/held states honestly. Link this README and the acceptance ledger rather than promising permanent operation or inventing judge endorsements.
+```sh
+npm run contract:test
+npm run contract:build
+bash scripts/build-mock.sh
+bash scripts/install-sandbox.sh
+npm run contract:integration
+```
+
+The latest validation comprises 162 backend unit, 81 PostgreSQL integration,
+19 wallet-tool and 28 frontend tests, plus contract/sandbox checks. The local
+sandbox uses an intentionally invalid-signature MPC stub; historical testnet
+and mainnet records document their real signatures separately. For detailed
+results see [VERIFICATION](VERIFICATION.md).
+
+## Code map and deeper checks
+
+- [Treasury contract](../contracts/treasury/src/lib.rs): roles, token caps, reserves and one-use payload construction.
+- [Workflow](../src/engine.ts) and [store](../src/store.ts): admission, fencing, reservations and durable recovery.
+- [Provider adapters](../src/providers): quotes, signing, settlement and inference verification.
+- [API contract](API.md), [operations](OPERATIONS.md) and [deployment](DEPLOYMENT.md).
+- [Private inference policy](PRIVATE_INFERENCE.md) and [recorded Brave audit](../artifacts/brave-cli-verification.json).
+- [Human demo/X-post draft](DEMO_POST.md) and [idea field](../HACKATHON.md#idea-field-pitch).
+
+Security and DeFi are the primary presentation tracks. Reviewer access is
+read-only; private operator actions are separate from the public dashboard.
