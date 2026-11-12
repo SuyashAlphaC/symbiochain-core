@@ -134,6 +134,8 @@ export function verifyActivationReceipt(raw, hash, transaction, perFee = UNIT / 
         p.args,
         'ARGUMENT_MISMATCH',
       );
+    } else if (expected.type === 'Transfer') {
+      assert.equal(String(actual.Transfer?.deposit), expected.params.deposit, 'TRANSFER_MISMATCH');
     } else if (expected.type === 'DeleteKey') {
       assert.equal(actual.DeleteKey?.public_key, expected.params.publicKey, 'KEY_MISMATCH');
     } else {
