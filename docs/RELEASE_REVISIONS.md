@@ -1,6 +1,37 @@
 # Deployment, candidate and submission revisions
 
-## Current production — controlled mainnet execution
+## Current production — mainnet read recovery
+
+The [RPC recovery record](../artifacts/mainnet-rpc-recovery.json) identifies
+backend `df7bef86bc96d5e2d89444da46fd157e939e176e` and frontend
+`201974014d45f7f9b06646788978beb46f0d28f2` at its check time. The backend recovers
+transient rate-limited reads through a mainnet-verified public fallback while
+preserving finalized block hashes. Snapshot and activation return HTTP 200, and
+a check after cache expiry advances to a newer finalized block. Signing clients,
+environment values, spending gates and AI budgets were unchanged.
+
+This application revision passes 162 backend unit tests; the paired validation
+also includes 81 integration, 19 wallet-tool and 28 frontend tests. The manual
+inference count stays one and automated inference stays zero. Documentation-only
+frontend deployments can be newer; `/api/release` reports current identity.
+
+## Earlier November 12 manual probe and controlled mainnet execution
+
+The [November 12 manual-probe release record](../artifacts/manual-ai-probe-release.json)
+identifies backend `f8d0c3dc9a2072db928eb9ec1a36b1f873b0a238` on Render and
+frontend `8fdc80e38c8365e12e3b42503ad0f8ce5a4baeef` on the existing Vercel project.
+One isolated manual Cloud completion returned successfully and its provider
+charge reconciled to $0.00000548. The automated inference count remains zero;
+TEE approval and runtime execution remain quarantined/disarmed. Six micro-USD
+is held from the shared $1 allowance, leaving 999,994 micro-USD for automation.
+Owner capital, gas and permissions are configured for the controlled fixtures.
+
+The record is frozen at its check time. Later documentation-only frontend
+deployments can have newer Git revisions; `/api/release` reports their identity.
+The current product summary and consolidated scope are in the [README](../README.md).
+Submission remains on hold.
+
+## Earlier November 12 controlled execution — before the manual probe
 
 The [controlled mainnet release](../artifacts/mainnet-controlled-release.json)
 identifies the exact backend and frontend deployments on the existing hosting

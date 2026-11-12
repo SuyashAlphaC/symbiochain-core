@@ -7,11 +7,24 @@ The selected demo stack is Supabase PostgreSQL, a Render Docker web service, and
 The existing [Render service](https://symbiochain-core.onrender.com/docs) and
 [Vercel application](https://symbiochain.vercel.app/dashboard) now serve LIVE
 mainnet observations with `EXECUTION_ENABLED=false`. The owner has activated
-the bounded contract policy and worker permissions; monitor-only heartbeats run
-without an execution engine or signer. API mutations remain refused and no owner
-recovery key is loaded. The [bounded release record](../artifacts/mainnet-bounded-release.json)
+the bounded contract policy and worker permissions; read-only preparation
+publishes heartbeats, finalized chain observations and signed dry previews
+without constructing the execution engine. API mutations remain refused and no
+owner recovery key is loaded. The [RPC recovery release record](../artifacts/mainnet-rpc-recovery.json)
 identifies exact revisions and deployment IDs. [Mainnet operation and rollback](MAINNET_PRODUCTION.md)
 describes the independent requirements for paid inference and funded execution.
+
+Owner-funded gas, actual Intents settlements and controlled MPC transfers on
+Base/Solana are complete. A standalone manual Cloud completion cost $0.00000548;
+it did not invoke the treasury. Automated inference remains at zero and the
+shared $1 allowance's automatic portion is 999,994 micro-USD. Current USDC limits
+are 0.25 per authorization / 0.50 daily, with separate native-SOL caps. Trading
+still requires TEE approval and a viable route.
+
+Mainnet observations use bounded read-only failover after transient RPC failures,
+including HTTP 429. The fallback must identify as mainnet; account queries keep
+the requested finalized block hash. The limited primary backs off for one minute.
+Financial signing/broadcast clients retain their configured RPC path.
 
 `render.yaml` remains the reusable PAPER template. The existing service's reviewed
 runtime variables select LIVE/disarmed instead. Historical PAPER rows remain in
