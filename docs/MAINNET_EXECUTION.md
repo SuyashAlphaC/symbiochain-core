@@ -1,4 +1,13 @@
-# Funded mainnet execution preparation
+# Historical funded-mainnet preparation — October 30
+
+This file preserves the original unfunded preparation worksheet. Owner accounts,
+mainnet deployment, scoped permissions and capital/gas funding have since been
+configured. Controlled Base/Solana MPC transfers and real Intents settlements
+are recorded in the [current preparation guide](MAINNET_PREPARATION.md) and
+[product summary](../README.md). Statements about missing deployment/funding
+below describe the October 30 preparation, not current production.
+
+## Original preparation
 
 This runbook prepares the first funded Base USDC → native Solana SOL → Base USDC round trip supported by the current live provider. It does not establish that a profitable route exists. Existing policy, TEE, compute-credit, signature and reconciliation gates remain required.
 

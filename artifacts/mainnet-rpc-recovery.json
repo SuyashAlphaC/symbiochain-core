@@ -1,0 +1,135 @@
+{
+  "checkedAt": "2026-11-12T15:26:33.653Z",
+  "scope": "READ_ONLY_MAINNET_RPC_RATE_LIMIT_RECOVERY",
+  "cause": "Configured NEAR RPC returned HTTP 429 to Render; the frontend surfaced 503.",
+  "before": [
+    {
+      "name": "backendHealth",
+      "status": 200,
+      "error": null
+    },
+    {
+      "name": "backendReady",
+      "status": 200,
+      "error": null
+    },
+    {
+      "name": "backendSnapshot",
+      "status": 502,
+      "error": "UPSTREAM_HTTP"
+    },
+    {
+      "name": "frontendSnapshot",
+      "status": 503,
+      "error": "The backend is temporarily unavailable."
+    },
+    {
+      "name": "backendActivation",
+      "status": 502,
+      "error": "UPSTREAM_HTTP"
+    }
+  ],
+  "after": [
+    {
+      "name": "frontendSnapshotFirst",
+      "status": 200,
+      "milliseconds": 1224
+    },
+    {
+      "name": "frontendActivation",
+      "status": 200,
+      "milliseconds": 2500
+    },
+    {
+      "name": "frontendSnapshotFresh",
+      "status": 200,
+      "milliseconds": 1738
+    },
+    {
+      "name": "backendSnapshot",
+      "status": 200,
+      "milliseconds": 2394
+    },
+    {
+      "name": "backendActivation",
+      "status": 200,
+      "milliseconds": 374
+    },
+    {
+      "name": "frontendRelease",
+      "status": 200,
+      "milliseconds": 391
+    }
+  ],
+  "backend": {
+    "revision": "df7bef86bc96d5e2d89444da46fd157e939e176e",
+    "deploymentId": "dep-dbqtj0mc6qcc73fvm4vg"
+  },
+  "frontend": {
+    "contractVersion": 1,
+    "frontendRevision": "201974014d45f7f9b06646788978beb46f0d28f2",
+    "deploymentId": "dpl_ReNZyxTgaCWzcZ5CTZVPA8vk8gnk",
+    "environment": "production"
+  },
+  "verifiedFinalBlocks": [
+    "224231521",
+    "224231560"
+  ],
+  "freshCaptureAfterCacheExpiry": true,
+  "chain": "mainnet",
+  "treasuryCodeMatches": true,
+  "activeOwnerPermissions": true,
+  "readFallback": "https://near.drpc.org",
+  "readFallbackChainIdentityVerifiedByCode": true,
+  "primaryBackoffSeconds": 60,
+  "signingRpcChanged": false,
+  "environmentValuesChanged": 0,
+  "executionEnabled": false,
+  "teeApproval": "QUARANTINED",
+  "manualInferenceRequestsTotal": 1,
+  "newPaidInferenceRequests": 0,
+  "newBlockchainTransactions": 0,
+  "submitted": false,
+  "validation": {
+    "backendUnitTests": 162,
+    "postgresIntegrationTests": 81,
+    "ownerToolTests": 19,
+    "frontendTests": 28,
+    "ciPassed": true,
+    "focusedMainnetTests": 15,
+    "injectedPrimary429WithRealFallback": {
+      "checkedAt": "2026-11-12T15:13:07.086Z",
+      "scope": "INJECTED_PRIMARY_HTTP_429_WITH_REAL_MAINNET_FALLBACK_READS",
+      "success": true,
+      "primaryRequests": 2,
+      "fallbackRequests": 21,
+      "block": "224230367",
+      "codeMatches": true,
+      "accounts": 6,
+      "executionEnabled": false,
+      "transactionsSubmitted": 0,
+      "paidInferenceRequests": 0,
+      "milliseconds": 13762
+    },
+    "anonymousReviewerAccess": {
+      "checkedAt": "2026-11-12T15:31:53.787Z",
+      "publicDashboard": true,
+      "publicEvidence": true,
+      "judgeTokenRequired": false,
+      "walletRequired": false,
+      "operatorLoginPerformed": false,
+      "currentMaxUsdcAtoms": "250000",
+      "currentDailyUsdcAtoms": "500000",
+      "recordedManualInferenceRequests": 1,
+      "newInferenceRequests": 0,
+      "verifiedMpcReceiptLinks": 8,
+      "browserAuthorizationHeaders": 0,
+      "directBrowserBackendRequests": 0,
+      "financialMutations": 0,
+      "submitted": false
+    },
+    "paperQuickstartState": "CLOSED"
+  },
+  "earlierManualProbeRelease": "artifacts/manual-ai-probe-release.json",
+  "identityScope": "Frozen application deployments at checkedAt; later documentation-only revisions may be newer. /api/release reports current frontend identity."
+}
