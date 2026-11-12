@@ -1,0 +1,143 @@
+{
+  "checkedAt": "2026-11-12T10:47:12.701Z",
+  "scope": "OWNER_AUTHORIZED_MAINNET_MPC_EXECUTION_FIXTURES",
+  "network": "mainnet",
+  "results": [
+    {
+      "checkedAt": "2026-11-12T10:46:39.617Z",
+      "id": "mainnet-owned-base-fixture-v1",
+      "chain": "eip155:8453",
+      "source": "0xE9464975ECAFa3e27AC1048C16a3406395061092",
+      "recipient": "0xE9464975ECAFa3e27AC1048C16a3406395061092",
+      "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "amountAtoms": "1",
+      "txHash": "0x671a03fd1e327cd4a6cb57d5eb668016b3625364a14eb7a7beaafaebfd24135c",
+      "explorerUrl": "https://basescan.org/tx/0x671a03fd1e327cd4a6cb57d5eb668016b3625364a14eb7a7beaafaebfd24135c",
+      "destinationFinal": true,
+      "destinationNativeFeeAtoms": "224610000000",
+      "nativeReceipts": [
+        {
+          "hash": "4yxFmMsYBGE9bPGo39RdvzSaue7d2xrpRBYT1n7RQ9oA",
+          "step": "authorize_cycle",
+          "signerId": "brain.symbio-fcef733893.near",
+          "receiverId": "treasury.symbio-fcef733893.near",
+          "actualFeeYocto": "338542809012400000000",
+          "blockHash": "4SJzuXMVnHxqVUy8pcRooCEdiCJaPKitUSMWPMsawMZr",
+          "final": true,
+          "succeeded": true,
+          "url": "https://nearblocks.io/txns/4yxFmMsYBGE9bPGo39RdvzSaue7d2xrpRBYT1n7RQ9oA"
+        },
+        {
+          "hash": "5D8uXe1yuHvTcVivJxgfn3qbmDHmFL6EP6hfLVkL44cJ",
+          "step": "request_evm_signature",
+          "signerId": "hand.symbio-fcef733893.near",
+          "receiverId": "treasury.symbio-fcef733893.near",
+          "actualFeeYocto": "1451672055641900000000",
+          "blockHash": "8vK2vNJVH9H3u2bya4WTrTagohC23JxPMdHPR52WGXLD",
+          "final": true,
+          "succeeded": true,
+          "url": "https://nearblocks.io/txns/5D8uXe1yuHvTcVivJxgfn3qbmDHmFL6EP6hfLVkL44cJ"
+        },
+        {
+          "hash": "53UC2UYpwNoN5q4xRiWctEhhMkx7mJsqZcv826NqaFgL",
+          "step": "record_submission",
+          "signerId": "hand.symbio-fcef733893.near",
+          "receiverId": "treasury.symbio-fcef733893.near",
+          "actualFeeYocto": "277499146366700000000",
+          "blockHash": "9rPJnWzUQewsFuopPAP24BnPV3Dp4E2zMnmP4FG5gw6G",
+          "final": true,
+          "succeeded": true,
+          "url": "https://nearblocks.io/txns/53UC2UYpwNoN5q4xRiWctEhhMkx7mJsqZcv826NqaFgL"
+        },
+        {
+          "hash": "9M2bkUb2QArEhwvj3sK4TBpr9q4XYXh1j9ctEFPP2eR8",
+          "step": "finalize_cycle",
+          "signerId": "books.symbio-fcef733893.near",
+          "receiverId": "treasury.symbio-fcef733893.near",
+          "actualFeeYocto": "292356171378700000000",
+          "blockHash": "Egs6k9mZ3MgKV4Gg4EmbG62SngPTet5YqpMAhqfrD8kc",
+          "final": true,
+          "succeeded": true,
+          "url": "https://nearblocks.io/txns/9M2bkUb2QArEhwvj3sK4TBpr9q4XYXh1j9ctEFPP2eR8"
+        }
+      ],
+      "contractStatus": "CLOSED",
+      "grossPnlAtoms": "0",
+      "netProfitProven": false,
+      "sourceClassification": "OWNER_AUTHORIZATION_FIXTURE_NOT_AI"
+    },
+    {
+      "checkedAt": "2026-11-12T10:47:12.699Z",
+      "id": "mainnet-owned-sol-fixture-v1",
+      "chain": "solana:mainnet",
+      "source": "G48CEnMPfRadRQxaTmJkkdFRVTobyJyDDVec88PZwt2f",
+      "recipient": "7H8oMpbquwsR44mkrVvZZpBYF79jcshnCPCefYoh1sxc",
+      "asset": "sol:native",
+      "amountAtoms": "660240",
+      "txHash": "2WvDKWegMfxqaDDUJbsjXDgQ1CQK7aoHL7b51mNuscVG9swPC36i55pZYFNDANnEFp2E2c4hx1Hwd3vJQ3rdfxZv",
+      "explorerUrl": "https://solscan.io/tx/2WvDKWegMfxqaDDUJbsjXDgQ1CQK7aoHL7b51mNuscVG9swPC36i55pZYFNDANnEFp2E2c4hx1Hwd3vJQ3rdfxZv",
+      "destinationFinal": true,
+      "destinationNativeFeeAtoms": "5000",
+      "nativeReceipts": [
+        {
+          "hash": "DvHAspmuDy3rSGPQDWt8TQtbvjskX6LPBhwE5LcZRd5o",
+          "step": "authorize_cycle",
+          "signerId": "brain.symbio-fcef733893.near",
+          "receiverId": "treasury.symbio-fcef733893.near",
+          "actualFeeYocto": "338890630459900000000",
+          "blockHash": "7q9NaPuG1o9TiFRNZisEQj2Y8vcsfj5Toi4gPdoFZWSS",
+          "final": true,
+          "succeeded": true,
+          "url": "https://nearblocks.io/txns/DvHAspmuDy3rSGPQDWt8TQtbvjskX6LPBhwE5LcZRd5o"
+        },
+        {
+          "hash": "C92pmbW33C9GjJA9yqHrMSK67VEqs1RvvYiQtqXMd45f",
+          "step": "request_solana_signature",
+          "signerId": "hand.symbio-fcef733893.near",
+          "receiverId": "treasury.symbio-fcef733893.near",
+          "actualFeeYocto": "1504822598707300000000",
+          "blockHash": "5w8ejNx2W3pMUkdGqDiV79YS6MdH8Aot5UuV96m3QXYL",
+          "final": true,
+          "succeeded": true,
+          "url": "https://nearblocks.io/txns/C92pmbW33C9GjJA9yqHrMSK67VEqs1RvvYiQtqXMd45f"
+        },
+        {
+          "hash": "4mikcRU9YrhfGcNUCnP5rCPUe5MrQzsEbzQMfDrTtqc4",
+          "step": "record_submission",
+          "signerId": "hand.symbio-fcef733893.near",
+          "receiverId": "treasury.symbio-fcef733893.near",
+          "actualFeeYocto": "281272172090000000000",
+          "blockHash": "2WKob5G2PKnwHfpFVmf8Av3exNsBD7nEQK57DP2MnGR4",
+          "final": true,
+          "succeeded": true,
+          "url": "https://nearblocks.io/txns/4mikcRU9YrhfGcNUCnP5rCPUe5MrQzsEbzQMfDrTtqc4"
+        },
+        {
+          "hash": "4XDnbak9ftP8xANKSCBD1LbAJsN5qhTarkTMjQMSAR9g",
+          "step": "finalize_cycle",
+          "signerId": "books.symbio-fcef733893.near",
+          "receiverId": "treasury.symbio-fcef733893.near",
+          "actualFeeYocto": "297279804205500000000",
+          "blockHash": "2qnULVbr88G1qXZNerdHwKDfCo3tG3tskbVfoEtZgYp7",
+          "final": true,
+          "succeeded": true,
+          "url": "https://nearblocks.io/txns/4XDnbak9ftP8xANKSCBD1LbAJsN5qhTarkTMjQMSAR9g"
+        }
+      ],
+      "contractStatus": "CLOSED",
+      "grossPnlAtoms": "0",
+      "netProfitProven": false,
+      "sourceClassification": "OWNER_AUTHORIZATION_FIXTURE_NOT_AI"
+    }
+  ],
+  "executionNativeFeesYocto": "4782335387862400000000",
+  "allContinuationNativeFeesYocto": "43527928324320700000000",
+  "retainedCapitalInputYocto": "450000000000000000000000",
+  "additionalPlanningCeilingYocto": "500000000000000000000000",
+  "paidInferenceRequests": 0,
+  "teeApproved": false,
+  "marketSwapProven": false,
+  "externalRevenueProven": false,
+  "netProfitProven": false,
+  "nftMinted": false
+}
