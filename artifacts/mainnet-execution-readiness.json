@@ -1,0 +1,66 @@
+{
+  "checkedAt": "2026-11-12T06:32:19.278Z",
+  "scope": "BOUNDED_MAINNET_EXECUTION_PREPARATION_NOT_TEE_APPROVAL",
+  "network": "mainnet",
+  "transactions": [
+    {
+      "hash": "7dHHTzoeirQjQ7SYnibCnrYn87EoL5BicM7RVDfhVVDP",
+      "step": "hand_mpc_allowance",
+      "signerId": "hand.symbio-fcef733893.near",
+      "receiverId": "hand.symbio-fcef733893.near",
+      "actualFeeYocto": "61069779303000000000",
+      "blockHash": "8hqYZFTMEp383krRduTPjusvzMPoj1rZPbJVW9FujZSs",
+      "final": true,
+      "succeeded": true,
+      "url": "https://nearblocks.io/txns/7dHHTzoeirQjQ7SYnibCnrYn87EoL5BicM7RVDfhVVDP"
+    },
+    {
+      "hash": "8gYJJpuyU51BRx5b27YiqLVEj4s6YVmPyvL1djRa46RW",
+      "step": "base_sol_bounded_policy",
+      "signerId": "symbio-fcef733893.near",
+      "receiverId": "treasury.symbio-fcef733893.near",
+      "actualFeeYocto": "228027133319100000000",
+      "blockHash": "CPq2mrs5YLbfgDxQJ6pgzdzAtvmrFpxxsB7CuM6nJxst",
+      "final": true,
+      "succeeded": true,
+      "url": "https://nearblocks.io/txns/8gYJJpuyU51BRx5b27YiqLVEj4s6YVmPyvL1djRa46RW"
+    }
+  ],
+  "policy": {
+    "max_trade_atoms": "250000",
+    "max_daily_atoms": "500000",
+    "min_reserve_yocto": "100000000000000000000000",
+    "max_signing_cost_yocto": "1",
+    "max_slippage_bps": 0,
+    "allowed_chain_ids": [
+      8453,
+      0
+    ],
+    "allowed_token_contracts": [
+      "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "sol:native"
+    ],
+    "token_max_trade_atoms": [
+      "250000",
+      "4000000"
+    ],
+    "token_max_daily_atoms": [
+      "500000",
+      "8000000"
+    ]
+  },
+  "handTreasuryKey": {
+    "samePublicKey": true,
+    "receiverId": "treasury.symbio-fcef733893.near",
+    "methodNames": [
+      "request_evm_signature",
+      "request_solana_signature",
+      "record_submission"
+    ],
+    "finiteGasAllowanceYocto": "300000000000000000000000"
+  },
+  "nativeFeesYocto": "289096912622100000000",
+  "paidInferenceRequests": 0,
+  "automatedSpendingEnabled": false,
+  "externalRevenueProven": false
+}
