@@ -1,10 +1,12 @@
 /** One controlled mainnet payment per agent. This never runs inside the AI engine. */
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, rename } from 'node:fs/promises';
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { parse } from 'dotenv';
-import { Account, JsonRpcProvider, KeyPair, SignedTransaction, actions } from 'near-api-js';
-import { signMessage } from 'near-api-js/nep413';
+import { createRequire } from 'node:module';
+const require = createRequire(new URL('../../package.json', import.meta.url));
+const { Account, JsonRpcProvider, KeyPair, SignedTransaction, actions } = require('near-api-js');
+const { signMessage } = require('near-api-js/nep413');
 import bs58 from 'bs58';
 import { rpc, RPC, UNIT } from './plan.mjs';
 import { BRAIN, HAND, SCOUT } from './intents-funding-plan.mjs';
@@ -147,7 +149,89 @@ async function main() {
         mode: 0o600,
       });
     }
-    const attempted = await optional(path + '-attempt.json');
+    let attempted = await optional(path + '-attempt.json');
+    const recoveryFile = path + '-known-rejection-recovery.json';
+    let recovery = await optional(recoveryFile);
+    if (
+      !recovery &&
+      attempted &&
+      BigInt(access.nonce) >=
+        BigInt(
+          SignedTransaction.decode(Buffer.from(prepared.signedBase64, 'base64')).transaction.nonce,
+        )
+    ) {
+      const repair = await optional(
+        DIR + 'key-repair/' + (step.payer === BRAIN ? 'brain' : 'hand') + '/receipt.json',
+      );
+      const rejected = await optional(path + '-rebroadcast-result.json');
+      const allowanceError =
+        rejected?.error?.data?.TxExecutionError?.InvalidTxError?.InvalidAccessKeyError
+          ?.NotEnoughAllowance;
+      assert.ok(
+        repair?.transaction.succeeded && allowanceError,
+        'KNOWN_PREINCLUSION_REJECTION_REQUIRED',
+      );
+      assert.equal(allowanceError.public_key, publicKey);
+      assert.equal(
+        await view('is_nonce_used', { account_id: step.payer, nonce: prepared.intentNonce }),
+        false,
+        'EXISTING_INTENT_ALREADY_USED',
+      );
+      const account = new Account(step.payer, provider, step.key);
+      let intent = prepared.intent;
+      const message = JSON.parse(intent.payload.message);
+      assert.equal(message.signer_id, step.payer);
+      assert.equal(message.intents.length, 1);
+      assert.equal(message.intents[0].receiver_id, step.recipient);
+      assert.equal(message.intents[0].tokens['nep141:wrap.near'], AMOUNT.toString());
+      const deadlineRenewed = Date.parse(message.deadline) <= Date.now();
+      if (deadlineRenewed) {
+        message.deadline = new Date(Date.now() + 1200000).toISOString();
+        const payload = { ...intent.payload, message: JSON.stringify(message) };
+        const signed = await signMessage({
+          signerAccount: account,
+          payload: { ...payload, nonce: Buffer.from(prepared.intentNonce, 'base64') },
+        });
+        intent = { ...intent, payload, signature: 'ed25519:' + bs58.encode(signed.signature) };
+      }
+      const signed = await account.createSignedTransaction({
+        receiverId: 'intents.near',
+        actions: [actions.functionCall('execute_intents', { signed: [intent] }, GAS, 0n)],
+      });
+      const updated = {
+        ...prepared,
+        intent,
+        txHash: bs58.encode(sha(signed.transaction.encode())),
+        signedBase64: Buffer.from(signed.encode()).toString('base64'),
+      };
+      recovery = {
+        at: new Date().toISOString(),
+        reason: 'CONFIRMED_NOT_ENOUGH_ALLOWANCE_BEFORE_INCLUSION',
+        oldHash: prepared.txHash,
+        oldEnvelopeInvalidatedByKeyNonce: String(access.nonce),
+        sameEconomicTerms: true,
+        sameIntentNonce: true,
+        deadlineRenewed,
+        updated,
+      };
+      await writeFile(recoveryFile, JSON.stringify(recovery), { flag: 'wx', mode: 0o600 });
+    }
+    if (
+      recovery &&
+      (prepared.txHash !== recovery.updated.txHash || attempted?.txHash === recovery.oldHash)
+    ) {
+      if (prepared.txHash !== recovery.updated.txHash) {
+        await writeFile(path + '-pre-repair-envelope.json', JSON.stringify(prepared), {
+          mode: 0o600,
+        });
+        await writeFile(path + '-prepared.json', JSON.stringify(recovery.updated), { mode: 0o600 });
+      }
+      if (attempted?.txHash === recovery.oldHash)
+        await rename(path + '-attempt.json', path + '-pre-repair-attempt.json');
+      prepared = recovery.updated;
+      attempted = null;
+    }
+
     if (!attempted) {
       assert.equal(
         await view('is_nonce_used', { account_id: step.payer, nonce: prepared.intentNonce }),
@@ -241,9 +325,15 @@ async function main() {
   }
   const failure = await optional(DIR + 'failed-funding-reconciliation.json');
   const failedFee = BigInt(failure?.feeYocto ?? '0');
+  const repairs = [];
+  for (const role of ['brain', 'hand']) {
+    const repair = await optional(DIR + 'key-repair/' + role + '/receipt.json');
+    if (repair) repairs.push(repair.transaction);
+  }
   const fees =
     BigInt(funding.transaction.actualFeeYocto) +
-    receipts.reduce((n, r) => n + BigInt(r.transaction.actualFeeYocto), failedFee);
+    receipts.reduce((n, r) => n + BigInt(r.transaction.actualFeeYocto), failedFee) +
+    repairs.reduce((n, r) => n + BigInt(r.actualFeeYocto), 0n);
   assert.ok(fees + 3250000000000000000000n <= (3n * UNIT) / 100n, 'TOTAL_FIXTURE_CEILING_EXCEEDED');
   const out = {
     checkedAt: new Date().toISOString(),
@@ -254,11 +344,19 @@ async function main() {
       hash: funding.transaction.hash,
       url: funding.transaction.url,
       capitalYocto: '2000000000000000000000',
+      storageCollateralYocto: (
+        BigInt(funding.before.ownerBalanceYocto) -
+        BigInt(funding.after.ownerBalanceYocto) -
+        BigInt(funding.transaction.actualFeeYocto) -
+        BigInt(funding.capitalYocto) -
+        2n
+      ).toString(),
     },
     transactions: receipts.map((r) => r.transaction),
     payments: receipts.map(({ transaction, ...r }) => ({ ...r, hash: transaction.hash })),
     totalNetworkFeesIncludingFailedAttemptYocto: fees.toString(),
     failedFunding: failure ?? null,
+    allowanceRepairs: repairs,
     capitalAndStoragePlanningCeilingYocto: '3250000000000000000000',
     totalPlanningCeilingYocto: ((3n * UNIT) / 100n).toString(),
     paidInferenceRequests: 0,

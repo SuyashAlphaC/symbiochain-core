@@ -1,0 +1,13 @@
+{
+  "checkedAt": "2026-11-12T05:21:59.225Z",
+  "scope": "UNSIGNED_RESTRICTED_KEY_ALLOWANCE_REPAIR",
+  "signer": "brain.symbio-fcef733893.near",
+  "actions": 2,
+  "newGasAllowanceNear": "0.04",
+  "samePublicKey": true,
+  "sameReceiverAndMethods": true,
+  "noFullAccessGrant": true,
+  "actualMainnetTransactions": 0,
+  "paidInferenceRequests": 0,
+  "signatureDeliberatelyRejected": true
+}

@@ -187,3 +187,25 @@ test('activation portal requires explicit sequential signatures, reconciles once
     await rm(dir, { recursive: true, force: true });
   }
 });
+
+test('same-key allowance repair rejects changed keys, allowances and expanded permissions', () => {
+  const t = structuredClone(plan.transactions[0]);
+  t.actions[0].params.accessKey.permission.allowance = '40000000000000000000000';
+  t.actions.unshift({ type: 'DeleteKey', params: { publicKey: keys.brain } });
+  const r = receipt(plan.transactions[0], 0);
+  r.transaction.actions[0].AddKey.access_key.permission.FunctionCall.allowance =
+    '40000000000000000000000';
+  r.transaction.actions.unshift({ DeleteKey: { public_key: keys.brain } });
+  assert.equal(verifyActivationReceipt(r, r.transaction.hash, t).succeeded, true);
+  for (const change of [
+    (r) => (r.transaction.actions[0].DeleteKey.public_key = keys.hand),
+    (r) => (r.transaction.actions[1].AddKey.access_key.permission.FunctionCall.allowance = null),
+    (r) =>
+      r.transaction.actions[1].AddKey.access_key.permission.FunctionCall.method_names.push('other'),
+    (r) => (r.transaction.actions[1].AddKey.access_key.permission = 'FullAccess'),
+  ]) {
+    const bad = structuredClone(r);
+    change(bad);
+    assert.throws(() => verifyActivationReceipt(bad, bad.transaction.hash, t));
+  }
+});

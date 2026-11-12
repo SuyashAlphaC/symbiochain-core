@@ -74,6 +74,9 @@ export async function inspectIntentsFunding() {
 }
 export async function createIntentsFundingApp({
   client = '',
+  plan = intentsFundingPlan(),
+  page,
+  verifyAfter,
   stateDir = DIR,
   inspect = inspectIntentsFunding,
   readBlock = (hash) => rpc('block', { block_id: hash }),
@@ -85,7 +88,6 @@ export async function createIntentsFundingApp({
       'https://archival-rpc.mainnet.fastnear.com',
     ),
 } = {}) {
-  const plan = intentsFundingPlan();
   await mkdir(stateDir, { recursive: true, mode: 0o700 });
   const token = randomBytes(32).toString('hex');
   const app = Fastify({ logger: false, bodyLimit: 2000 });
@@ -121,11 +123,13 @@ export async function createIntentsFundingApp({
   });
   const body = (b) => assert.equal(b?.planDigest, plan.digest, 'PLAN_CHANGED');
   app.get('/', async (_q, r) =>
-    r
-      .type('text/html')
-      .send(
-        `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="fixture-token" content="${token}"><title>SymbioChain controlled Intents funding</title><style>body{font:17px system-ui;background:#142127;color:#e6f4f2;max-width:1000px;margin:40px auto;padding:20px;line-height:1.6}button,input{padding:14px;margin:10px}pre,code{white-space:pre-wrap;overflow-wrap:anywhere}a{color:#6ee5ba}</style></head><body><h1>Controlled mainnet Intents payment fixture</h1><p>One transaction from <strong>${ROOT}</strong> to <strong>wrap.near</strong>, with four reviewed calls. Deposit up to <strong>0.00125 NEAR</strong> refundable storage collateral, wrap <strong>0.002 NEAR</strong>, then credit <strong>0.001 wNEAR each</strong> to Brain and Hand inside Intents. Each transfer-call attaches 1 yoctoNEAR.</p><p>Owner transaction fee planning allowance: <strong>0.017 NEAR</strong>. The earlier failed batch cost 0.00063244 NEAR in fees and credited no agent. That fee counts toward the same test budget. The complete funding and two-agent-payment fixture has a <strong>0.03 NEAR planning ceiling</strong>. At least <strong>0.20 NEAR</strong> stays in your wallet. Existing treasury funds and its 0.10 NEAR reserve are untouched.</p><p>The subsequent two payments are capped at 0.0001 wNEAR each: Brain pays Scout, then Hand pays Brain. They prove internal Intents settlement mechanics. No AI approval, external revenue, profitable trade, NFT distribution or compute purchase is claimed. No recovery key or key grant is requested.</p><details><summary>Full exact plan</summary><pre>${JSON.stringify(plan, null, 2)}</pre></details><pre id="status">Checking finalized mainnet state…</pre><button id="connect">Connect Meteor</button><label><input id="reviewed" type="checkbox">I reviewed the bounded funding and internal payment fixture.</label><button id="sign" disabled>Sign reviewed Intents funding</button><h2>Reconcile an existing signature</h2><p>Unknown outcomes prevent another signature. Paste the existing transaction hash.</p><input id="hash" size="55" autocomplete="off"><button id="verify">Verify existing receipt</button><script type="module" src="/client.js"></script></body></html>`,
-      ),
+    page
+      ? r.type('text/html').send(page(token, plan))
+      : r
+          .type('text/html')
+          .send(
+            `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="fixture-token" content="${token}"><title>SymbioChain controlled Intents funding</title><style>body{font:17px system-ui;background:#142127;color:#e6f4f2;max-width:1000px;margin:40px auto;padding:20px;line-height:1.6}button,input{padding:14px;margin:10px}pre,code{white-space:pre-wrap;overflow-wrap:anywhere}a{color:#6ee5ba}</style></head><body><h1>Controlled mainnet Intents payment fixture</h1><p>One transaction from <strong>${ROOT}</strong> to <strong>wrap.near</strong>, with four reviewed calls. Deposit up to <strong>0.00125 NEAR</strong> refundable storage collateral, wrap <strong>0.002 NEAR</strong>, then credit <strong>0.001 wNEAR each</strong> to Brain and Hand inside Intents. Each transfer-call attaches 1 yoctoNEAR.</p><p>Owner transaction fee planning allowance: <strong>0.017 NEAR</strong>. The earlier failed batch cost 0.00063244 NEAR in fees and credited no agent. That fee counts toward the same test budget. The complete funding and two-agent-payment fixture has a <strong>0.03 NEAR planning ceiling</strong>. At least <strong>0.20 NEAR</strong> stays in your wallet. Existing treasury funds and its 0.10 NEAR reserve are untouched.</p><p>The subsequent two payments are capped at 0.0001 wNEAR each: Brain pays Scout, then Hand pays Brain. They prove internal Intents settlement mechanics. No AI approval, external revenue, profitable trade, NFT distribution or compute purchase is claimed. No recovery key or key grant is requested.</p><details><summary>Full exact plan</summary><pre>${JSON.stringify(plan, null, 2)}</pre></details><pre id="status">Checking finalized mainnet state…</pre><button id="connect">Connect Meteor</button><label><input id="reviewed" type="checkbox">I reviewed the bounded funding and internal payment fixture.</label><button id="sign" disabled>Sign reviewed Intents funding</button><h2>Reconcile an existing signature</h2><p>Unknown outcomes prevent another signature. Paste the existing transaction hash.</p><input id="hash" size="55" autocomplete="off"><button id="verify">Verify existing receipt</button><script type="module" src="/client.js"></script></body></html>`,
+          ),
   );
   app.get('/client.js', async (_q, r) => r.type('text/javascript').send(client));
   app.get('/favicon.ico', async (_q, r) => r.code(204).send());
@@ -169,7 +173,7 @@ export async function createIntentsFundingApp({
         await readTransaction(hash),
         hash,
         plan.transaction,
-        INTENTS_FUNDING_FEE,
+        BigInt(plan.feeAllowanceYocto),
       );
       const before = (await optional(stateDir + '/attempt.json')).before;
       const after = await inspect();
@@ -179,16 +183,19 @@ export async function createIntentsFundingApp({
         'RECEIPT_PREDATES_ATTEMPT',
       );
       assert.ok(BigInt(block.header.height) <= BigInt(after.block.height), 'RECEIPT_NOT_FINAL');
-      assert.equal(
-        BigInt(after.brain) - BigInt(before.brain),
-        FUND_PER_AGENT,
-        'BRAIN_CREDIT_MISMATCH',
-      );
-      assert.equal(
-        BigInt(after.hand) - BigInt(before.hand),
-        FUND_PER_AGENT,
-        'HAND_CREDIT_MISMATCH',
-      );
+      if (verifyAfter) await verifyAfter(before, after);
+      else {
+        assert.equal(
+          BigInt(after.brain) - BigInt(before.brain),
+          FUND_PER_AGENT,
+          'BRAIN_CREDIT_MISMATCH',
+        );
+        assert.equal(
+          BigInt(after.hand) - BigInt(before.hand),
+          FUND_PER_AGENT,
+          'HAND_CREDIT_MISMATCH',
+        );
+      }
       const result = {
         checkedAt: new Date().toISOString(),
         scope: plan.scope,
