@@ -15,6 +15,8 @@ const Schema = z.object({
   EXECUTION_ENABLED: bool.prefault('true'),
   // Heartbeats may run while every provider/signing engine remains disarmed.
   MONITOR_ONLY_WORKERS: bool.prefault('false'),
+  // Autonomous chain/quote checks, without a paid engine or signing client.
+  MAINNET_PREPARATION_ENABLED: bool.prefault('false'),
   DATABASE_URL: z.string().min(1),
   DATABASE_POOL_MAX: z.coerce.number().int().min(1).max(20).default(10),
   HOST: z.string().default('127.0.0.1'),
@@ -108,6 +110,20 @@ const Schema = z.object({
 export type Config = z.infer<typeof Schema>;
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
   const c = Schema.parse(env);
+  if (
+    c.MAINNET_PREPARATION_ENABLED &&
+    (c.EXECUTION_MODE !== 'LIVE' ||
+      c.EXECUTION_ENABLED ||
+      c.MONITOR_ONLY_WORKERS ||
+      c.LIVE_TRADING_ENABLED ||
+      c.LIVE_ARBITRAGE_ENABLED ||
+      c.BUSINESS_PAYOUTS_ENABLED)
+  )
+    throw new Error(
+      'Mainnet preparation requires disarmed LIVE with all spending disabled and monitor-only off',
+    );
+  if (c.MAINNET_PREPARATION_ENABLED && /devnet|testnet/.test(c.SOLANA_RPC_URL))
+    throw new Error('Mainnet preparation requires a Solana mainnet RPC');
   if (
     c.MONITOR_ONLY_WORKERS &&
     (c.EXECUTION_MODE !== 'LIVE' ||
