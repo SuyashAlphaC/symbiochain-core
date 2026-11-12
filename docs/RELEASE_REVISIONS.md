@@ -1,6 +1,18 @@
 # Deployment, candidate and submission revisions
 
-## Current production — bounded mainnet activation
+## Current production — internal Intents settlement and preparation
+
+The [November 12 paired release](../artifacts/mainnet-preparation-release.json)
+identifies backend `13c2c56475aec7fe83b6e00422c9955fb61441ee` on the existing
+Render service and frontend `b21653e5a8c1b334141e684b5cf4c1be02f4b65a` on the
+existing Vercel project. Production browser checks passed on desktop and mobile.
+Two actual internal Intents payments are published with finalized receipt,
+nonce and balance reconciliation. They are team-funded mechanics, not revenue.
+The read-only preparation worker checks chain identities, funding, owner
+permissions and signed previews every five minutes. Paid execution stays disarmed
+and the TEE gate stays quarantined. Submission remains on hold.
+
+## Earlier bounded mainnet activation
 
 The [November 9 bounded release record](../artifacts/mainnet-bounded-release.json)
 identifies the deployed backend/frontend revisions and their existing Render and
