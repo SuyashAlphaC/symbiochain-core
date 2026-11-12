@@ -12,7 +12,7 @@ export const MainnetPreparationReport = z
     id: z.uuid(),
     capturedAt: z.iso.datetime(),
     scope: z.literal('REAL_MAINNET_READ_ONLY_PREPARATION'),
-    checks: z.array(check).max(25),
+    checks: z.array(check).min(1).max(25),
     wallets: z
       .array(
         z
@@ -49,7 +49,20 @@ export const MainnetPreparationReport = z
   })
   .strict()
   .superRefine((v, ctx) => {
-    const ready = v.checks.every((c) => c.status === 'PASS');
+    const required = [
+      'TREASURY_IDENTITY',
+      'OWNER_ACTIVATION',
+      'BASE_AUTHORIZATION',
+      'SOLANA_RETURN_AUTHORIZATION',
+      'MAINNET_ENDPOINTS',
+      'BASE_CAPITAL',
+      'BASE_GAS',
+      'SOLANA_GAS',
+      'PROFITABLE_SIGNED_ROUTE',
+    ];
+    const ready =
+      v.checks.every((c) => c.status === 'PASS') &&
+      required.every((id) => v.checks.some((c) => c.id === id));
     if (v.nonTeeReady !== ready || (v.nextGate === 'TEE_APPROVAL_REQUIRED') !== ready)
       ctx.addIssue({ code: 'custom', message: 'Readiness must match all non-TEE checks' });
   });
@@ -64,3 +77,4 @@ export const MainnetPreparation = z
     tee: z.literal('QUARANTINED'),
   })
   .strict();
+export type MainnetPreparation = z.infer<typeof MainnetPreparation>;

@@ -138,7 +138,7 @@ export async function inspectMainnetPreparation(c: Config, ports: PreparationPor
         status: 'VALIDATED',
         inputAtoms: input,
         minimumOutputAtoms: q.minimumOutputAtoms,
-        costAllowanceAtoms: costs,
+        costAllowanceAtoms: q.costsAtoms,
         requiredOutputAtoms: profit.requiredMinimumOutputAtoms,
         passesProfitFloor: profit.passesProfitFloor,
         quoteDigest: q.id,
@@ -249,6 +249,8 @@ export async function runMainnetPreparation(store: Store, ports?: PreparationPor
 }
 
 export async function mainnetPreparation(store: Store) {
+  if (store.mode !== 'LIVE' || store.config.NEAR_NETWORK !== 'mainnet')
+    throw new DomainError('MAINNET_ONLY', 'Mainnet preparation is separate from PAPER data', 403);
   const row = await store.db.outboxEvent.findFirst({
     where: { mode: store.mode, topic: TOPIC },
     orderBy: { seq: 'desc' },
@@ -258,7 +260,10 @@ export async function mainnetPreparation(store: Store) {
     contractVersion: 1,
     enabled: store.config.MAINNET_PREPARATION_ENABLED,
     report,
-    stale: !report || Date.now() - Date.parse(report.capturedAt) > 600000,
+    stale:
+      !report ||
+      Date.now() < Date.parse(report.capturedAt) ||
+      Date.now() - Date.parse(report.capturedAt) > 600000,
     executionEnabled: store.config.EXECUTION_ENABLED,
     tee: 'QUARANTINED',
   });

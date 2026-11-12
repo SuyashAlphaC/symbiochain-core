@@ -124,6 +124,8 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     );
   if (c.MAINNET_PREPARATION_ENABLED && /devnet|testnet/.test(c.SOLANA_RPC_URL))
     throw new Error('Mainnet preparation requires a Solana mainnet RPC');
+  if (c.MAINNET_PREPARATION_ENABLED && c.EVM_CHAIN_ID !== 8453)
+    throw new Error('Mainnet preparation currently requires Base chain ID 8453');
   if (
     c.MONITOR_ONLY_WORKERS &&
     (c.EXECUTION_MODE !== 'LIVE' ||
