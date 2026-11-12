@@ -1,6 +1,28 @@
 # Deployment, candidate and submission revisions
 
-## Current production — internal Intents settlement and preparation
+## Current production — controlled mainnet execution
+
+The [controlled mainnet release](../artifacts/mainnet-controlled-release.json)
+identifies the exact backend and frontend deployments on the existing hosting
+projects. Two owner-authorized Chain Signatures transfers finalized on Base and
+Solana; both contract cycles closed, with eight successful NEAR receipts. Fresh
+Intents conversions supplied destination gas. Expired funding attempts refunded
+principal, and their actual fees remain included in the 0.50-NEAR continuation
+ceiling. These are controlled fixtures with zero gross P&L, not approved AI,
+external revenue, profitable trading or a business-funded NFT distribution.
+
+The runtime is LIVE and disarmed. Its database policy matches the owner-signed
+0.25-USDC per-authorization / 0.50-USDC daily policy and native-SOL caps. Verified
+owner USDC is accounted as capital. Chain identity, permissions, capital and gas
+checks pass; the signed strategy preview still fails the unchanged profit floor.
+Cloud TEE approval remains quarantined. No paid inference occurred. Automatic
+provider credit purchasing still lacks a supported public payment interface.
+
+The release record distinguishes browser-tested application revisions from any
+later documentation-only deployment. `/api/release` reports current public
+frontend identity. Submission remains on hold at the owner's request.
+
+## Earlier November 12 internal Intents settlement and preparation
 
 The [November 12 paired release](../artifacts/mainnet-preparation-release.json)
 identifies backend `13c2c56475aec7fe83b6e00422c9955fb61441ee` on the existing
@@ -69,7 +91,7 @@ for this feature. Subsequent documentation commits do not change the application
 revisions frozen in the table. Preserve this distinction when choosing submission
 commits or refreshing deployment evidence.
 
-## Execution and business scope
+## Historical execution and business scope — November 6
 
 Real evidence covers testnet contract safeguards, agent ledger payments, MPC
 signatures and separate confirmed Sepolia/Solana devnet transfers. Those transfers

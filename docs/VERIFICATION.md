@@ -1,5 +1,30 @@
 # Verification record
 
+## Controlled mainnet release — November 12, 2026
+
+The [paired release record](../artifacts/mainnet-controlled-release.json)
+identifies the deployed frontend/backend revisions, CI and production checks.
+Current validation passes **152 backend unit tests, 81 isolated PostgreSQL
+integration tests, 19 owner-tool tests and 28 frontend tests**, plus strict checks
+and production builds. Backend and contract CI pass. Local wallet/gas rehearsals
+remain separate from actual network evidence.
+
+Two [owner-authorized MPC transfer fixtures](../artifacts/mainnet-owned-execution.json)
+finalized on Base and Solana, and both contract cycles closed with zero gross
+P&L. Eight successful NEAR receipts cover authorization, signing, submission and
+finalization. Fresh Intents conversions funded destination gas. Failed/expired
+funding attempts and principal refunds are retained in the fee reconciliation.
+Capital input plus actual continuation NEAR fees stayed below 0.50 NEAR.
+
+Hosted desktop/mobile checks cover the new evidence panels, live balances,
+receipt lookup, wallet choices, stale recovery and credential exposure. There
+were zero browser credential findings, direct browser-to-backend requests or
+paid inference requests. The runtime remains disarmed and TEE-quarantined.
+Owner permissions, capital and gas checks pass; profitable trading, external
+revenue, automatic provider credit purchases and business-funded NFT payouts
+remain unproven. Submission is on hold. Older sections below describe dated
+observations and do not override this release.
+
 ## Testnet rehearsal on 2026-11-02
 
 The [separate report](../artifacts/testnet-rehearsal.json) records the actual
