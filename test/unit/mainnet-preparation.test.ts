@@ -3,6 +3,7 @@ import { inspectMainnetPreparation, type PreparationPorts } from '../../src/main
 import { preparationWorkers } from '../../src/preparation-workers.js';
 import { loadConfig } from '../../src/config.js';
 import { MainnetPreparationReport } from '../../src/mainnet-preparation-contract.js';
+import { matchesMainnetPolicy } from '../../src/mainnet-activation.js';
 const env = {
   DATABASE_URL: 'postgresql://u:p@localhost/test',
   ADMIN_TOKEN: 'a'.repeat(40),
@@ -33,6 +34,8 @@ function fixture(): PreparationPorts {
       workers: 3,
       allowedChains: [8453, 0],
       allowedTokens: ['0x833589fcd6edb6e08f4c7c32d4f71b54bda02913', 'sol:native'],
+      tokenMaxTradeAtoms: ['50000', '4000000'],
+      tokenMaxDailyAtoms: ['100000', '8000000'],
       maxTradeAtoms: '50000',
     }),
     wallets: async () => ({
@@ -62,7 +65,7 @@ function fixture(): PreparationPorts {
       expectedOutputAtoms: '50100',
       minimumOutputAtoms: '50004',
       costsAtoms: '2',
-      route: {},
+      route: { first: { quote: { minAmountOut: '300000' } } },
       expiresAt: new Date(Date.now() + 60000).toISOString(),
     }),
   };
@@ -150,4 +153,42 @@ it('heartbeats continue during a slow preparation request, with no duplicate wor
   );
   expect(runs).toBe(1);
   expect(roles).toHaveLength(9);
+});
+
+it('requires SOL token capacity for the signed return amount even when both chains are allowed', async () => {
+  const p = fixture(),
+    state = p.state;
+  p.state = async () => ({ ...(await state()), tokenMaxTradeAtoms: ['50000', '1'] });
+  const r = await inspectMainnetPreparation(config, p);
+  expect(r.nonTeeReady).toBe(false);
+  expect(r.checks.find((c) => c.id === 'SOLANA_RETURN_AUTHORIZATION')?.status).toBe('BLOCKED');
+});
+it('recognizes only the configured Base policy or its exact bounded native-SOL extension', () => {
+  const c = { MAX_TRADE_ATOMS: '250000', MAX_DAILY_SPEND_ATOMS: '500000' };
+  const p = {
+    max_trade_atoms: '250000',
+    max_daily_atoms: '500000',
+    min_reserve_yocto: '100000000000000000000000',
+    max_signing_cost_yocto: '1',
+    max_slippage_bps: 0,
+    allowed_chain_ids: [8453, 0],
+    allowed_token_contracts: ['0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913', 'sol:native'],
+    token_max_trade_atoms: ['250000', '4000000'],
+    token_max_daily_atoms: ['500000', '8000000'],
+  };
+  expect(matchesMainnetPolicy(c, p)).toBe(true);
+  expect(
+    matchesMainnetPolicy(c, {
+      ...p,
+      allowed_chain_ids: [8453],
+      allowed_token_contracts: p.allowed_token_contracts.slice(0, 1),
+      token_max_trade_atoms: ['250000'],
+      token_max_daily_atoms: ['500000'],
+    }),
+  ).toBe(true);
+  expect(matchesMainnetPolicy(c, { ...p, token_max_trade_atoms: ['250000', '4000001'] })).toBe(
+    false,
+  );
+  expect(matchesMainnetPolicy(c, { ...p, allowed_chain_ids: [8453, 1] })).toBe(false);
+  expect(matchesMainnetPolicy(c, { ...p, max_slippage_bps: 1 })).toBe(false);
 });

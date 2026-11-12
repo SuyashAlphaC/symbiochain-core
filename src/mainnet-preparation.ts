@@ -19,6 +19,8 @@ export interface PreparationPorts {
     workers: number;
     allowedChains: number[];
     allowedTokens: string[];
+    tokenMaxTradeAtoms: string[];
+    tokenMaxDailyAtoms: string[];
     maxTradeAtoms: string;
   }>;
   wallets(): Promise<{
@@ -38,7 +40,8 @@ export async function inspectMainnetPreparation(c: Config, ports: PreparationPor
     checks.push({ id, status: passes ? 'PASS' : 'BLOCKED', detail });
   let wallets: MainnetPreparationReport['wallets'] = [];
   let networkValid = false;
-  const input = BigInt(c.MAX_TRADE_ATOMS) < 50000n ? c.MAX_TRADE_ATOMS : '50000';
+  const input = BigInt(c.MAX_TRADE_ATOMS) < 250000n ? c.MAX_TRADE_ATOMS : '250000';
+  let solCap = 0n;
   const costs = (BigInt(c.GAS_COST_BASE_ATOMS) + BigInt(c.LIVE_COST_BUFFER_ATOMS)).toString();
   let quote: MainnetPreparationReport['quote'] = {
     status: 'UNAVAILABLE',
@@ -52,6 +55,11 @@ export async function inspectMainnetPreparation(c: Config, ports: PreparationPor
   };
   try {
     const state = await ports.state();
+    const baseIndex = state.allowedTokens.findIndex(
+      (t) => t.toLowerCase() === '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913',
+    );
+    const solIndex = state.allowedTokens.indexOf('sol:native');
+    solCap = BigInt(state.tokenMaxTradeAtoms[solIndex] ?? '0');
     check(
       'TREASURY_IDENTITY',
       state.codeMatches,
@@ -65,16 +73,18 @@ export async function inspectMainnetPreparation(c: Config, ports: PreparationPor
     check(
       'BASE_AUTHORIZATION',
       state.allowedChains.includes(c.EVM_CHAIN_ID) &&
-        state.allowedTokens.some(
-          (t) => t.toLowerCase() === '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913',
-        ) &&
-        BigInt(state.maxTradeAtoms) >= BigInt(input),
+        baseIndex >= 0 &&
+        BigInt(state.maxTradeAtoms) >= BigInt(input) &&
+        BigInt(state.tokenMaxTradeAtoms[baseIndex] ?? '0') >= BigInt(input),
       'Base USDC must fit the owner-approved contract policy.',
     );
     check(
       'SOLANA_RETURN_AUTHORIZATION',
-      state.allowedChains.includes(0) && state.allowedTokens.includes('sol:native'),
-      'The SOL return leg needs an owner-signed chain-0 and sol:native policy with native-unit token caps. Current Base-only permissions do not authorize it.',
+      state.allowedChains.includes(0) &&
+        solIndex >= 0 &&
+        solCap > 0n &&
+        BigInt(state.tokenMaxDailyAtoms[solIndex] ?? '0') >= solCap,
+      'The SOL return leg needs an owner-signed chain-0 and sol:native policy; its native-unit caps must cover the signed return-leg amount.',
     );
   } catch {
     checks.push({
@@ -133,6 +143,19 @@ export async function inspectMainnetPreparation(c: Config, ports: PreparationPor
         expiresAt: new Date(Date.now() + 120000).toISOString(),
       });
       const q = await ports.quote(p);
+      if (q.inputAtoms !== input)
+        throw new DomainError(
+          'PREPARATION_QUOTE_AMOUNT',
+          'Quote input differs from the approved probe',
+        );
+      const solAmount = BigInt(
+        (q.route as { first: { quote: { minAmountOut: string } } }).first.quote.minAmountOut,
+      );
+      const solCheck = checks.find((r) => r.id === 'SOLANA_RETURN_AUTHORIZATION');
+      if (solCheck && solCap < solAmount) {
+        solCheck.status = 'BLOCKED';
+        solCheck.detail = `The signed return leg needs ${solAmount} lamports; the owner token cap is ${solCap}.`;
+      }
       const profit = quoteProfitCheck(q, c.MIN_NET_PROFIT_ATOMS);
       quote = {
         status: 'VALIDATED',
@@ -195,6 +218,8 @@ export async function runMainnetPreparation(store: Store, ports?: PreparationPor
           workers: s.accounts.filter((a) => a.workerEnabled).length,
           allowedChains: p.allowed_chain_ids,
           allowedTokens: p.allowed_token_contracts,
+          tokenMaxTradeAtoms: p.token_max_trade_atoms,
+          tokenMaxDailyAtoms: p.token_max_daily_atoms,
           maxTradeAtoms: s.policy.maxTradeAtoms,
         };
       },
