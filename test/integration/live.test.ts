@@ -331,7 +331,10 @@ function fixture(
       return Response.json(result);
     }
     if (endpoint.pathname === '/v0/status') {
-      const q = quotes.get(endpoint.searchParams.get('depositAddress')!)!;
+      const q = structuredClone(quotes.get(endpoint.searchParams.get('depositAddress')!)!);
+      // The real status API omits transport IDs and adds unsigned empty defaults.
+      delete (q as Partial<QuoteResponse>).correlationId;
+      Object.assign(q.quoteRequest, { appFees: [], insured: false });
       const first = q.quoteRequest.originAsset === base;
       if (first && options.firstLegRefund)
         return Response.json({

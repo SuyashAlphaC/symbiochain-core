@@ -95,4 +95,28 @@ describe('1Click boundary', () => {
       'signature is invalid',
     );
   });
+  it('accepts signed status echoes without transport metadata and preserves unknown pending amounts', async () => {
+    const original = await client().quote(terms, false);
+    const { correlationId: _transportId, ...echo } = original;
+    const body = {
+      status: 'PROCESSING',
+      quoteResponse: echo,
+      swapDetails: {
+        amountIn: null,
+        amountOut: null,
+        refundedAmount: '0',
+        originChainTxHashes: [],
+        destinationChainTxHashes: [],
+      },
+    };
+    const statusClient = new OneClickClient(c, async () => Response.json(body));
+    const pending = await statusClient.status('quote.deposit');
+    expect(pending.status).toBe('PROCESSING');
+    expect(pending.swapDetails.amountOut).toBeNull();
+    expect(quoteHash(pending.quoteResponse)).toBe(quoteHash(original));
+    body.quoteResponse.quoteRequest.recipient = 'attacker';
+    await expect(statusClient.status('quote.deposit')).rejects.toThrow(
+      'invalid 1Click quote signature',
+    );
+  });
 });

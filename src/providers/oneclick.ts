@@ -133,12 +133,13 @@ export class OneClickClient {
           'REFUNDED',
           'FAILED',
         ]),
-        quoteResponse: quoteSchema,
+        // Status echoes omit quote-creation transport metadata. It is not signed.
+        quoteResponse: quoteSchema.extend({ correlationId: z.string().optional() }),
         swapDetails: z
           .object({
-            amountIn: atoms.optional(),
-            amountOut: atoms.optional(),
-            refundedAmount: atoms.optional(),
+            amountIn: atoms.nullish(),
+            amountOut: atoms.nullish(),
+            refundedAmount: atoms.nullish(),
             originChainTxHashes: z.array(z.object({ hash: z.string(), explorerUrl: z.string() })),
             destinationChainTxHashes: z.array(
               z.object({ hash: z.string(), explorerUrl: z.string() }),
