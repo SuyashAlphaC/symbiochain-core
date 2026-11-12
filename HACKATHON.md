@@ -2,11 +2,23 @@
 
 ## Submission status
 
-The public [mainnet evidence page](https://symbiochain.vercel.app/evidence) shows finalized treasury data and seven confirmed owner-reviewed activation transactions. Both scoped Intents keys are registered, three worker permissions are enabled and the treasury policy allows at most 0.05 USDC per cross-chain authorization and 0.10 USDC per day. Runtime execution remains DISARMED; monitor heartbeats establish monitoring only. See the [activation proof](artifacts/mainnet-bounded-activation.json) and [release revisions](docs/RELEASE_REVISIONS.md). No submission receipt has been recorded.
+The public [mainnet evidence page](https://symbiochain.vercel.app/evidence) shows finalized treasury data, owner activation, real Intents funding/payments and completed Base/Solana MPC transfer fixtures. The current owner-signed policy permits 0.25 USDC per authorization and 0.50 USDC daily, with separate native-SOL caps. One manual unverified model request succeeded; automated inference and treasury execution remain DISARMED. See the [manual probe](artifacts/manual-ai-probe.json) and [release revisions](docs/RELEASE_REVISIONS.md). Submission remains on hold.
 
 ## Idea-field pitch
 
-SymbioChain is a policy-controlled AI agent treasury deployed on NEAR mainnet. Its contract supports owner-signed spending limits, revocable agent permissions and constrained cross-chain signing. Dedicated receiver-scoped keys separate treasury operations from Intents settlement. Our public evidence distinguishes finalized mainnet transactions, configuration readiness and monitor heartbeats from autonomous AI execution. Recorded Intel TDX and NVIDIA subchecks passed; complete Cloud deployment approval failed and inference remains quarantined. External revenue, profitable settlement, business-funded NFT distributions and automatic AI-credit purchasing remain unproven. Reproducible tests, exact deployment revisions and transaction receipts make these boundaries auditable.
+SymbioChain is a policy-controlled AI agent treasury deployed on NEAR mainnet. Owner-authorized Chain Signatures transfers finalized on Base and Solana, and real Intents settlements funded destination gas and paid agents. The owner-signed policy caps USDC authorizations at 0.25 per action and 0.50 daily, with independent native-SOL limits. A single isolated, unverified NEAR AI Cloud probe authenticated our API key, returned a response from z-ai/glm-5.3-flash and incurred a provider-reported $0.00000548 charge. That completion does not independently establish the configured organization binding or TEE approval. Automated AI trading remains disarmed behind our application-level TEE workload policy, and losing routes remain rejected. The contract separately enforces roles and spending limits; it does not verify the Cloud TEE workload. With 280+ passing automated tests, public deployment records and reconciled mainnet receipts, we demonstrate constrained execution mechanics. External revenue, profitable trading, automatic provider credit purchases and business-funded NFT distributions remain unproven.
+
+## Manual API Probe (Unverified Inference)
+
+One explicitly authorized request to the public Gateway returned `NEAR_AI_OK`:
+31 input tokens, 6 completion tokens, and 5,480 nano-USD of reconciled provider
+cost. The raw response is private; the [public record](artifacts/manual-ai-probe.json)
+contains its hash, response identifiers, usage, billing and exact trust boundary.
+The request bypassed the automated treasury without invoking it. No treasury
+funds or blockchain transaction were used, no response signature was verified,
+and TEE workload approval remains quarantined. Six micro-USD is held against the
+existing shared $1 AI allowance, leaving $0.999994 for future automated requests.
+This proves API connectivity and model availability, not approved AI execution.
 
 ## Entry point and startup
 
@@ -69,7 +81,7 @@ The NEAR testnet treasury, real MPC signatures and Sepolia/Solana devnet transfe
 
 The new [business accounting source](docs/BUSINESS_ACCOUNTING.md) separates invoices from finalized external receipts, records accountant-reported operating costs and reserves proceeds only after recorded loss recovery. Fixture tests validate those rules. No customer revenue or realized business profitability is proven.
 
-The mainnet treasury, dedicated owner/agents, scoped signing configuration, registered Intents keys and bounded contract policy are complete. Real funded 1Click/Intents settlement still needs separate approved trading/gas capital, TEE approval and a viable route. The losing preview remains rejected. Neither the activation probe nor internally funded service escrow establishes revenue or a completed agent trade.
+The mainnet treasury, dedicated owner/agents, scoped keys, registered Intents keys, bounded policy and capital/gas funding are complete for the controlled tests. Real Intents gas conversions and two owner-authorized MPC transfers have finalized. Autonomous strategy trading still needs TEE approval and a viable route; the losing preview remains rejected. Capital funding, manual inference and internal settlement do not establish external revenue or a profitable agent trade.
 
 Automatic NEAR AI purchases remain unimplemented pending a provider-approved payment-to-credit protocol. Proceeds-funded NFT conversion, distribution and exact-identity recovery are [implemented and locally tested](docs/BUSINESS_FUNDING.md), but disabled without funded mainnet proof. No reservation, balance sync, faucet token or internal payment is presented as either completed cash flow.
 

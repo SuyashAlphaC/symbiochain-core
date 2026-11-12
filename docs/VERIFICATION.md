@@ -1,5 +1,20 @@
 # Verification record
 
+## Manual API probe — November 12, 2026
+
+The [recorded probe](../artifacts/manual-ai-probe.json) is one real, explicitly
+authorized unverified inference request. The Gateway returned HTTP 200 and
+`NEAR_AI_OK` from `z-ai/glm-5.3-flash`; usage was 31 prompt and 6 completion
+tokens. Its `inference-id` reconciled to 5,480 nano-USD through the published
+per-request billing API. No inference retry, treasury call, blockchain action,
+TEE acceptance or response-signature verification occurred. Organization binding
+is configured but not independently verified by the completion.
+
+This request is separate from the automated inference ledger, which remains at
+zero. A 6-micro-USD hold reduces the shared $1 allowance's automatic portion to
+999,994 micro-USD. The evidence endpoint reads the captured artifact and cannot
+trigger inference. Earlier zero-request records below remain historical facts.
+
 ## Controlled mainnet release — November 12, 2026
 
 The [paired release record](../artifacts/mainnet-controlled-release.json)
