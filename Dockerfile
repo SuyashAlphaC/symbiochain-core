@@ -26,6 +26,7 @@ COPY --from=build --chown=node:node /app/artifacts/mainnet-bounded-activation.js
 COPY --from=build --chown=node:node /app/artifacts/mainnet-intents-settlement.json ./artifacts/mainnet-intents-settlement.json
 COPY --from=build --chown=node:node /app/artifacts/mainnet-wallet-provisioning.json ./artifacts/mainnet-wallet-provisioning.json
 COPY --from=build --chown=node:node /app/artifacts/mainnet-owned-execution.json ./artifacts/mainnet-owned-execution.json
+COPY --from=build --chown=node:node /app/artifacts/manual-ai-probe.json ./artifacts/manual-ai-probe.json
 USER node
 EXPOSE 3001
 CMD ["node","dist/main.js"]

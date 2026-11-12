@@ -47,10 +47,11 @@ jobs:
             import { readMainnetOwnedExecution } from "./dist/mainnet-execution.js";
             import { readMainnetProvisioning } from "./dist/mainnet-provisioning.js";
             import { readMainnetSettlementFixture } from "./dist/mainnet-settlement.js";
+            import { readManualAiProbe } from "./dist/manual-ai-probe.js";
             const report = await readTestnetReport();
             assert.ok(report.runId);
             assert.equal(report.profile, "TESTNET_REHEARSAL");
-            assert.deepEqual((await readdir("artifacts")).sort(), ["brave-cli-verification.json", "mainnet-acceptance.json", "mainnet-bounded-activation.json", "mainnet-intents-settlement.json", "mainnet-owned-execution.json", "mainnet-paused-deployment.json", "mainnet-wallet-provisioning.json", "testnet-rehearsal.json"]);
+            assert.deepEqual((await readdir("artifacts")).sort(), ["brave-cli-verification.json", "mainnet-acceptance.json", "mainnet-bounded-activation.json", "mainnet-intents-settlement.json", "mainnet-owned-execution.json", "mainnet-paused-deployment.json", "mainnet-wallet-provisioning.json", "manual-ai-probe.json", "testnet-rehearsal.json"]);
             const audit = JSON.parse(await readFile("artifacts/brave-cli-verification.json", "utf8"));
             assert.equal(audit.deploymentApproved, false);
             assert.equal(audit.signedModelResponseVerified, false);
@@ -61,6 +62,10 @@ jobs:
             assert.equal(settlement.externalRevenueProven, false);
             assert.equal((await readMainnetProvisioning()).status, "PARTIAL_REFUNDED");
             assert.equal((await readMainnetOwnedExecution()).results.length, 2);
+            const manual = await readManualAiProbe();
+            assert.equal(manual.inferenceRequests, 1);
+            assert.equal(manual.automatedInferenceRequests, 0);
+            assert.equal(manual.security.teeWorkloadApproved, false);
           '
       - run: npm run db:harden
       # Integration fixtures deliberately leave pending recovery jobs in this isolated database.

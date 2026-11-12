@@ -1,0 +1,54 @@
+{
+  "contractVersion": 1,
+  "scope": "MANUAL_API_PROBE_UNVERIFIED_INFERENCE",
+  "label": "Manual API Probe (Unverified Inference)",
+  "status": "SUCCESS",
+  "checkedAt": "2026-11-12T11:39:21.297Z",
+  "endpoint": "https://cloud-api.near.ai/v1/chat/completions",
+  "requestedModel": "z-ai/glm-5.3-flash",
+  "returnedModel": "z-ai/glm-5.3-flash",
+  "httpStatus": 200,
+  "responseId": "0ec6e7c43442497ca12e3657a82d8885",
+  "inferenceId": "4925af5e-e3b9-551e-a0aa-f09e28df24b1",
+  "requestSha256": "376351b7babba7c52b81604ac8b86f893b7b46ddcc1dd5ad53d3a380473fc2cc",
+  "responseSha256": "4adb16d4c32e9a13eb08a2c192cabea94fed2aa6350e991afb8ceb74f0fbe3d3",
+  "expectedResponse": "NEAR_AI_OK",
+  "responseMatched": true,
+  "usage": {
+    "promptTokens": 31,
+    "completionTokens": 6,
+    "totalTokens": 37
+  },
+  "limits": {
+    "maxCompletionTokens": 64,
+    "thinkingTokenBudget": 16,
+    "requestCeilingUsdMicros": "100000",
+    "worstCaseUsdMicros": "83927"
+  },
+  "billing": {
+    "status": "RECONCILED",
+    "costNanoUsd": "5480",
+    "costUsdMicros": "6",
+    "applicationBudgetHoldUsdMicros": "6"
+  },
+  "organization": {
+    "configured": true,
+    "binding": "NOT_INDEPENDENTLY_VERIFIED",
+    "detail": "The inference key was accepted. The completion does not expose an organization ID; configured organization membership is not independently established by this probe."
+  },
+  "security": {
+    "isolated": true,
+    "teeWorkloadApproved": false,
+    "responseSignatureVerified": false,
+    "automatedExecutionEnabled": false,
+    "treasuryInvoked": false,
+    "treasuryFundsUsed": false,
+    "blockchainTransactionsSubmitted": 0
+  },
+  "inferenceRequests": 1,
+  "automatedInferenceRequests": 0,
+  "sources": [
+    "https://docs.near.ai/cloud/guides/openai-compatibility",
+    "https://docs.near.ai/cloud/guides/usage-reporting"
+  ]
+}

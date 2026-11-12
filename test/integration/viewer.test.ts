@@ -66,6 +66,18 @@ it('keeps PAPER records private and rejects all privileged writes when LIVE is d
     expect((await app.inject('/api/evidence/mainnet-intents')).statusCode).toBe(401);
     expect((await app.inject('/api/evidence/mainnet-provisioning')).statusCode).toBe(401);
     expect((await app.inject('/api/evidence/mainnet-execution')).statusCode).toBe(401);
+    expect((await app.inject('/api/evidence/manual-ai-probe')).statusCode).toBe(401);
+    const manualProbe = await app.inject({ url: '/api/evidence/manual-ai-probe', headers });
+    expect(manualProbe.statusCode).toBe(200);
+    expect(manualProbe.json()).toMatchObject({
+      label: 'Manual API Probe (Unverified Inference)',
+      inferenceRequests: 1,
+      automatedInferenceRequests: 0,
+      security: { teeWorkloadApproved: false, treasuryInvoked: false },
+    });
+    expect(manualProbe.headers['cache-control']).toBe('private, no-store');
+    expect(manualProbe.body).not.toContain(config.READ_TOKEN);
+    expect(manualProbe.body).not.toContain(config.ADMIN_TOKEN);
     const acceptance = await app.inject({ url: '/api/evidence/mainnet', headers });
     expect(acceptance.statusCode).toBe(200);
     expect(MainnetAcceptance.parse(acceptance.json())).toMatchObject({
