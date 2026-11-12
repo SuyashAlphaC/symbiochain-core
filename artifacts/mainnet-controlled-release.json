@@ -1,0 +1,155 @@
+{
+  "checkedAt": "2026-11-12T11:10:23.892Z",
+  "scope": "MAINNET_CONTROLLED_EXECUTION_AND_CONFIGURATION_RELEASE",
+  "frontend": {
+    "revision": "ac44f1f9e930fe607a75a2005d2a9e97867df36c",
+    "deploymentId": "dpl_2p1kqimjhxTZQmAjnuRd1s6PnTMa",
+    "url": "https://symbiochain.vercel.app",
+    "browserCheckedApplicationRevision": "ac44f1f9e930fe607a75a2005d2a9e97867df36c"
+  },
+  "backend": {
+    "revision": "4727173ef999bfd748acf9da1d8c6d16bed12a11",
+    "deploymentId": "dep-dbqprvdckfvc73d5era0",
+    "serviceId": "srv-dbgd7u4s728c738qjstg",
+    "url": "https://symbiochain-core.onrender.com"
+  },
+  "runtime": {
+    "mode": "LIVE",
+    "executionEnabled": false,
+    "mainnetPreparationEnabled": true,
+    "monitorOnlyWorkers": false,
+    "teeApproval": "QUARANTINED",
+    "paidInferenceRequests": 0
+  },
+  "configuration": {
+    "maxTradeAtoms": "250000",
+    "maxDailySpendAtoms": "500000",
+    "maxSlippageBps": 0,
+    "policyPaused": true,
+    "ownerCapitalUsdcAtoms": "349281",
+    "ownerActivation": "ACTIVE",
+    "freshPreparationHeartbeats": 3,
+    "aiTotalBudgetUsdMicros": "1000000",
+    "aiMaxRequestUsdMicros": "100000"
+  },
+  "currentPreparationGates": [
+    {
+      "id": "TREASURY_IDENTITY",
+      "status": "PASS",
+      "detail": "Treasury executable must match the reviewed deployment."
+    },
+    {
+      "id": "OWNER_ACTIVATION",
+      "status": "PASS",
+      "detail": "The treasury must be unpaused with all three worker permissions enabled."
+    },
+    {
+      "id": "BASE_AUTHORIZATION",
+      "status": "PASS",
+      "detail": "Base USDC must fit the owner-approved contract policy."
+    },
+    {
+      "id": "SOLANA_RETURN_AUTHORIZATION",
+      "status": "PASS",
+      "detail": "The SOL return leg needs an owner-signed chain-0 and sol:native policy; its native-unit caps must cover the signed return-leg amount."
+    },
+    {
+      "id": "MAINNET_ENDPOINTS",
+      "status": "PASS",
+      "detail": "Base chain ID and Solana mainnet genesis are checked against the serving RPCs."
+    },
+    {
+      "id": "BASE_CAPITAL",
+      "status": "PASS",
+      "detail": "The derived Base wallet needs at least 250000 USDC atoms; native NEAR is not USDC trading capital."
+    },
+    {
+      "id": "BASE_GAS",
+      "status": "PASS",
+      "detail": "The derived Base wallet must cover the configured maximum transfer-gas budget in ETH."
+    },
+    {
+      "id": "SOLANA_GAS",
+      "status": "PASS",
+      "detail": "The derived Solana wallet must retain the configured native SOL fee reserve."
+    },
+    {
+      "id": "PROFITABLE_SIGNED_ROUTE",
+      "status": "BLOCKED",
+      "detail": "Two real signed dry quotes must clear gas/operating buffers and the unchanged profit floor. A dry quote does not reserve capital or settle a trade."
+    }
+  ],
+  "executionEvidence": "artifacts/mainnet-owned-execution.json",
+  "fundingEvidence": "artifacts/mainnet-fresh-gas-funding.json",
+  "provisioningEvidence": "artifacts/mainnet-wallet-provisioning.json",
+  "historicalAcceptance": "artifacts/mainnet-acceptance.json",
+  "realMpcCyclesClosed": 2,
+  "realDestinationTransfers": 2,
+  "nativeExecutionReceipts": 8,
+  "allContinuationNativeFeesYocto": "43527928324320700000000",
+  "retainedCapitalInputYocto": "450000000000000000000000",
+  "additionalPlanningCeilingYocto": "500000000000000000000000",
+  "externalRevenueProven": false,
+  "netProfitProven": false,
+  "automaticCreditPurchaseImplemented": false,
+  "businessFundedNftDistributionProven": false,
+  "submissionStatus": "ON_HOLD_NOT_SUBMITTED",
+  "documentationScope": "Frozen deployment identities at checkedAt; later documentation-only commits may have newer Git revisions. See frontend /api/release for current identity.",
+  "validation": {
+    "backendUnitTests": 152,
+    "integrationTests": 81,
+    "ownerToolTests": 19,
+    "frontendTests": 28,
+    "backendCi": true,
+    "contractCi": true,
+    "frontendCi": true,
+    "backendMergeCiRun": "https://github.com/SuyashAlphaC/symbiochain-core/actions/runs/43206371926",
+    "frontendMergeCiRun": "https://github.com/AviraL0013/SymbioChain/actions/runs/43206444131",
+    "productionBrowser": {
+      "checkedAt": "2026-11-12T11:10:54.603Z",
+      "target": "https://symbiochain.vercel.app",
+      "scope": "READ_ONLY_PRODUCTION_BROWSER",
+      "boundedOwnerActivation": true,
+      "verifiedActivationReceipts": 7,
+      "preparationHeartbeats": 3,
+      "teeQuarantined": true,
+      "mainnetAcceptance": true,
+      "internalIntentsPayments": 2,
+      "nonTeePreparation": true,
+      "confirmedMpcTransfers": 2,
+      "closedMpcCycles": 2,
+      "nativeMpcReceipts": 8,
+      "ownerFundingAndPermissions": true,
+      "serviceDepositAndWithdrawalProofs": true,
+      "mainnetOnlyEvidence": true,
+      "legacyTestnetRedirect": true,
+      "staleReportHandling": true,
+      "mutatingApiRequests": 0,
+      "credentialTypesInspected": 15,
+      "dashboard": true,
+      "finalizedMainnetData": true,
+      "activePermissionsAndDisarmedLabels": true,
+      "knownReceiptLookup": true,
+      "walletDialog": true,
+      "realExtensionLoginPerformed": false,
+      "localWalletFixtureCoveredSeparately": true,
+      "staleRecoveryViaInterception": true,
+      "routeCount": 8,
+      "mobileWidth": 390,
+      "mobileOverflow": false,
+      "directBrowserBackendRequests": 0,
+      "credentialExposures": 0,
+      "pageErrors": 0,
+      "inspectedResponses": 520,
+      "paidInferenceRequests": 0,
+      "blockchainTransactionsSubmitted": 0
+    },
+    "newHistorySecretScan": {
+      "backendCommits": 16,
+      "frontendCommits": 5,
+      "actualPrivateCredentialTypes": 14,
+      "findings": 0
+    }
+  },
+  "completedLocalSigningPagesStopped": true
+}
