@@ -32,6 +32,9 @@ export async function createCrossFundingApp({
   stateDir = '.data/mainnet-cross-funding',
   port = 3424,
   client = '',
+  fundingRows = ROWS,
+  handFundingYocto = UNIT / 4n,
+  page,
 } = {}) {
   assert.equal(plan.scope, 'OWNER_FUNDED_MAINNET_WALLETS_NOT_REVENUE');
   await mkdir(stateDir, { recursive: true, mode: 0o700 });
@@ -74,11 +77,13 @@ export async function createCrossFundingApp({
   }
   const bind = (b) => assert.equal(b?.planDigest, plan.digest, 'PLAN_CHANGED');
   app.get('/', async (_q, r) =>
-    r
-      .type('text/html')
-      .send(
-        `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="fixture-token" content="${token}"><title>SymbioChain bounded mainnet wallet funding</title><style>body{font:17px system-ui;background:#142127;color:#e6f4f2;max-width:1000px;margin:35px auto;padding:20px;line-height:1.6}button,input{padding:12px;margin:8px}pre,code{white-space:pre-wrap;overflow-wrap:anywhere}a{color:#6ee5ba}</style></head><body><h1>Fund owned mainnet wallets</h1><p>Four transfers from <strong>${ROOT}</strong>: <strong>0.25 NEAR</strong> to Hand for MPC gas reservation; <strong>0.10 NEAR</strong> converted to Base USDC; <strong>0.05 NEAR</strong> converted to Base ETH; <strong>0.05 NEAR</strong> converted to Solana SOL. Capital totals <strong>0.45 NEAR</strong>. Combined funding/continuation fee allowance: <strong>0.05 NEAR</strong>. Additional funding and fees must stay below <strong>0.50 NEAR</strong>. At least <strong>0.20 NEAR</strong> stays in Meteor; no treasury top-up or withdrawal is requested.</p><p>Cross-chain outputs go only to the treasury's derived wallets. Each provider quote is signature-verified, has a fixed input and minimum output, and refunds only to your Meteor account. Provider conversion fees reduce the funded capital. This is owner-funded provisioning, not arbitrage, profit or external revenue. Funding does not authorize AI, an MPC request or automated spending. No access key is requested.</p><p>The proposed later bounded gas profile is at most 100,000 EVM gas at 0.5 gwei and a 0.001 SOL reserve. Hand will separately need an owner-signed same-key treasury gas-allowance repair before MPC testing. AI stays quarantined; existing 0.05/0.10-USDC contract limits are unchanged by these transfers.</p><details><summary>Exact transactions, signed quotes and minimum outputs</summary><pre>${JSON.stringify(plan, null, 2).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')}</pre></details><pre id="status">Checking finalized state…</pre><button id="connect">Connect Meteor</button><label><input id="reviewed" type="checkbox">I reviewed all four transfers, conversion minimums, refund account and 0.50-NEAR ceiling.</label><button id="sign" disabled>Sign four reviewed funding transfers</button><button id="refresh">Reconcile existing receipts</button><h2>Reconcile an existing hash</h2><p>Partial or unknown results block another signature. Select the original transfer and paste its existing hash.</p><select id="index">${plan.transactions.map((t, i) => `<option value="${i}">${i + 1}. ${t.id}</option>`).join('')}</select><input id="hash" size="50"><button id="verify">Verify existing receipt</button><script type="module" src="/client.js"></script></body></html>`,
-      ),
+    page
+      ? r.type('text/html').send(page(token, plan))
+      : r
+          .type('text/html')
+          .send(
+            `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="fixture-token" content="${token}"><title>SymbioChain bounded mainnet wallet funding</title><style>body{font:17px system-ui;background:#142127;color:#e6f4f2;max-width:1000px;margin:35px auto;padding:20px;line-height:1.6}button,input{padding:12px;margin:8px}pre,code{white-space:pre-wrap;overflow-wrap:anywhere}a{color:#6ee5ba}</style></head><body><h1>Fund owned mainnet wallets</h1><p>Four transfers from <strong>${ROOT}</strong>: <strong>0.25 NEAR</strong> to Hand for MPC gas reservation; <strong>0.10 NEAR</strong> converted to Base USDC; <strong>0.05 NEAR</strong> converted to Base ETH; <strong>0.05 NEAR</strong> converted to Solana SOL. Capital totals <strong>0.45 NEAR</strong>. Combined funding/continuation fee allowance: <strong>0.05 NEAR</strong>. Additional funding and fees must stay below <strong>0.50 NEAR</strong>. At least <strong>0.20 NEAR</strong> stays in Meteor; no treasury top-up or withdrawal is requested.</p><p>Cross-chain outputs go only to the treasury's derived wallets. Each provider quote is signature-verified, has a fixed input and minimum output, and refunds only to your Meteor account. Provider conversion fees reduce the funded capital. This is owner-funded provisioning, not arbitrage, profit or external revenue. Funding does not authorize AI, an MPC request or automated spending. No access key is requested.</p><p>The proposed later bounded gas profile is at most 100,000 EVM gas at 0.5 gwei and a 0.001 SOL reserve. Hand will separately need an owner-signed same-key treasury gas-allowance repair before MPC testing. AI stays quarantined; existing 0.05/0.10-USDC contract limits are unchanged by these transfers.</p><details><summary>Exact transactions, signed quotes and minimum outputs</summary><pre>${JSON.stringify(plan, null, 2).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')}</pre></details><pre id="status">Checking finalized state…</pre><button id="connect">Connect Meteor</button><label><input id="reviewed" type="checkbox">I reviewed all four transfers, conversion minimums, refund account and 0.50-NEAR ceiling.</label><button id="sign" disabled>Sign four reviewed funding transfers</button><button id="refresh">Reconcile existing receipts</button><h2>Reconcile an existing hash</h2><p>Partial or unknown results block another signature. Select the original transfer and paste its existing hash.</p><select id="index">${plan.transactions.map((t, i) => `<option value="${i}">${i + 1}. ${t.id}</option>`).join('')}</select><input id="hash" size="50"><button id="verify">Verify existing receipt</button><script type="module" src="/client.js"></script></body></html>`,
+          ),
   );
   app.get('/client.js', async (_q, r) => r.type('text/javascript').send(client));
   app.get('/favicon.ico', async (_q, r) => r.code(204).send());
@@ -92,7 +97,7 @@ export async function createCrossFundingApp({
     bind(q.body);
     const s = await state();
     assert.ok(!s.pending && !s.complete, 'EXISTING_ATTEMPT_REQUIRES_RECONCILIATION');
-    for (let i = 0; i < ROWS.length; i++) assertFundingQuote(ROWS[i], plan.quotes[i]);
+    for (let i = 0; i < fundingRows.length; i++) assertFundingQuote(fundingRows[i], plan.quotes[i]);
     const before = await inspect();
     assert.ok(
       BigInt(before.ownerAvailableYocto) >=
@@ -110,7 +115,10 @@ export async function createCrossFundingApp({
   app.post('/observe', async (q) => {
     bind(q.body);
     const { index, hash } = q.body;
-    assert.ok(Number.isInteger(index) && index >= 0 && index < 4, 'TRANSFER_INDEX_REQUIRED');
+    assert.ok(
+      Number.isInteger(index) && index >= 0 && index < plan.transactions.length,
+      'TRANSFER_INDEX_REQUIRED',
+    );
     assert.match(hash ?? '', /^[1-9A-HJ-NP-Za-km-z]{43,44}$/, 'INVALID_HASH');
     assert.ok(!observing, 'RECONCILIATION_IN_PROGRESS');
     observing = true;
@@ -152,7 +160,7 @@ export async function createCrossFundingApp({
     bind(q.body);
     const s = await state();
     if (s.complete) return s.complete;
-    assert.ok(s.receipts.every(Boolean), 'FOUR_FINAL_RECEIPTS_REQUIRED');
+    assert.ok(s.receipts.every(Boolean), 'ALL_FINAL_RECEIPTS_REQUIRED');
     const attempt = await optional(stateDir + '/attempt.json'),
       after = await inspect();
     const fees = s.receipts.reduce((n, t) => n + BigInt(t.actualFeeYocto), 0n);
@@ -163,7 +171,7 @@ export async function createCrossFundingApp({
       'OWNER_DEBIT_NOT_RECONCILED',
     );
     assert.ok(
-      BigInt(after.handBalanceYocto) >= BigInt(attempt.before.handBalanceYocto) + UNIT / 4n,
+      BigInt(after.handBalanceYocto) >= BigInt(attempt.before.handBalanceYocto) + handFundingYocto,
       'HAND_FUNDING_NOT_OBSERVED',
     );
     const destinations = await settlement(plan, attempt.before, after, s.receipts);

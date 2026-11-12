@@ -1,0 +1,14 @@
+{
+  "checkedAt": "2026-11-12T06:40:40.480Z",
+  "scope": "UNSIGNED_REFUNDED_MAINNET_GAS_FUNDING",
+  "transactions": 2,
+  "capitalNear": "0.10",
+  "additionalPlanningCeilingNear": "0.50",
+  "namedOwner": true,
+  "exactAmountsAndProviderDeposits": true,
+  "dedicatedDestinations": true,
+  "signatureDeliberatelyRejected": true,
+  "mainnetTransactionsSubmitted": 0,
+  "paidInferenceRequests": 0,
+  "noAccessKeyRequested": true
+}
