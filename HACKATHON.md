@@ -6,7 +6,7 @@ The public [mainnet evidence page](https://symbiochain.vercel.app/evidence) show
 
 ## Idea-field pitch
 
-SymbioChain is a policy-controlled AI agent treasury deployed on NEAR mainnet. Its contract supports owner-signed spending limits, revocable agent permissions and constrained cross-chain signing. Dedicated receiver-scoped keys separate treasury operations from Intents settlement. Our public evidence distinguishes finalized mainnet transactions, configuration readiness and monitor heartbeats from autonomous AI execution. Hardware TEE verification has passed, while our application-level workload measurement policy currently keeps inference quarantined. External revenue, profitable settlement, business-funded NFT distributions and automatic AI-credit purchasing remain unproven. Reproducible tests, exact deployment revisions and transaction receipts make these boundaries auditable.
+SymbioChain is a policy-controlled AI agent treasury deployed on NEAR mainnet. Its contract supports owner-signed spending limits, revocable agent permissions and constrained cross-chain signing. Dedicated receiver-scoped keys separate treasury operations from Intents settlement. Our public evidence distinguishes finalized mainnet transactions, configuration readiness and monitor heartbeats from autonomous AI execution. Recorded Intel TDX and NVIDIA subchecks passed; complete Cloud deployment approval failed and inference remains quarantined. External revenue, profitable settlement, business-funded NFT distributions and automatic AI-credit purchasing remain unproven. Reproducible tests, exact deployment revisions and transaction receipts make these boundaries auditable.
 
 ## Entry point and startup
 
@@ -74,3 +74,7 @@ The mainnet treasury, dedicated owner/agents, scoped signing configuration, regi
 Automatic NEAR AI purchases remain unimplemented pending a provider-approved payment-to-credit protocol. Proceeds-funded NFT conversion, distribution and exact-identity recovery are [implemented and locally tested](docs/BUSINESS_FUNDING.md), but disabled without funded mainnet proof. No reservation, balance sync, faucet token or internal payment is presented as either completed cash flow.
 
 See the [acceptance ledger](docs/IMPLEMENTATION.md), [deployment record](docs/DEPLOYMENT.md) and [judge walkthrough](docs/JUDGING.md). Submit evidence with its actual revision, network, contract hash, approved model measurements and transaction links; keep real execution, simulations, implementation tests and unfinished work distinct.
+
+## November 12 mainnet scope update
+
+See [confirmed owner-controlled MPC execution](artifacts/mainnet-owned-execution.json), [fresh Intents gas funding](artifacts/mainnet-fresh-gas-funding.json) and [owner funding/refund outcomes](artifacts/mainnet-wallet-provisioning.json). Base and Solana transfer fixtures finalized and their contract cycles closed. The application has real owner-capital accounting and the signed bounded policy. These are not approved AI executions or profitable strategy trades; external revenue, profit-funded compute purchases and NFT distributions remain unproven. Submission remains on hold.
