@@ -134,6 +134,8 @@ export function verifyActivationReceipt(raw, hash, transaction, perFee = UNIT / 
         p.args,
         'ARGUMENT_MISMATCH',
       );
+    } else if (expected.type === 'DeleteKey') {
+      assert.equal(actual.DeleteKey?.public_key, expected.params.publicKey, 'KEY_MISMATCH');
     } else {
       assert.equal(expected.type, 'AddKey', 'UNEXPECTED_ACTION');
       const a = actual.AddKey,
@@ -144,7 +146,11 @@ export function verifyActivationReceipt(raw, hash, transaction, perFee = UNIT / 
       assert.ok(f, 'FULL_ACCESS_FORBIDDEN');
       assert.equal(f.receiver_id, 'intents.near', 'KEY_RECEIVER_MISMATCH');
       assert.deepEqual(f.method_names, ['execute_intents'], 'KEY_METHOD_MISMATCH');
-      assert.equal(String(f.allowance), INTENTS_ALLOWANCE.toString(), 'KEY_ALLOWANCE_MISMATCH');
+      assert.equal(
+        String(f.allowance),
+        String(p.accessKey.permission.allowance),
+        'KEY_ALLOWANCE_MISMATCH',
+      );
     }
   }
   const success = (s) => s && ('SuccessValue' in s || 'SuccessReceiptId' in s);

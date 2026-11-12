@@ -14,5 +14,6 @@ artifacts/*
 !artifacts/mainnet-paused-deployment.json
 !artifacts/mainnet-acceptance.json
 !artifacts/mainnet-bounded-activation.json
+!artifacts/mainnet-intents-settlement.json
 coverage
 *.log

@@ -1,4 +1,4 @@
-import type { QuoteResponse, TokenResponse } from '@defuse-protocol/one-click-sdk-typescript';
+import type { QuoteResponse } from '@defuse-protocol/one-click-sdk-typescript';
 import { PublicKey } from '@solana/web3.js';
 import type { Providers } from './types.js';
 import { OneClickClient, type SwapTerms } from './oneclick.js';
@@ -17,15 +17,8 @@ import {
 import { seal, unseal } from '../crypto.js';
 import { IntentPayments } from './intent-payments.js';
 import { totalApprovedCost } from '../cost-basis.js';
+import { RoundTripQuotes, type Route } from './route-quotes.js';
 
-interface Route {
-  first: QuoteResponse;
-  second: QuoteResponse;
-  originToken: TokenResponse;
-  intermediateToken: TokenResponse;
-  originAddress: string;
-  intermediateAddress: string;
-}
 interface LegPayload {
   terms: SwapTerms;
   quote: QuoteResponse;
@@ -72,6 +65,7 @@ export class LiveProviders implements Providers {
   readonly treasury: LivePorts['treasury'];
   readonly wallets: LivePorts['wallets'];
   readonly payments: LivePorts['payments'];
+  private readonly quotes: RoundTripQuotes;
   constructor(
     readonly store: Store,
     ports: Partial<LivePorts> = {},
@@ -83,6 +77,7 @@ export class LiveProviders implements Providers {
     this.treasury = ports.treasury ?? new NearTreasury(store.config);
     this.wallets = ports.wallets ?? new ChainWallets(store.config);
     this.payments = ports.payments ?? new IntentPayments(store);
+    this.quotes = new RoundTripQuotes(store.config, this.oneclick, this.wallets);
   }
   private async pay(
     cycleId: string,
@@ -143,94 +138,8 @@ export class LiveProviders implements Providers {
       });
     });
   }
-  private async route(p: Proposal): Promise<Omit<Route, 'first' | 'second'>> {
-    const c = this.store.config,
-      tokens = await this.oneclick.tokens();
-    const originToken = tokens.find((t) => t.assetId === p.originAsset),
-      intermediateToken = tokens.find((t) => t.assetId === p.intermediateAsset);
-    if (!originToken || !intermediateToken)
-      throw new DomainError('ASSET_METADATA', 'Asset is not in the current 1Click registry');
-    if (p.originAsset !== c.BASE_ASSET || originToken.decimals !== c.BASE_DECIMALS)
-      throw new DomainError(
-        'BASE_DENOMINATION',
-        'Origin must match the ledger base asset and decimals',
-      );
-    const chainNames: Record<number, string> = { 1: 'eth', 8453: 'base', 42161: 'arb', 10: 'op' };
-    const expected = chainNames[c.EVM_CHAIN_ID];
-    if (
-      !expected ||
-      originToken.blockchain !== expected ||
-      p.originChain !== `eip155:${c.EVM_CHAIN_ID}` ||
-      !originToken.contractAddress?.match(/^0x[a-fA-F0-9]{40}$/)
-    )
-      throw new DomainError('ORIGIN_CHAIN', 'Origin must be an ERC-20 on the configured EVM chain');
-    if (
-      p.destinationChain !== 'solana:mainnet' ||
-      intermediateToken.assetId !== 'nep141:sol.omft.near' ||
-      intermediateToken.blockchain !== 'sol' ||
-      intermediateToken.symbol !== 'SOL' ||
-      intermediateToken.decimals !== 9 ||
-      intermediateToken.contractAddress
-    )
-      throw new DomainError(
-        'INTERMEDIATE_CHAIN',
-        'This strategy supports native SOL as the intermediate asset',
-      );
-    const originAddress = await this.wallets.address(p.originChain),
-      intermediateAddress = await this.wallets.address(p.destinationChain);
-    if (
-      p.recipient.toLowerCase() !== originAddress.toLowerCase() ||
-      p.refundTo.toLowerCase() !== originAddress.toLowerCase()
-    )
-      throw new DomainError(
-        'TREASURY_RECIPIENT',
-        'Round-trip proceeds and refunds must return to the derived treasury',
-      );
-    return { originToken, intermediateToken, originAddress, intermediateAddress };
-  }
-  private firstTerms(p: Proposal, r: Omit<Route, 'first' | 'second'>): SwapTerms {
-    return {
-      originAsset: p.originAsset,
-      destinationAsset: p.intermediateAsset,
-      amount: p.amountAtoms,
-      recipient: r.intermediateAddress,
-      refundTo: r.originAddress,
-      deadline: p.expiresAt,
-      slippageBps: p.slippageBps,
-    };
-  }
-  private secondTerms(p: Proposal, r: Omit<Route, 'first' | 'second'>, amount: string): SwapTerms {
-    return {
-      originAsset: p.intermediateAsset,
-      destinationAsset: p.originAsset,
-      amount,
-      recipient: r.originAddress,
-      refundTo: r.intermediateAddress,
-      deadline: p.expiresAt,
-      slippageBps: p.slippageBps,
-    };
-  }
   async quote(_cycleId: string, p: Proposal): Promise<Quote> {
-    const route = await this.route(p),
-      first = await this.oneclick.quote(this.firstTerms(p, route), true);
-    const second = await this.oneclick.quote(
-      this.secondTerms(p, route, first.quote.minAmountOut),
-      true,
-    );
-    const full = { ...route, first, second };
-    const costs =
-      BigInt(this.store.config.GAS_COST_BASE_ATOMS) +
-      BigInt(this.store.config.LIVE_COST_BUFFER_ATOMS);
-    return {
-      id: digest(full),
-      inputAtoms: p.amountAtoms,
-      expectedOutputAtoms: second.quote.amountOut,
-      minimumOutputAtoms: second.quote.minAmountOut,
-      costsAtoms: costs.toString(),
-      expiresAt: new Date(Math.min(Date.parse(p.expiresAt), Date.now() + 120000)).toISOString(),
-      routeDigest: digest(full),
-      route: full,
-    };
+    return this.quotes.quote(p);
   }
   async assess(cycleId: string, p: Proposal, q: Quote) {
     // A prepaid report does not purchase a trading signal or authorize a transfer.
@@ -385,7 +294,7 @@ export class LiveProviders implements Providers {
       1,
       p,
       q,
-      this.firstTerms(p, r),
+      this.quotes.firstTerms(p, r),
       r.first.quote.minAmountOut,
     );
     return {
@@ -677,7 +586,7 @@ export class LiveProviders implements Providers {
         2,
         p,
         q,
-        this.secondTerms(p, r, first.amount),
+        this.quotes.secondTerms(p, r, first.amount),
         q.minimumOutputAtoms,
       );
       const ex: PreparedExecution = {

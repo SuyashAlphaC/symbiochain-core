@@ -40,6 +40,8 @@ import { viewerSnapshot, viewerProof, requirePaperViewer } from './viewer.js';
 import { readTestnetReport } from './testnet-report.js';
 import { readMainnetAcceptance } from './mainnet-acceptance.js';
 import { mainnetActivation } from './mainnet-activation.js';
+import { mainnetPreparation } from './mainnet-preparation.js';
+import { readMainnetSettlementFixture } from './mainnet-settlement.js';
 import { viewerStatus, viewerCycles, viewerCycle, viewerEvents } from './viewer-details.js';
 import { MainnetReader } from './mainnet.js';
 import { RuntimeStatus } from './mainnet-contract.js';
@@ -148,6 +150,14 @@ export async function createApp(
   app.get('/api/mainnet/activation', secured, async (_req, reply) => {
     reply.header('cache-control', 'private, no-store');
     return mainnetActivation(store, mainnet);
+  });
+  app.get('/api/mainnet/preparation', secured, async (_req, reply) => {
+    reply.header('cache-control', 'private, no-store');
+    return mainnetPreparation(store);
+  });
+  app.get('/api/evidence/mainnet-intents', secured, async (_req, reply) => {
+    reply.header('cache-control', 'private, no-store');
+    return readMainnetSettlementFixture();
   });
   app.get('/api/mainnet/wallet', secured, async (req, reply) => {
     const { accountId } = z

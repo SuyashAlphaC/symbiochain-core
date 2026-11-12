@@ -1,0 +1,13 @@
+{
+  "checkedAt": "2026-11-12T04:59:55.958Z",
+  "scope": "LOCAL_SANDBOX_WITH_OBSERVED_MAINNET_WRAP_CODE",
+  "mainnetWrapCodeHash": "DL2f5xmZ44cQRP6vBMt94rvseH5d5KKnAGis2WkTAsh1",
+  "receiver": "SANDBOX_MOCK_NOT_INTENTS",
+  "originalTransferGas": "30000000000000",
+  "originalFailureReproduced": true,
+  "correctedTransferGas": "70000000000000",
+  "correctedBatchSucceeded": true,
+  "twoTransfersCredited": true,
+  "mainnetTransactionsSubmitted": 0,
+  "paidInferenceRequests": 0
+}

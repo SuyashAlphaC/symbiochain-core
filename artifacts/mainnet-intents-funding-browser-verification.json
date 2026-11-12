@@ -1,0 +1,14 @@
+{
+  "checkedAt": "2026-11-12T05:03:04.721Z",
+  "scope": "UNSIGNED_INTENTS_FUNDING_BROWSER_FIXTURE",
+  "signer": "solidvideo4090.near",
+  "receiver": "wrap.near",
+  "actions": 4,
+  "capitalNear": "0.002",
+  "storageCollateralCeilingNear": "0.00125",
+  "feePlanningCeilingNear": "0.017",
+  "signatureDeliberatelyRejected": true,
+  "actualMainnetTransactions": 0,
+  "paidInferenceRequests": 0,
+  "walletErrorRetained": true
+}

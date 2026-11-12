@@ -70,6 +70,7 @@ export async function mainnetActivation(store: Store, reader: MainnetReader) {
     executionEnabled: c.EXECUTION_ENABLED,
     automaticTradingEnabled: c.LIVE_ARBITRAGE_ENABLED,
     monitorOnlyWorkers: c.MONITOR_ONLY_WORKERS,
+    preparationEnabled: c.MAINNET_PREPARATION_ENABLED,
     proof: MainnetActivationProof.parse(
       JSON.parse(await readFile('artifacts/mainnet-bounded-activation.json', 'utf8')),
     ),
@@ -77,7 +78,7 @@ export async function mainnetActivation(store: Store, reader: MainnetReader) {
       role: r.role,
       heartbeat: r.heartbeat?.toISOString() ?? null,
       fresh:
-        c.MONITOR_ONLY_WORKERS &&
+        (c.MONITOR_ONLY_WORKERS || c.MAINNET_PREPARATION_ENABLED) &&
         !!r.heartbeat &&
         Date.now() - r.heartbeat.getTime() >= 0 &&
         Date.now() - r.heartbeat.getTime() < 30000,

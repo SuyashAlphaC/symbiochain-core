@@ -11,13 +11,33 @@ import { scout } from './scout.js';
 import { refreshComputeCredits } from './providers/compute-credits.js';
 import { colocatedPaperFaults } from './paper-faults.js';
 import { monitorWorkers } from './monitor-workers.js';
+import { preparationWorkers } from './preparation-workers.js';
+import { runMainnetPreparation } from './mainnet-preparation.js';
 
 const config = loadConfig();
-if (!config.EXECUTION_ENABLED && !config.MONITOR_ONLY_WORKERS)
+if (
+  !config.EXECUTION_ENABLED &&
+  !config.MONITOR_ONLY_WORKERS &&
+  !config.MAINNET_PREPARATION_ENABLED
+)
   throw new Error('Execution is disarmed; start the production API without workers');
 const db = createDatabase(config.DATABASE_URL, config.DATABASE_POOL_MAX);
 const store = new Store(db, config);
 await store.initialize();
+if (config.MAINNET_PREPARATION_ENABLED) {
+  let preparing = true;
+  for (const signal of ['SIGTERM', 'SIGINT'] as const)
+    process.on(signal, () => {
+      preparing = false;
+    });
+  await preparationWorkers(
+    (role) => db.workerControl.update({ where: { role }, data: { heartbeat: new Date() } }),
+    () => runMainnetPreparation(store),
+    () => preparing,
+  );
+  await db.$disconnect();
+  process.exit(0);
+}
 // Importing provider modules does not construct them. This branch never creates
 // an Engine, signer, inference client, quote client or funding runner.
 if (config.MONITOR_ONLY_WORKERS) {
