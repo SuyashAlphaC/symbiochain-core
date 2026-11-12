@@ -1,0 +1,42 @@
+{
+  "checkedAt": "2026-11-12T06:16:48.144Z",
+  "scope": "LOCAL_SANDBOX_GAS_WITH_REVIEWED_MAINNET_WASM",
+  "treasuryWasmSha256": "39f034e6ae16ddb9cf253ac977c4146989a0fee1fa7c33ba0944092bf41de3d5",
+  "signer": "SANDBOX_INVALID_SIGNATURE_TRANSPORT_STUB",
+  "methods": [
+    {
+      "method": "authorize_cycle",
+      "attachedGas": "20000000000000",
+      "succeeded": true,
+      "gasBurnt": "3162649525355"
+    },
+    {
+      "method": "request_evm_signature",
+      "attachedGas": "250000000000000",
+      "succeeded": true,
+      "gasBurnt": "7676107274191"
+    },
+    {
+      "method": "record_submission",
+      "attachedGas": "20000000000000",
+      "succeeded": true,
+      "gasBurnt": "2681105398997"
+    },
+    {
+      "method": "finalize_cycle",
+      "attachedGas": "20000000000000",
+      "succeeded": true,
+      "gasBurnt": "2826002408710"
+    },
+    {
+      "method": "mint_proof_nft",
+      "attachedGas": "20000000000000",
+      "succeeded": true,
+      "gasBurnt": "3746333427332",
+      "fixture": "LOCAL_SYNTHETIC_PROFIT_ONLY"
+    }
+  ],
+  "mainnetTransactionsSubmitted": 0,
+  "paidInferenceRequests": 0,
+  "profitClaimed": false
+}
