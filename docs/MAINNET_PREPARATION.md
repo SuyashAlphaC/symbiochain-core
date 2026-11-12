@@ -88,3 +88,31 @@ for those balances. A route must clear the unchanged cost buffers and profit
 floor. No market result or customer demand is created by deployment or by a
 funding budget. Automatic provider credit purchasing still needs a supported
 provider flow; internal transfers cannot establish purchased credits or revenue.
+
+## Confirmed internal settlement — November 12
+
+The corrected funding transaction is finalized:
+[`EtMQTEso4nZsyzbhqY3f4sWmmBmaKpDLkCCJJxq7MMhx`](https://nearblocks.io/txns/EtMQTEso4nZsyzbhqY3f4sWmmBmaKpDLkCCJJxq7MMhx).
+Both agents received exactly 0.001 wNEAR inside Intents.
+
+The first attempted native payment was rejected before inclusion with
+`NotEnoughAllowance`: the node required 0.030923502300241 NEAR allowance while
+the key allowed 0.005 NEAR. It incurred no fee and used no Intents nonce. The user
+atomically replaced each existing native function-call key with the same public
+key, receiver and method scope, increasing its finite gas allowance to 0.04 NEAR.
+The native key nonce reset invalidated the rejected transaction envelope.
+Reconciliation retained the same off-chain payment nonce and exact economic terms.
+
+Two actual transfers then succeeded and their exact debit/credit changes were
+reconciled:
+
+- [Brain paid Scout](https://nearblocks.io/txns/DVhS7bWWj5Rk3B7TRiTCw1SYXR1RpctCSw5xzWX5FnLB): 0.0001 wNEAR.
+- [Hand paid Brain](https://nearblocks.io/txns/D2MwyAjVyKZFe8hYVeNX2YT6WR9dL1VRud3xaARJJneZ): 0.0001 wNEAR.
+
+[Machine-readable evidence](../artifacts/mainnet-intents-settlement.json) records
+0.0037364334643139 NEAR in total network fees, including the failed funding and
+the two allowance repairs. A separate 0.00125 NEAR is FT storage collateral and
+0.002 NEAR is recoverable capital. The observed sum is below the 0.03-NEAR ceiling.
+These transfers do not establish external revenue, a market swap, model execution,
+profit or purchased credits. The Intents key repair does not expand its receiver
+or permitted native method and does not grant full access.
