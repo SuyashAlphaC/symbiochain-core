@@ -66,7 +66,16 @@ describe('1Click boundary', () => {
       }).quote(terms, false),
     ).rejects.toThrow('requested terms');
   });
+  it('funds external wallets from Intents while refunds remain with the named Intents payer', async () => {
+    const q = await client().quote(terms, false, 'INTENTS_TO_CHAIN');
+    expect(q.quoteRequest.depositType).toBe('INTENTS');
+    expect(q.quoteRequest.recipientType).toBe('DESTINATION_CHAIN');
+    expect(q.quoteRequest.refundType).toBe('INTENTS');
+  });
   it('rejects memo deposits and expired executable quotes', async () => {
+    await expect(
+      client().quote({ ...terms, deadline: new Date(0).toISOString() }, false),
+    ).rejects.toThrow('spend deadline');
     await expect(
       client((r) => {
         r.quote.depositMemo = '42';

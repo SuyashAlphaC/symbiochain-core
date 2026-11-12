@@ -38,7 +38,7 @@ export function fundingTerms(row, deadline) {
     recipient: row.recipient,
     refundTo: ROOT,
     deadline,
-    slippageBps: 0,
+    slippageBps: row.slippageBps ?? 0,
   };
 }
 export function assertFundingQuote(row, q, now = Date.now()) {
@@ -51,10 +51,11 @@ export function assertFundingQuote(row, q, now = Date.now()) {
   assert.equal(q.quoteRequest.depositType, 'ORIGIN_CHAIN');
   assert.equal(q.quoteRequest.recipientType, 'DESTINATION_CHAIN');
   assert.equal(q.quoteRequest.dry, false);
-  assert.equal(q.quoteRequest.slippageTolerance, 0);
+  assert.equal(q.quoteRequest.slippageTolerance, row.slippageBps ?? 0);
   assert.equal(q.quote.amountIn, row.near.toString());
   assert.ok(BigInt(q.quote.minAmountOut) >= BigInt(row.minimum), 'FUNDING_OUTPUT_TOO_LOW');
   assert.ok(Date.parse(q.quote.deadline) > now + 90000, 'FUNDING_QUOTE_EXPIRING');
+  assert.ok(Date.parse(q.quoteRequest.deadline) > now + 90000, 'FUNDING_REQUEST_DEADLINE_EXPIRED');
 }
 export function makeCrossFundingPlan(quotes, now = Date.now()) {
   assert.equal(quotes.length, 3);

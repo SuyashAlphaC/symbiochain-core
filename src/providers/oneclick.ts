@@ -74,7 +74,7 @@ export class OneClickClient {
   async quote(
     t: SwapTerms,
     dry: boolean,
-    balances: 'CHAIN' | 'INTENTS' = 'CHAIN',
+    balances: 'CHAIN' | 'INTENTS' | 'INTENTS_TO_CHAIN' = 'CHAIN',
   ): Promise<QuoteResponse> {
     const request = {
       dry,
@@ -83,12 +83,12 @@ export class OneClickClient {
       slippageTolerance: t.slippageBps,
       originAsset: t.originAsset,
       destinationAsset: t.destinationAsset,
-      depositType: balances === 'INTENTS' ? 'INTENTS' : 'ORIGIN_CHAIN',
+      depositType: balances !== 'CHAIN' ? 'INTENTS' : 'ORIGIN_CHAIN',
       amount: t.amount,
       recipient: t.recipient,
       recipientType: balances === 'INTENTS' ? 'INTENTS' : 'DESTINATION_CHAIN',
       refundTo: t.refundTo,
-      refundType: balances === 'INTENTS' ? 'INTENTS' : 'ORIGIN_CHAIN',
+      refundType: balances !== 'CHAIN' ? 'INTENTS' : 'ORIGIN_CHAIN',
       deadline: t.deadline,
     } as QuoteRequest;
     const raw = quoteSchema.parse(
@@ -117,6 +117,8 @@ export class OneClickClient {
       throw new DomainError('DEPOSIT_FORMAT', 'Expected a simple deposit address without a memo');
     if (!dry && (!raw.quote.deadline || Date.parse(raw.quote.deadline) <= Date.now() + 30000))
       throw new DomainError('QUOTE_EXPIRED', 'Deposit quote has insufficient lifetime');
+    if (!dry && Date.parse(t.deadline) <= Date.now() + 30000)
+      throw new DomainError('QUOTE_EXPIRED', 'Requested spend deadline has insufficient lifetime');
     return raw as unknown as QuoteResponse;
   }
   async status(address: string): Promise<GetExecutionStatusResponse> {
