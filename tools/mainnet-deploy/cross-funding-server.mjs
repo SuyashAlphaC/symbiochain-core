@@ -188,146 +188,171 @@ export async function createCrossFundingApp({
   return app;
 }
 if (process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.meta.url) {
-  const dir = '.data/mainnet-cross-funding',
-    stateDir = process.argv[3] ?? dir,
-    port = Number(process.argv[2] ?? 3424);
-  assert.ok([3424, 3434].includes(port), 'LOOPBACK_PORT_REQUIRED');
-  await mkdir(dir, { recursive: true, mode: 0o700 });
-  const { parse } = await import('dotenv');
-  const { loadConfig } = await import('../../dist/config.js');
-  const { OneClickClient } = await import('../../dist/providers/oneclick.js');
-  const c = loadConfig({
-      ...parse(await readFile('.env', 'utf8')),
-      SOLANA_RPC_URL: 'https://api.mainnet-beta.solana.com',
-    }),
-    client = new OneClickClient(c);
-  assert.equal(c.NEAR_CONTRACT_ID, 'treasury.symbio-fcef733893.near');
-  assert.equal(c.CHAIN_DERIVATION_PATH, 'symbio-mainnet-v1');
-  assert.equal(c.NEAR_NETWORK, 'mainnet');
-  const { ChainWallets } = await import('../../dist/providers/wallets.js');
-  const wallets = new ChainWallets(c);
-  const probe = {
-    evmAddress: await wallets.address('eip155:8453'),
-    solanaAddress: await wallets.address('solana:mainnet'),
-  };
-  assert.equal(probe.evmAddress, '0xE9464975ECAFa3e27AC1048C16a3406395061092');
-  assert.equal(probe.solanaAddress, 'G48CEnMPfRadRQxaTmJkkdFRVTobyJyDDVec88PZwt2f');
-  let plan = await optional(dir + '/plan.json');
-  if (!plan) {
-    const deadline = new Date(Date.now() + 1200000).toISOString(),
-      quotes = [];
-    for (const row of ROWS) quotes.push(await client.quote(fundingTerms(row, deadline), false));
-    plan = makeCrossFundingPlan(quotes);
-    await writeFile(dir + '/plan.json', JSON.stringify(plan), { mode: 0o600, flag: 'wx' });
-  }
-  const plain = { ...plan };
-  delete plain.digest;
-  assert.equal(planDigest(plain), plan.digest, 'SAVED_PLAN_CHANGED');
-  const { createPublicClient, http, parseAbi } = await import('viem');
-  const { Connection, PublicKey } = await import('@solana/web3.js');
-  const evm = createPublicClient({ transport: http(c.EVM_RPC_URL) }),
-    sol = new Connection(c.SOLANA_RPC_URL, 'finalized');
-  const inspect = async () => {
-    assert.equal(await evm.getChainId(), 8453);
-    assert.equal(await sol.getGenesisHash(), '5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKuc147dw2N9d');
-    const b = (await rpc('block', { finality: 'final' })).header;
-    const owner = await rpc('query', {
-        request_type: 'view_account',
-        account_id: ROOT,
-        block_id: b.hash,
+  try {
+    const dir = '.data/mainnet-cross-funding',
+      stateDir = process.argv[3] ?? dir,
+      port = Number(process.argv[2] ?? 3424);
+    assert.ok([3424, 3434].includes(port), 'LOOPBACK_PORT_REQUIRED');
+    await mkdir(dir, { recursive: true, mode: 0o700 });
+    const { parse } = await import('dotenv');
+    const { loadConfig } = await import('../../dist/config.js');
+    const { OneClickClient } = await import('../../dist/providers/oneclick.js');
+    const c = loadConfig({
+        ...parse(await readFile('.env', 'utf8')),
+        SOLANA_RPC_URL: 'https://api.mainnet-beta.solana.com',
       }),
-      hand = await rpc('query', {
-        request_type: 'view_account',
-        account_id: HAND,
-        block_id: b.hash,
-      });
-    const { MainnetReader } = await import('../../dist/mainnet.js');
-    const observed = await new MainnetReader(c).snapshot();
-    assert.ok(observed.code.matches, 'TREASURY_CODE_CHANGED');
-    assert.equal(observed.treasuryAccount, c.NEAR_CONTRACT_ID);
-    const base = (await evm.getBlockNumber()) - BigInt(c.EVM_CONFIRMATIONS) + 1n;
-    return {
-      block: { height: String(b.height), hash: b.hash },
-      ownerAvailableYocto: (
-        BigInt(owner.amount) -
-        BigInt(owner.storage_usage) * 10n ** 19n
-      ).toString(),
-      ownerBalanceYocto: owner.amount,
-      handBalanceYocto: hand.amount,
-      baseBlock: base.toString(),
-      usdc: (
-        await evm.readContract({
-          address: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
-          abi: parseAbi(['function balanceOf(address) view returns (uint256)']),
-          functionName: 'balanceOf',
-          args: [probe.evmAddress],
-          blockNumber: base,
-        })
-      ).toString(),
-      eth: (await evm.getBalance({ address: probe.evmAddress, blockNumber: base })).toString(),
-      sol: String(await sol.getBalance(new PublicKey(probe.solanaAddress), 'finalized')),
+      client = new OneClickClient(c);
+    assert.equal(c.NEAR_CONTRACT_ID, 'treasury.symbio-fcef733893.near');
+    assert.equal(c.CHAIN_DERIVATION_PATH, 'symbio-mainnet-v1');
+    assert.equal(c.NEAR_NETWORK, 'mainnet');
+    const { ChainWallets } = await import('../../dist/providers/wallets.js');
+    const wallets = new ChainWallets(c);
+    const probe = {
+      evmAddress: await wallets.address('eip155:8453'),
+      solanaAddress: await wallets.address('solana:mainnet'),
     };
-  };
-  const settlement = async (p, before, after) => {
-    const out = [];
-    for (let i = 0; i < ROWS.length; i++) {
-      const row = ROWS[i],
-        q = p.quotes[i],
-        s = await client.status(q.quote.depositAddress);
-      assert.equal(s.status, 'SUCCESS', 'CROSS_CHAIN_SETTLEMENT_PENDING');
-      assert.equal(planDigest(s.quoteResponse), planDigest(q), 'SETTLEMENT_QUOTE_MISMATCH');
-      assert.ok(
-        BigInt(s.swapDetails.amountOut) >= BigInt(q.quote.minAmountOut),
-        'DESTINATION_MINIMUM_NOT_MET',
-      );
-      assert.ok(s.swapDetails.destinationChainTxHashes.length > 0, 'DESTINATION_RECEIPT_REQUIRED');
-      for (const t of s.swapDetails.destinationChainTxHashes) {
-        if (i < 2) {
-          const r = await evm.getTransactionReceipt({ hash: t.hash });
-          assert.equal(r.status, 'success');
-          assert.ok(after.baseBlock && r.blockNumber <= BigInt(after.baseBlock));
-        } else {
-          const r = await sol.getTransaction(t.hash, {
-            commitment: 'finalized',
-            maxSupportedTransactionVersion: 0,
-          });
-          assert.ok(r && !r.meta.err, 'SOLANA_RECEIPT_NOT_FINAL');
-        }
-      }
-      const key = ['usdc', 'eth', 'sol'][i];
-      assert.ok(
-        BigInt(after[key]) - BigInt(before[key]) >= BigInt(q.quote.minAmountOut),
-        'DERIVED_BALANCE_CREDIT_UNCONFIRMED',
-      );
-      out.push({
-        asset: row.asset,
-        recipient: row.recipient,
-        minimumOutput: q.quote.minAmountOut,
-        observedBalanceIncrease: (BigInt(after[key]) - BigInt(before[key])).toString(),
-        destinationTransactions: s.swapDetails.destinationChainTxHashes,
-      });
+    assert.equal(probe.evmAddress, '0xE9464975ECAFa3e27AC1048C16a3406395061092');
+    assert.equal(probe.solanaAddress, 'G48CEnMPfRadRQxaTmJkkdFRVTobyJyDDVec88PZwt2f');
+    let plan = await optional(dir + '/plan.json');
+    if (!plan) {
+      const deadline = new Date(Date.now() + 1200000).toISOString(),
+        quotes = [];
+      for (const row of ROWS) quotes.push(await client.quote(fundingTerms(row, deadline), false));
+      plan = makeCrossFundingPlan(quotes);
+      await writeFile(dir + '/plan.json', JSON.stringify(plan), { mode: 0o600, flag: 'wx' });
     }
-    return out;
-  };
-  const app = await createCrossFundingApp({
-    plan,
-    stateDir,
-    port,
-    inspect,
-    settlement,
-    client: await readFile(dir + '/client.js', 'utf8'),
-    readTransaction: (h) =>
-      rpc('tx', { tx_hash: h, sender_account_id: ROOT, wait_until: 'FINAL' }, ARCHIVE),
-    readBlock: (h) => rpc('block', { block_id: h }, ARCHIVE),
-  });
-  await app.listen({ host: '127.0.0.1', port });
-  console.log(
-    JSON.stringify({
-      portal: 'http://localhost:' + port,
-      capitalNear: '0.45',
-      totalAdditionalCeilingNear: '0.50',
-      serverHoldsOwnerKey: false,
-      transactionsSubmitted: 0,
-    }),
-  );
+    const plain = { ...plan };
+    delete plain.digest;
+    assert.equal(planDigest(plain), plan.digest, 'SAVED_PLAN_CHANGED');
+    const { createPublicClient, http, parseAbi } = await import('viem');
+    const { Connection, PublicKey } = await import('@solana/web3.js');
+    const evm = createPublicClient({ transport: http(c.EVM_RPC_URL) }),
+      sol = new Connection(c.SOLANA_RPC_URL, 'finalized');
+    const inspect = async () => {
+      assert.equal(await evm.getChainId(), 8453);
+      assert.equal(await sol.getGenesisHash(), '5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKuc147dw2N9d');
+      const b = (await rpc('block', { finality: 'final' })).header;
+      const owner = await rpc('query', {
+          request_type: 'view_account',
+          account_id: ROOT,
+          block_id: b.hash,
+        }),
+        hand = await rpc('query', {
+          request_type: 'view_account',
+          account_id: HAND,
+          block_id: b.hash,
+        });
+      const { MainnetReader } = await import('../../dist/mainnet.js');
+      const observed = await new MainnetReader(c).snapshot();
+      assert.ok(observed.code.matches, 'TREASURY_CODE_CHANGED');
+      assert.equal(observed.treasuryAccount, c.NEAR_CONTRACT_ID);
+      const base = (await evm.getBlockNumber()) - BigInt(c.EVM_CONFIRMATIONS) + 1n;
+      return {
+        block: { height: String(b.height), hash: b.hash },
+        ownerAvailableYocto: (
+          BigInt(owner.amount) -
+          BigInt(owner.storage_usage) * 10n ** 19n
+        ).toString(),
+        ownerBalanceYocto: owner.amount,
+        handBalanceYocto: hand.amount,
+        baseBlock: base.toString(),
+        usdc: (
+          await evm.readContract({
+            address: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
+            abi: parseAbi(['function balanceOf(address) view returns (uint256)']),
+            functionName: 'balanceOf',
+            args: [probe.evmAddress],
+            blockNumber: base,
+          })
+        ).toString(),
+        eth: (await evm.getBalance({ address: probe.evmAddress, blockNumber: base })).toString(),
+        sol: String(await sol.getBalance(new PublicKey(probe.solanaAddress), 'finalized')),
+        solSlot: String(await sol.getSlot('finalized')),
+      };
+    };
+    const settlement = async (p, before, after) => {
+      const out = [];
+      for (let i = 0; i < ROWS.length; i++) {
+        const row = ROWS[i],
+          q = p.quotes[i],
+          s = await client.status(q.quote.depositAddress);
+        assert.equal(s.status, 'SUCCESS', 'CROSS_CHAIN_SETTLEMENT_PENDING');
+        assert.equal(planDigest(s.quoteResponse), planDigest(q), 'SETTLEMENT_QUOTE_MISMATCH');
+        assert.ok(
+          BigInt(s.swapDetails.amountOut) >= BigInt(q.quote.minAmountOut),
+          'DESTINATION_MINIMUM_NOT_MET',
+        );
+        assert.ok(
+          s.swapDetails.destinationChainTxHashes.length > 0,
+          'DESTINATION_RECEIPT_REQUIRED',
+        );
+        for (const t of s.swapDetails.destinationChainTxHashes) {
+          if (i < 2) {
+            const r = await evm.getTransactionReceipt({ hash: t.hash });
+            assert.equal(r.status, 'success');
+            assert.ok(after.baseBlock && r.blockNumber <= BigInt(after.baseBlock));
+          } else {
+            const r = await sol.getTransaction(t.hash, {
+              commitment: 'finalized',
+              maxSupportedTransactionVersion: 0,
+            });
+            assert.ok(r && !r.meta.err, 'SOLANA_RECEIPT_NOT_FINAL');
+          }
+        }
+        if (i !== 1) {
+          const incoming = await wallets.verifyIncoming(
+            i === 0 ? 'eip155:8453' : 'solana:mainnet',
+            i === 0 ? '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913' : 'sol:native',
+            row.recipient,
+            q.quote.minAmountOut,
+            s.swapDetails.destinationChainTxHashes.map((t) => t.hash),
+            BigInt(i === 0 ? before.baseBlock : before.solSlot),
+          );
+          assert.ok(incoming.verified, 'DESTINATION_TRANSFER_NOT_VERIFIED');
+        }
+        const key = ['usdc', 'eth', 'sol'][i];
+        assert.ok(
+          BigInt(after[key]) - BigInt(before[key]) >= BigInt(q.quote.minAmountOut),
+          'DERIVED_BALANCE_CREDIT_UNCONFIRMED',
+        );
+        out.push({
+          asset: row.asset,
+          recipient: row.recipient,
+          minimumOutput: q.quote.minAmountOut,
+          observedBalanceIncrease: (BigInt(after[key]) - BigInt(before[key])).toString(),
+          destinationTransactions: s.swapDetails.destinationChainTxHashes,
+        });
+      }
+      return out;
+    };
+    const app = await createCrossFundingApp({
+      plan,
+      stateDir,
+      port,
+      inspect,
+      settlement,
+      client: await readFile(dir + '/client.js', 'utf8'),
+      readTransaction: (h) =>
+        rpc('tx', { tx_hash: h, sender_account_id: ROOT, wait_until: 'FINAL' }, ARCHIVE),
+      readBlock: (h) => rpc('block', { block_id: h }, ARCHIVE),
+    });
+    await app.listen({ host: '127.0.0.1', port });
+    console.log(
+      JSON.stringify({
+        portal: 'http://localhost:' + port,
+        capitalNear: '0.45',
+        totalAdditionalCeilingNear: '0.50',
+        serverHoldsOwnerKey: false,
+        transactionsSubmitted: 0,
+      }),
+    );
+  } catch (e) {
+    console.error(
+      JSON.stringify({
+        code: /^[A-Z0-9_]+$/.test(e.message) ? e.message : 'CROSS_FUNDING_START_HELD',
+        credentialValuesPrinted: false,
+      }),
+    );
+    process.exitCode = 1;
+  }
 }
