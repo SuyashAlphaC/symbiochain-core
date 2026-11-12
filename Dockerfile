@@ -17,12 +17,15 @@ COPY --from=build --chown=node:node /app/prisma.config.ts /app/package.json /app
 COPY --from=build --chown=node:node /app/scripts/start-render.sh ./scripts/start-render.sh
 COPY --from=build --chown=node:node /app/src/database-connection.ts ./src/database-connection.ts
 COPY --from=build --chown=node:node /app/certs ./certs
+COPY --from=build --chown=node:node /app/config/mainnet-scout-routes.json ./config/mainnet-scout-routes.json
 COPY --from=build --chown=node:node /app/artifacts/testnet-rehearsal.json ./artifacts/testnet-rehearsal.json
 COPY --from=build --chown=node:node /app/artifacts/brave-cli-verification.json ./artifacts/brave-cli-verification.json
 COPY --from=build --chown=node:node /app/artifacts/mainnet-paused-deployment.json ./artifacts/mainnet-paused-deployment.json
 COPY --from=build --chown=node:node /app/artifacts/mainnet-acceptance.json ./artifacts/mainnet-acceptance.json
 COPY --from=build --chown=node:node /app/artifacts/mainnet-bounded-activation.json ./artifacts/mainnet-bounded-activation.json
 COPY --from=build --chown=node:node /app/artifacts/mainnet-intents-settlement.json ./artifacts/mainnet-intents-settlement.json
+COPY --from=build --chown=node:node /app/artifacts/mainnet-wallet-provisioning.json ./artifacts/mainnet-wallet-provisioning.json
+COPY --from=build --chown=node:node /app/artifacts/mainnet-owned-execution.json ./artifacts/mainnet-owned-execution.json
 USER node
 EXPOSE 3001
 CMD ["node","dist/main.js"]

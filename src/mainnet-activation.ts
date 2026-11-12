@@ -3,6 +3,37 @@ import type { Store } from './store.js';
 import type { MainnetReader } from './mainnet.js';
 import { MainnetActivation, MainnetActivationProof } from './mainnet-activation-contract.js';
 import { readFile } from 'node:fs/promises';
+import type { Config } from './config.js';
+export function matchesMainnetPolicy(
+  c: Pick<Config, 'MAX_TRADE_ATOMS' | 'MAX_DAILY_SPEND_ATOMS'>,
+  policy: Awaited<ReturnType<MainnetReader['activationPolicy']>>,
+) {
+  const base = policy.allowed_token_contracts.findIndex(
+    (t) => t.toLowerCase() === '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913',
+  );
+  const sol = policy.allowed_token_contracts.indexOf('sol:native');
+  const chains = [...policy.allowed_chain_ids].sort((a, b) => a - b);
+  const baseOnly =
+    JSON.stringify(chains) === '[8453]' && policy.allowed_token_contracts.length === 1;
+  const dual =
+    JSON.stringify(chains) === '[0,8453]' &&
+    policy.allowed_token_contracts.length === 2 &&
+    sol >= 0 &&
+    policy.token_max_trade_atoms[sol] === '4000000' &&
+    policy.token_max_daily_atoms[sol] === '8000000';
+  return (
+    (baseOnly || dual) &&
+    base >= 0 &&
+    policy.max_trade_atoms === c.MAX_TRADE_ATOMS &&
+    policy.max_daily_atoms === c.MAX_DAILY_SPEND_ATOMS &&
+    BigInt(c.MAX_TRADE_ATOMS) > 1n &&
+    policy.token_max_trade_atoms[base] === c.MAX_TRADE_ATOMS &&
+    policy.token_max_daily_atoms[base] === c.MAX_DAILY_SPEND_ATOMS &&
+    BigInt(policy.min_reserve_yocto) >= 100000000000000000000000n &&
+    BigInt(policy.max_signing_cost_yocto) <= 1n &&
+    policy.max_slippage_bps === 0
+  );
+}
 export async function mainnetActivation(store: Store, reader: MainnetReader) {
   const c = store.config,
     snapshot = await reader.snapshot();
@@ -43,18 +74,7 @@ export async function mainnetActivation(store: Store, reader: MainnetReader) {
     reader.activationPolicy(snapshot.block.hash),
   ]);
   const enabled = snapshot.accounts.filter((a) => a.workerEnabled === true).length;
-  const matches =
-    snapshot.policy.maxTradeAtoms === c.MAX_TRADE_ATOMS &&
-    snapshot.policy.maxDailyAtoms === c.MAX_DAILY_SPEND_ATOMS &&
-    BigInt(c.MAX_TRADE_ATOMS) > 1n &&
-    JSON.stringify(policy.allowed_chain_ids) === '[8453]' &&
-    policy.allowed_token_contracts.length === 1 &&
-    policy.allowed_token_contracts[0]?.toLowerCase() ===
-      '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913' &&
-    policy.token_max_trade_atoms[0] === c.MAX_TRADE_ATOMS &&
-    policy.token_max_daily_atoms[0] === c.MAX_DAILY_SPEND_ATOMS &&
-    BigInt(policy.min_reserve_yocto) >= 100000000000000000000000n &&
-    BigInt(policy.max_signing_cost_yocto) <= 1n;
+  const matches = matchesMainnetPolicy(c, policy);
   return MainnetActivation.parse({
     contractVersion: 1,
     network: 'mainnet',

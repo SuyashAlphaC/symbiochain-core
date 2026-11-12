@@ -1,4 +1,4 @@
-import type { QuoteResponse } from '@defuse-protocol/one-click-sdk-typescript';
+import { quoteHash, type QuoteResponse } from '@defuse-protocol/one-click-sdk-typescript';
 import { PublicKey } from '@solana/web3.js';
 import type { Providers } from './types.js';
 import { OneClickClient, type SwapTerms } from './oneclick.js';
@@ -442,7 +442,7 @@ export class LiveProviders implements Providers {
         'Deposit reverted; reconciliation is required before releasing reservations',
       );
     const result = await this.oneclick.status(payload.quote.quote.depositAddress!);
-    if (digest(result.quoteResponse) !== digest(payload.quote))
+    if (quoteHash(result.quoteResponse) !== quoteHash(payload.quote))
       throw new DomainError('SETTLEMENT_QUOTE', 'Status quote differs from the funded quote');
     payload.nativeFeeAtoms = confirmation.nativeFeeAtoms;
     payload.statusEvidence = result;

@@ -66,7 +66,16 @@ describe('1Click boundary', () => {
       }).quote(terms, false),
     ).rejects.toThrow('requested terms');
   });
+  it('funds external wallets from Intents while refunds remain with the named Intents payer', async () => {
+    const q = await client().quote(terms, false, 'INTENTS_TO_CHAIN');
+    expect(q.quoteRequest.depositType).toBe('INTENTS');
+    expect(q.quoteRequest.recipientType).toBe('DESTINATION_CHAIN');
+    expect(q.quoteRequest.refundType).toBe('INTENTS');
+  });
   it('rejects memo deposits and expired executable quotes', async () => {
+    await expect(
+      client().quote({ ...terms, deadline: new Date(0).toISOString() }, false),
+    ).rejects.toThrow('spend deadline');
     await expect(
       client((r) => {
         r.quote.depositMemo = '42';
@@ -93,6 +102,30 @@ describe('1Click boundary', () => {
       });
     await expect(new OneClickClient(wrong, transport).quote(terms, true)).rejects.toThrow(
       'signature is invalid',
+    );
+  });
+  it('accepts signed status echoes without transport metadata and preserves unknown pending amounts', async () => {
+    const original = await client().quote(terms, false);
+    const { correlationId: _transportId, ...echo } = original;
+    const body = {
+      status: 'PROCESSING',
+      quoteResponse: echo,
+      swapDetails: {
+        amountIn: null,
+        amountOut: null,
+        refundedAmount: '0',
+        originChainTxHashes: [],
+        destinationChainTxHashes: [],
+      },
+    };
+    const statusClient = new OneClickClient(c, async () => Response.json(body));
+    const pending = await statusClient.status('quote.deposit');
+    expect(pending.status).toBe('PROCESSING');
+    expect(pending.swapDetails.amountOut).toBeNull();
+    expect(quoteHash(pending.quoteResponse)).toBe(quoteHash(original));
+    body.quoteResponse.quoteRequest.recipient = 'attacker';
+    await expect(statusClient.status('quote.deposit')).rejects.toThrow(
+      'invalid 1Click quote signature',
     );
   });
 });

@@ -1,0 +1,129 @@
+{
+  "contractVersion": 1,
+  "checkedAt": "2026-11-12T06:35:08.737Z",
+  "network": "mainnet",
+  "scope": "OWNER_FUNDED_PROVISIONING_NOT_REVENUE",
+  "status": "PARTIAL_REFUNDED",
+  "funding": [
+    {
+      "hash": "Af3Mh6mNck2qe4HUdfNjdL5jsdrEtEBADSEJJkTeVY7j",
+      "url": "https://nearblocks.io/txns/Af3Mh6mNck2qe4HUdfNjdL5jsdrEtEBADSEJJkTeVY7j",
+      "label": "hand_near_gas",
+      "amountYocto": "250000000000000000000000",
+      "feeYocto": "44636512500000000000"
+    },
+    {
+      "hash": "J7w865ca3Syh4bQsRyV8jTH3qk4EYBFVxp7HeXSPBEBR",
+      "url": "https://nearblocks.io/txns/J7w865ca3Syh4bQsRyV8jTH3qk4EYBFVxp7HeXSPBEBR",
+      "label": "base_usdc",
+      "amountYocto": "100000000000000000000000",
+      "feeYocto": "7114989537500000000000"
+    },
+    {
+      "hash": "B4QxUsTtC8tbhcTBgyeabeDtJygXdnCrqwUkrrxLgcHK",
+      "url": "https://nearblocks.io/txns/B4QxUsTtC8tbhcTBgyeabeDtJygXdnCrqwUkrrxLgcHK",
+      "label": "base_eth",
+      "amountYocto": "50000000000000000000000",
+      "feeYocto": "7114989537500000000000"
+    },
+    {
+      "hash": "9en7QTii9tQaX13Y1EJw95MQmACpq7prvgPh25MMg3ru",
+      "url": "https://nearblocks.io/txns/9en7QTii9tQaX13Y1EJw95MQmACpq7prvgPh25MMg3ru",
+      "label": "sol_gas",
+      "amountYocto": "50000000000000000000000",
+      "feeYocto": "7114989537500000000000"
+    }
+  ],
+  "permissions": [
+    {
+      "hash": "7dHHTzoeirQjQ7SYnibCnrYn87EoL5BicM7RVDfhVVDP",
+      "url": "https://nearblocks.io/txns/7dHHTzoeirQjQ7SYnibCnrYn87EoL5BicM7RVDfhVVDP",
+      "label": "hand_mpc_allowance",
+      "feeYocto": "61069779303000000000"
+    },
+    {
+      "hash": "8gYJJpuyU51BRx5b27YiqLVEj4s6YVmPyvL1djRa46RW",
+      "url": "https://nearblocks.io/txns/8gYJJpuyU51BRx5b27YiqLVEj4s6YVmPyvL1djRa46RW",
+      "label": "base_sol_bounded_policy",
+      "feeYocto": "228027133319100000000"
+    }
+  ],
+  "conversions": [
+    {
+      "asset": "nep141:base-0x833589fcd6edb6e08f4c7c32d4f71b54bda02913.omft.near",
+      "status": "SUCCESS",
+      "inputYocto": "100000000000000000000000",
+      "minimumOutputAtoms": "349181",
+      "actualOutputAtoms": "349281",
+      "refundYocto": "0",
+      "refundReceipts": [],
+      "destinationHashes": [
+        "0x182fedfdbe739fd2bc8fd46d20448d3fe8f98e3407efe5cf4a1eca83c0dc10d0"
+      ],
+      "reason": null
+    },
+    {
+      "asset": "nep141:base.omft.near",
+      "status": "REFUNDED",
+      "inputYocto": "50000000000000000000000",
+      "minimumOutputAtoms": "85372123822312",
+      "actualOutputAtoms": null,
+      "refundYocto": "50000000000000000000000",
+      "refundReceipts": [
+        {
+          "hash": "3tJA1Nacbtri5bVoWRrNeb6vgoknEjKZZfF9rX9gQPCQ",
+          "url": "https://nearblocks.io/txns/3tJA1Nacbtri5bVoWRrNeb6vgoknEjKZZfF9rX9gQPCQ"
+        }
+      ],
+      "destinationHashes": [],
+      "reason": "QUOTE_EXPIRED"
+    },
+    {
+      "asset": "nep141:sol.omft.near",
+      "status": "REFUNDED",
+      "inputYocto": "50000000000000000000000",
+      "minimumOutputAtoms": "2001601",
+      "actualOutputAtoms": null,
+      "refundYocto": "50000000000000000000000",
+      "refundReceipts": [
+        {
+          "hash": "AVTLQNtBccJwPnTFhb372gEfz1SDte1kbTbrvkPtJZ7y",
+          "url": "https://nearblocks.io/txns/AVTLQNtBccJwPnTFhb372gEfz1SDte1kbTbrvkPtJZ7y"
+        }
+      ],
+      "destinationHashes": [],
+      "reason": "QUOTE_EXPIRED"
+    }
+  ],
+  "capitalSentYocto": "450000000000000000000000",
+  "capitalReturnedYocto": "100000000000000000000000",
+  "retainedCapitalYocto": "350000000000000000000000",
+  "networkFeesYocto": "21678702037622100000000",
+  "additionalCeilingYocto": "500000000000000000000000",
+  "policy": {
+    "max_trade_atoms": "250000",
+    "max_daily_atoms": "500000",
+    "min_reserve_yocto": "100000000000000000000000",
+    "max_signing_cost_yocto": "1",
+    "max_slippage_bps": 0,
+    "allowed_chain_ids": [
+      8453,
+      0
+    ],
+    "allowed_token_contracts": [
+      "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "sol:native"
+    ],
+    "token_max_trade_atoms": [
+      "250000",
+      "4000000"
+    ],
+    "token_max_daily_atoms": [
+      "500000",
+      "8000000"
+    ]
+  },
+  "paidInferenceRequests": 0,
+  "externalRevenueProven": false,
+  "profitProven": false
+}

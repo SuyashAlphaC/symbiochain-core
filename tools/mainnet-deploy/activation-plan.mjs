@@ -134,6 +134,8 @@ export function verifyActivationReceipt(raw, hash, transaction, perFee = UNIT / 
         p.args,
         'ARGUMENT_MISMATCH',
       );
+    } else if (expected.type === 'Transfer') {
+      assert.equal(String(actual.Transfer?.deposit), expected.params.deposit, 'TRANSFER_MISMATCH');
     } else if (expected.type === 'DeleteKey') {
       assert.equal(actual.DeleteKey?.public_key, expected.params.publicKey, 'KEY_MISMATCH');
     } else {
@@ -144,8 +146,8 @@ export function verifyActivationReceipt(raw, hash, transaction, perFee = UNIT / 
       assert.equal(a.public_key, p.publicKey, 'KEY_MISMATCH');
       const f = a.access_key.permission.FunctionCall;
       assert.ok(f, 'FULL_ACCESS_FORBIDDEN');
-      assert.equal(f.receiver_id, 'intents.near', 'KEY_RECEIVER_MISMATCH');
-      assert.deepEqual(f.method_names, ['execute_intents'], 'KEY_METHOD_MISMATCH');
+      assert.equal(f.receiver_id, p.accessKey.permission.receiverId, 'KEY_RECEIVER_MISMATCH');
+      assert.deepEqual(f.method_names, p.accessKey.permission.methodNames, 'KEY_METHOD_MISMATCH');
       assert.equal(
         String(f.allowance),
         String(p.accessKey.permission.allowance),

@@ -1,0 +1,33 @@
+{
+  "checkedAt": "2026-11-12T10:25:49.474Z",
+  "scope": "DISARMED_MAINNET_POLICY_AND_OWNER_CAPITAL",
+  "applied": true,
+  "policyPaused": true,
+  "onChainPolicyMatched": true,
+  "capitalSource": "VERIFIED_OWNER_FUNDING_NOT_REVENUE",
+  "capitalReceipt": "0x182fedfdbe739fd2bc8fd46d20448d3fe8f98e3407efe5cf4a1eca83c0dc10d0",
+  "capitalAtoms": "349281",
+  "journalBalanceAtoms": "349281",
+  "policy": {
+    "paused": true,
+    "maxTradeAtoms": "250000",
+    "maxDailySpendAtoms": "500000",
+    "minReserveAtoms": "100000",
+    "minNetProfitAtoms": "10000",
+    "maxSlippageBps": 0,
+    "allowedAssets": [
+      "nep141:base-0x833589fcd6edb6e08f4c7c32d4f71b54bda02913.omft.near",
+      "nep141:sol.omft.near"
+    ],
+    "allowedChains": [
+      "eip155:8453",
+      "solana:mainnet"
+    ],
+    "allowedRecipients": [
+      "0xE9464975ECAFa3e27AC1048C16a3406395061092"
+    ]
+  },
+  "paidInferenceRequests": 0,
+  "transactionsSubmitted": 0,
+  "externalRevenueProven": false
+}

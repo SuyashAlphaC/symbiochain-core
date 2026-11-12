@@ -1,0 +1,47 @@
+{
+  "checkedAt": "2026-11-12T10:36:20.865Z",
+  "scope": "EXPIRED_GAS_QUOTES_FULLY_REFUNDED",
+  "network": "mainnet",
+  "fundingReceipts": [
+    {
+      "hash": "6B7c5MraLZzMxtfUib5BVtfXHxaU5GKX1PARC8qyo4o1",
+      "step": "base_eth_refunded_retry",
+      "signerId": "solidvideo4090.near",
+      "receiverId": "5a0390e1741dae8a078f78e40e9e2124111ab4d63c630f3d48a6c87b929b5b65",
+      "actualFeeYocto": "7114989537500000000000",
+      "blockHash": "2YeDYzWnyvoydrgawFfYfqZSxq1MTgNGxkUKa6HVqbKs",
+      "final": true,
+      "succeeded": true,
+      "url": "https://nearblocks.io/txns/6B7c5MraLZzMxtfUib5BVtfXHxaU5GKX1PARC8qyo4o1"
+    },
+    {
+      "hash": "14dKHy8hGW3PG2hDNzvdajwbhRomecg7A9bYL4qjoCeU",
+      "step": "sol_gas_refunded_retry",
+      "signerId": "solidvideo4090.near",
+      "receiverId": "784ab23966c917f8f87305d922d1e951a913a07c450f774e9089380dd4ea73fc",
+      "actualFeeYocto": "7114989537500000000000",
+      "blockHash": "7fQZoZNUcTur9fUKo3nzdVnmihDfstMJXDTh2upmkRAp",
+      "final": true,
+      "succeeded": true,
+      "url": "https://nearblocks.io/txns/14dKHy8hGW3PG2hDNzvdajwbhRomecg7A9bYL4qjoCeU"
+    }
+  ],
+  "refunds": [
+    {
+      "hash": "CfBfAiVG2vxfuqLKYGKHMRiz58CR4bsmrsh7f9MmDBSQ",
+      "url": "https://nearblocks.io/txns/CfBfAiVG2vxfuqLKYGKHMRiz58CR4bsmrsh7f9MmDBSQ",
+      "amountYocto": "50000000000000000000000",
+      "reason": "QUOTE_EXPIRED"
+    },
+    {
+      "hash": "HAj4i68ZzxVY9KvNiiekHvt4N9oWqf8EdxBpRZx4nViE",
+      "url": "https://nearblocks.io/txns/HAj4i68ZzxVY9KvNiiekHvt4N9oWqf8EdxBpRZx4nViE",
+      "amountYocto": "50000000000000000000000",
+      "reason": "QUOTE_EXPIRED"
+    }
+  ],
+  "refundedNativeYocto": "100000000000000000000000",
+  "networkFeesYocto": "14229979075000000000000",
+  "paidInferenceRequests": 0,
+  "rootNativeRefundsReconciled": true
+}

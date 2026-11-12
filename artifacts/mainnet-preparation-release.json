@@ -1,0 +1,116 @@
+{
+  "checkedAt": "2026-11-12T05:58:54.316Z",
+  "scope": "MAINNET_INTERNAL_INTENTS_AND_READ_ONLY_PREPARATION_RELEASE",
+  "frontend": {
+    "revision": "b21653e5a8c1b334141e684b5cf4c1be02f4b65a",
+    "deploymentId": "dpl_H57UfdREeC48Q6MSJas8j3KSWiw8",
+    "url": "https://symbiochain.vercel.app"
+  },
+  "backend": {
+    "revision": "13c2c56475aec7fe83b6e00422c9955fb61441ee",
+    "deploymentId": "dep-dbql7i6c6qcc73fmji10",
+    "serviceId": "srv-dbgd7u4s728c738qjstg",
+    "url": "https://symbiochain-core.onrender.com"
+  },
+  "runtime": {
+    "mode": "LIVE",
+    "executionEnabled": false,
+    "mainnetPreparationEnabled": true,
+    "monitorOnlyWorkers": false,
+    "teeApproval": "QUARANTINED",
+    "paidInferenceRequests": 0
+  },
+  "settlementEvidence": "artifacts/mainnet-intents-settlement.json",
+  "currentPreparationGates": [
+    {
+      "id": "TREASURY_IDENTITY",
+      "status": "PASS",
+      "detail": "Treasury executable must match the reviewed deployment."
+    },
+    {
+      "id": "OWNER_ACTIVATION",
+      "status": "PASS",
+      "detail": "The treasury must be unpaused with all three worker permissions enabled."
+    },
+    {
+      "id": "BASE_AUTHORIZATION",
+      "status": "PASS",
+      "detail": "Base USDC must fit the owner-approved contract policy."
+    },
+    {
+      "id": "SOLANA_RETURN_AUTHORIZATION",
+      "status": "BLOCKED",
+      "detail": "The SOL return leg needs an owner-signed chain-0 and sol:native policy with native-unit token caps. Current Base-only permissions do not authorize it."
+    },
+    {
+      "id": "MAINNET_ENDPOINTS",
+      "status": "PASS",
+      "detail": "Base chain ID and Solana mainnet genesis are checked against the serving RPCs."
+    },
+    {
+      "id": "BASE_CAPITAL",
+      "status": "BLOCKED",
+      "detail": "The derived Base wallet needs at least 50000 USDC atoms; native NEAR is not USDC trading capital."
+    },
+    {
+      "id": "BASE_GAS",
+      "status": "BLOCKED",
+      "detail": "The derived Base wallet must cover the configured maximum transfer-gas budget in ETH."
+    },
+    {
+      "id": "SOLANA_GAS",
+      "status": "BLOCKED",
+      "detail": "The derived Solana wallet must retain the configured native SOL fee reserve."
+    },
+    {
+      "id": "PROFITABLE_SIGNED_ROUTE",
+      "status": "UNAVAILABLE",
+      "detail": "The provider supplied no usable signed round trip at the approved size. No funded quote or trade was requested."
+    }
+  ],
+  "validation": {
+    "backendUnitTests": 146,
+    "integrationTests": 81,
+    "ownerToolTests": 17,
+    "frontendTests": 28,
+    "backendCi": true,
+    "contractCi": true,
+    "frontendCi": true,
+    "productionBrowser": {
+      "checkedAt": "2026-11-12T05:57:36.881Z",
+      "target": "https://symbiochain.vercel.app",
+      "scope": "READ_ONLY_PRODUCTION_BROWSER",
+      "boundedOwnerActivation": true,
+      "verifiedActivationReceipts": 7,
+      "preparationHeartbeats": 3,
+      "teeQuarantined": true,
+      "mainnetAcceptance": true,
+      "internalIntentsPayments": 2,
+      "nonTeePreparation": true,
+      "serviceDepositAndWithdrawalProofs": true,
+      "mainnetOnlyEvidence": true,
+      "legacyTestnetRedirect": true,
+      "staleReportHandling": true,
+      "mutatingApiRequests": 0,
+      "credentialTypesInspected": 15,
+      "dashboard": true,
+      "finalizedMainnetData": true,
+      "activePermissionsAndDisarmedLabels": true,
+      "knownReceiptLookup": true,
+      "walletDialog": true,
+      "realExtensionLoginPerformed": false,
+      "localWalletFixtureCoveredSeparately": true,
+      "staleRecoveryViaInterception": true,
+      "routeCount": 8,
+      "mobileWidth": 390,
+      "mobileOverflow": false,
+      "directBrowserBackendRequests": 0,
+      "credentialExposures": 0,
+      "pageErrors": 0,
+      "inspectedResponses": 517,
+      "paidInferenceRequests": 0,
+      "blockchainTransactionsSubmitted": 0
+    }
+  },
+  "submissionHold": true
+}

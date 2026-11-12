@@ -53,6 +53,9 @@ it('distinguishes active owner policy, monitor heartbeats and the closed AI exec
     }),
     intentKeyRegistered: async (account: string) => account.startsWith('brain'),
     activationPolicy: async () => ({
+      max_trade_atoms: '50000',
+      max_daily_atoms: '100000',
+      max_slippage_bps: 0,
       allowed_chain_ids: [8453],
       allowed_token_contracts: ['0x833589fcd6edb6e08f4c7c32d4f71b54bda02913'],
       token_max_trade_atoms: ['50000'],

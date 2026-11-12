@@ -116,3 +116,9 @@ the two allowance repairs. A separate 0.00125 NEAR is FT storage collateral and
 These transfers do not establish external revenue, a market swap, model execution,
 profit or purchased credits. The Intents key repair does not expand its receiver
 or permitted native method and does not grant full access.
+
+## Bounded execution and configuration — November 12
+
+[Two mainnet Chain Signatures transfers](../artifacts/mainnet-owned-execution.json) finalized on Base and Solana, and both treasury cycles closed. Real Intents gas conversions funded the derived wallets. The [configuration script](../scripts/configure-mainnet.ts) verifies the signed owner policy, source funding receipt, provider binding and destination USDC credit before importing owner capital. It keeps the database policy paused and preserves the profit floor. The scope and cost disclosures in the root README supersede the earlier unfunded snapshot above.
+
+The original gas-funding retries exposed a deadline bug: the deposit cleanup deadline outlives the requested spend deadline. Both are now checked before funding. Static funding of the agents precedes executable quote creation, eliminating the human-approval gap for these conversions. Expired attempts are reconciled through actual native refunds; they are not silently resubmitted.

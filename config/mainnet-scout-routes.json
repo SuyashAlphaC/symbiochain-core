@@ -1,0 +1,13 @@
+[
+  {
+    "strategy": "round-trip",
+    "originChain": "eip155:8453",
+    "destinationChain": "solana:mainnet",
+    "originAsset": "nep141:base-0x833589fcd6edb6e08f4c7c32d4f71b54bda02913.omft.near",
+    "intermediateAsset": "nep141:sol.omft.near",
+    "amountAtoms": "150000",
+    "recipient": "0xE9464975ECAFa3e27AC1048C16a3406395061092",
+    "refundTo": "0xE9464975ECAFa3e27AC1048C16a3406395061092",
+    "slippageBps": 0
+  }
+]

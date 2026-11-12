@@ -60,7 +60,7 @@ export class NearTreasury {
     role: ContractRole,
     methodName: string,
     args: Record<string, unknown>,
-    gas = 80_000_000_000_000n,
+    gas = 20_000_000_000_000n,
   ): Promise<T> {
     return (await this.accounts[role].callFunction({
       contractId: this.config.NEAR_CONTRACT_ID,

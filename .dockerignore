@@ -15,5 +15,7 @@ artifacts/*
 !artifacts/mainnet-acceptance.json
 !artifacts/mainnet-bounded-activation.json
 !artifacts/mainnet-intents-settlement.json
+!artifacts/mainnet-wallet-provisioning.json
+!artifacts/mainnet-owned-execution.json
 coverage
 *.log

@@ -1,0 +1,72 @@
+{
+  "checkedAt": "2026-11-12T10:44:10.023Z",
+  "scope": "OWNER_FUNDED_MAINNET_GAS_WALLETS_VIA_INTENTS",
+  "network": "mainnet",
+  "ownerFundingReceipt": {
+    "hash": "7zBANhJ9EasR8jg46U6jSa59Jh2EuJWAJJWU8E76BorP",
+    "step": "refunded_capital_to_agents",
+    "signerId": "solidvideo4090.near",
+    "receiverId": "wrap.near",
+    "actualFeeYocto": "1702067580709000000000",
+    "blockHash": "KMRx5qo2ToRB69rYmNagmpUZaREY9sj4UdVBELyEPsF",
+    "final": true,
+    "succeeded": true,
+    "url": "https://nearblocks.io/txns/7zBANhJ9EasR8jg46U6jSa59Jh2EuJWAJJWU8E76BorP"
+  },
+  "conversions": [
+    {
+      "checkedAt": "2026-11-12T10:42:20.149Z",
+      "asset": "nep141:base.omft.near",
+      "payer": "brain.symbio-fcef733893.near",
+      "recipient": "0xE9464975ECAFa3e27AC1048C16a3406395061092",
+      "amountInYocto": "50000000000000000000000",
+      "amountOutAtoms": "84528536049266",
+      "nativeReceipt": {
+        "hash": "EWhQ2GQGp37SqzFgxeBotuifa2WGqgfDp1SVEzic4Tt2",
+        "step": "base_eth",
+        "signerId": "brain.symbio-fcef733893.near",
+        "receiverId": "intents.near",
+        "actualFeeYocto": "563396279196500000000",
+        "blockHash": "8DsXq97J4iVcjEzFYsCXuvM1fC5vBXEDSaU8pcSspHYr",
+        "final": true,
+        "succeeded": true,
+        "url": "https://nearblocks.io/txns/EWhQ2GQGp37SqzFgxeBotuifa2WGqgfDp1SVEzic4Tt2"
+      },
+      "destinationHashes": [
+        "0x4f33bfba90fb338ec565a764d5c1adf6be8a7e5e2f19338841440a63871e585a"
+      ],
+      "nonceConfirmed": true,
+      "quoteDigest": "BSySj29aufAFGwfFUM9hz44p38RzDqR79bLDkPUCs8rw",
+      "status": "SUCCESS"
+    },
+    {
+      "checkedAt": "2026-11-12T10:44:10.021Z",
+      "asset": "nep141:sol.omft.near",
+      "payer": "hand.symbio-fcef733893.near",
+      "recipient": "G48CEnMPfRadRQxaTmJkkdFRVTobyJyDDVec88PZwt2f",
+      "amountInYocto": "50000000000000000000000",
+      "amountOutAtoms": "1976031",
+      "nativeReceipt": {
+        "hash": "9N58JRrKxQ9T79GMpGJVKHnkyDs7io6vD6d7njwpjn2U",
+        "step": "sol_gas",
+        "signerId": "hand.symbio-fcef733893.near",
+        "receiverId": "intents.near",
+        "actualFeeYocto": "571447963930700000000",
+        "blockHash": "LSwwnERaYnzZ1eBEvnzpNnr8UqjnhMd6uxg6MDXJWny",
+        "final": true,
+        "succeeded": true,
+        "url": "https://nearblocks.io/txns/9N58JRrKxQ9T79GMpGJVKHnkyDs7io6vD6d7njwpjn2U"
+      },
+      "destinationHashes": [
+        "57PBjamzRHsJkh9gKqFh8CiojDUB29N19wwUPMnAgEZU2JZXt4XffNzSFzNbeXPjeByv7cEC8JkdHjykY84FhRe1"
+      ],
+      "nonceConfirmed": true,
+      "quoteDigest": "HmuXthB9VntkPx12KskvXPFygnN5Nu9Hkiy9T8pP4zdN",
+      "status": "SUCCESS"
+    }
+  ],
+  "paidInferenceRequests": 0,
+  "teeApprovalClaimed": false,
+  "externalRevenueProven": false,
+  "profitProven": false
+}

@@ -1,0 +1,14 @@
+{
+  "checkedAt": "2026-11-12T06:00:27.602Z",
+  "scope": "UNSIGNED_MAINNET_CROSS_CHAIN_FUNDING_BROWSER",
+  "transactions": 4,
+  "capitalNear": "0.45",
+  "additionalPlanningCeilingNear": "0.50",
+  "namedOwner": true,
+  "exactAmountsAndProviderDeposits": true,
+  "dedicatedDestinations": true,
+  "signatureDeliberatelyRejected": true,
+  "mainnetTransactionsSubmitted": 0,
+  "paidInferenceRequests": 0,
+  "noAccessKeyRequested": true
+}

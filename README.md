@@ -18,7 +18,7 @@ The backend includes TypeScript/Fastify, PostgreSQL/Prisma, durable workers, a R
 
 **Mainnet foundation:** [treasury.symbio-fcef733893.near](https://nearblocks.io/address/treasury.symbio-fcef733893.near) is deployed with four funded agent accounts. Its later bounded activation is recorded separately below; the original deployment snapshot remains a dated paused-state record. The dedicated owner is `symbio-fcef733893.near`; its Meteor recovery key remains in control and the temporary deployment key is revoked. Nine deployment transactions, a separate 0.001 NEAR treasury capital deposit, and a 0.002 NEAR service deposit/withdrawal are confirmed. The service test returned 0.0012 NEAR, retained 0.0008 NEAR as storage collateral and incurred 0.0007785144816934 NEAR in combined fees. The service balance is zero. These are self-funded mechanics, not earned revenue.
 
-Testnet artifacts remain dated historical regression evidence in Git; the current public evidence view does not count them as mainnet results. The legacy `/testnet` page redirects to `/evidence`. Two controlled mainnet agent payments have settled inside Intents. MPC execution, market swaps, profit-backed NFTs, business-funded distributions and verified paid AI remain blocked or unexecuted. No synthetic mainnet profit is used to fill those gaps. Automatic provider credit purchasing remains unsupported.
+Testnet artifacts remain dated historical regression evidence in Git; the current public evidence view does not count them as mainnet results. The legacy `/testnet` page redirects to `/evidence`. Two controlled mainnet agent payments have settled inside Intents. Owner-authorized MPC transfers have completed on Base and Solana. Profitable strategy trading, profit-backed NFTs, business-funded distributions and verified paid AI remain unproven. No synthetic mainnet profit is used to fill those gaps. Automatic provider credit purchasing remains unsupported.
 
 ## Bounded owner activation
 
@@ -29,6 +29,16 @@ The [activation guide](docs/BOUNDED_MAINNET_ACTIVATION.md) records the receiver-
 The [preparation runbook](docs/MAINNET_PREPARATION.md) separates non-TEE conditions from deployment approval. The dedicated read-only worker checks finalized account identities, Base/Solana balances, owner authorization and two signed dry quotes every five minutes. Missing capital, missing SOL-return permission and an unprofitable or unavailable route remain visible as independent gates. A passing preparation check never opens execution.
 
 The [November 12 settlement evidence](artifacts/mainnet-intents-settlement.json) records two real 0.0001-wNEAR Intents payments: Brain to Scout and Hand to Brain. Final receipts, consumed nonces and exact debit/credit changes were reconciled. Total network fees, including the failed funding attempt and two same-key gas-allowance repairs, were **0.0037364334643139 NEAR**. A separate 0.002 NEAR is recoverable capital and 0.00125 NEAR is FT storage collateral, within the 0.03-NEAR test ceiling. These are team-funded internal payments; they establish neither external revenue nor AI execution, a market swap, business profit or purchased credits.
+
+## Confirmed mainnet execution — November 12
+
+Two [owner-authorized Chain Signatures fixtures](artifacts/mainnet-owned-execution.json) completed: a one-atom Base USDC self-transfer and a native-SOL transfer to the Scout account's derived wallet. Both destination transactions finalized and both treasury cycles closed with zero gross P&L. Their eight NEAR receipts record authorization, MPC request, submission and accountant finalization. They establish cryptographic signing and transfer mechanics, not TEE-approved AI, strategy profit or an NFT mint.
+
+[Gas funding](artifacts/mainnet-fresh-gas-funding.json) used real Intents conversions after the owner funded the agents. Two earlier gas-quote attempts expired and refunded their principal; their fees remain included. The spend-deadline guard now checks the request deadline separately from the longer deposit-address cleanup deadline. The corrected flow requests executable prices only after wallet funding confirms.
+
+Continuation network fees were **0.0435279283243207 NEAR**, including the expired funding attempts and subsequent permission/execution calls. Retained capital input was **0.45 NEAR**, within the **0.50-NEAR additional planning ceiling**. Destination gas is paid from the funded native assets; these figures do not establish complete USD business costs or net profit. The treasury's existing storage collateral remains separate.
+
+The database policy now matches the signed 0.25-USDC / 0.50-USDC authorization limits and bounded SOL token caps. Its PAPER defaults and zero LIVE limits were replaced while preserving its paused state. The verified 0.349281-USDC owner deposit was imported as capital through an idempotent balanced journal, not revenue. The route allowlist, Base gas limits and Solana reserve are configured. Automated execution remains disarmed; TEE approval and the unchanged profit guard remain separate requirements. No paid model request or hackathon submission occurred.
 
 ## Business evidence
 

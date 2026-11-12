@@ -42,6 +42,8 @@ import { readMainnetAcceptance } from './mainnet-acceptance.js';
 import { mainnetActivation } from './mainnet-activation.js';
 import { mainnetPreparation } from './mainnet-preparation.js';
 import { readMainnetSettlementFixture } from './mainnet-settlement.js';
+import { readMainnetProvisioning } from './mainnet-provisioning.js';
+import { readMainnetOwnedExecution } from './mainnet-execution.js';
 import { viewerStatus, viewerCycles, viewerCycle, viewerEvents } from './viewer-details.js';
 import { MainnetReader } from './mainnet.js';
 import { RuntimeStatus } from './mainnet-contract.js';
@@ -158,6 +160,14 @@ export async function createApp(
   app.get('/api/evidence/mainnet-intents', secured, async (_req, reply) => {
     reply.header('cache-control', 'private, no-store');
     return readMainnetSettlementFixture();
+  });
+  app.get('/api/evidence/mainnet-provisioning', secured, async (_req, reply) => {
+    reply.header('cache-control', 'no-store');
+    return readMainnetProvisioning();
+  });
+  app.get('/api/evidence/mainnet-execution', secured, async (_req, reply) => {
+    reply.header('cache-control', 'no-store');
+    return readMainnetOwnedExecution();
   });
   app.get('/api/mainnet/wallet', secured, async (req, reply) => {
     const { accountId } = z
