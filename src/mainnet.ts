@@ -54,10 +54,26 @@ const accountId = z
   .max(64)
   .regex(/^[a-z0-9]+(?:[._-][a-z0-9]+)*$/);
 
+// Public mainnet read endpoint listed in NEAR's RPC provider documentation.
+// Financial signing/broadcast clients never use this observer fallback.
+const READ_FALLBACK = 'https://near.drpc.org';
+function transientReadFailure(error: unknown) {
+  return (
+    (error instanceof DomainError &&
+      error.code === 'UPSTREAM_HTTP' &&
+      /HTTP (429|502|503|504)$/.test(error.message)) ||
+    (error instanceof Error && error.name === 'TimeoutError') ||
+    (error instanceof TypeError && error.message === 'fetch failed')
+  );
+}
+
 /** Public, bounded, read-only chain port. No signer or model client is constructed here. */
 export class MainnetReader {
   private cached: { expires: number; snapshot: z.infer<typeof MainnetSnapshot> } | undefined;
   private inFlight: Promise<z.infer<typeof MainnetSnapshot>> | undefined;
+  private primaryRetryAfter = 0;
+  private fallbackIdentity: { expires: number; value: unknown } | undefined;
+  private fallbackIdentityRequest: Promise<unknown> | undefined;
   private manifest: Promise<z.infer<typeof Manifest>>;
   constructor(
     private c: Config,
@@ -77,7 +93,7 @@ export class MainnetReader {
     if (this.c.EXECUTION_MODE !== 'LIVE' || this.c.NEAR_NETWORK !== 'mainnet')
       throw new DomainError('MAINNET_NOT_ACTIVE', 'Mainnet observation is not active', 503);
   }
-  private async rpc(
+  private async rpcOnce(
     method: 'query' | 'status' | 'block' | 'EXPERIMENTAL_protocol_config' | 'tx',
     params: unknown,
     endpoint = this.c.NEAR_RPC_URL,
@@ -91,12 +107,54 @@ export class MainnetReader {
           body: JSON.stringify({ jsonrpc: '2.0', id: 'symbio-mainnet-read', method, params }),
           signal: AbortSignal.timeout(12000),
         },
-        this.transport,
+        async (url, init) => {
+          const response = await this.transport(url, init);
+          if (!response.ok) await response.body?.cancel();
+          return response;
+        },
       ),
     );
     if (raw.error || raw.result === undefined)
       throw new DomainError('MAINNET_RPC_UNAVAILABLE', 'Mainnet data could not be verified', 503);
     return raw.result;
+  }
+  private async verifiedFallback() {
+    if (this.fallbackIdentity && this.fallbackIdentity.expires > Date.now())
+      return this.fallbackIdentity.value;
+    if (this.fallbackIdentityRequest) return this.fallbackIdentityRequest;
+    this.fallbackIdentityRequest = this.rpcOnce('status', [], READ_FALLBACK)
+      .then((value) => {
+        if (z.object({ chain_id: z.string() }).parse(value).chain_id !== 'mainnet')
+          throw new DomainError('CHAIN_ID_MISMATCH', 'Fallback RPC is not NEAR mainnet', 503);
+        this.fallbackIdentity = { value, expires: Date.now() + 60000 };
+        return value;
+      })
+      .finally(() => {
+        this.fallbackIdentityRequest = undefined;
+      });
+    return this.fallbackIdentityRequest;
+  }
+  private async rpc(
+    method: 'query' | 'status' | 'block' | 'EXPERIMENTAL_protocol_config' | 'tx',
+    params: unknown,
+    endpoint?: string,
+  ) {
+    // An explicitly selected archive retains its own network/receipt checks.
+    if (endpoint) return this.rpcOnce(method, params, endpoint);
+    const sameEndpoint = new URL(this.c.NEAR_RPC_URL).href === new URL(READ_FALLBACK).href;
+    if (sameEndpoint || this.primaryRetryAfter <= Date.now()) {
+      try {
+        return await this.rpcOnce(method, params);
+      } catch (error) {
+        if (sameEndpoint || !transientReadFailure(error)) throw error;
+        // Avoid retrying the limited primary for every account in this snapshot.
+        this.primaryRetryAfter = Date.now() + 60000;
+      }
+    }
+    const identity = await this.verifiedFallback();
+    if (method === 'status') return identity;
+    // Query params keep the original finalized block hash when changing providers.
+    return this.rpcOnce(method, params, READ_FALLBACK);
   }
   private async block() {
     const [status, block] = await Promise.all([
