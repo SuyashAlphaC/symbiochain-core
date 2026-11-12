@@ -54,7 +54,9 @@ export class IntentPayments {
           contractId: c.INTENTS_CONTRACT_ID,
           methodName: 'execute_intents',
           args: { signed: [intent] },
-          gas: 100_000_000_000_000n,
+          // Fits a 0.005-NEAR function-call key allowance at the observed gas price.
+          // Native gas caps are checked by the signer; a rejected request is never re-keyed.
+          gas: 30_000_000_000_000n,
           deposit: 0n,
           waitUntil: 'FINAL',
         });
