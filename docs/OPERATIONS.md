@@ -1,5 +1,63 @@
 # Operations and live setup
 
+[Overview](../README.md) · [Architecture](ARCHITECTURE.md) · [API](API.md) · [Release identities](RELEASE_REVISIONS.md)
+
+## Current deployment and safe inspection
+
+The existing Render service serves `https://symbiochain-core.onrender.com`;
+the existing Vercel project serves `https://symbiochain.vercel.app`. Both source
+repositories are public. The deployed profile is `EXECUTION_MODE=LIVE`,
+`EXECUTION_ENABLED=false`: finalized mainnet observation with automated spending
+disabled. Preparation workers publish heartbeats and signed dry previews without
+constructing the execution engine. The public frontend has no LIVE arming action.
+
+The treasury is `treasury.symbio-fcef733893.near`, owned by
+`symbio-fcef733893.near`. Current owner limits are 0.25 USDC per authorization,
+0.50 USDC daily, 0.004/0.008 native SOL and a 0.10-NEAR reserve. The owner has
+unpaused the contract and enabled worker permissions; that does not arm the
+application. The temporary deployment key is revoked. Exact identities and
+recorded transactions are in [verification](VERIFICATION.md).
+
+`npm run live:preflight` reports configuration names; `npm run live:inspect`
+checks public account/code identities, storage and balances. These commands
+do not deploy, sign or purchase inference. `npm run probe:market` uses signed
+dry quotes and unfunded addresses; it does not submit a trade. Keep the
+[quote/profit gate](ARCHITECTURE.md#trading-admission) unchanged for losing routes.
+
+## Hosting and environment
+
+Use Node 24 for this backend and Node 22 for the frontend. Start from
+[.env.example](../.env.example); keep local secrets in ignored files and hosted
+secrets in the existing Render service. The frontend needs only its server-side
+backend URL/read token and optional private operator configuration, as described
+in its [integration guide](https://github.com/AviraL0013/SymbioChain/blob/main/docs/backend-integration.md).
+Never copy wallet, database or model credentials into Vercel.
+
+For Supabase, use the **session pooler on port 5432**, with a correctly encoded
+password and `sslmode=verify-full`. The transaction pooler on port 6543 is
+refused. The [bundled provider CA](../certs/README.md) preserves TLS verification;
+an explicit `sslrootcert` takes precedence. `DIRECT_DATABASE_URL` optionally
+selects the migration connection. Keep `DATABASE_POOL_MAX` small per process.
+
+[`scripts/start-render.sh`](../scripts/start-render.sh) applies migrations and
+database hardening, then supervises the API and the workers permitted by the
+selected profile. Hardening enables RLS and removes Data API grants for this
+backend's tables/sequences while retaining Prisma table-owner access. The
+browser never queries Supabase directly. Back up the database and evidence
+encryption key together. Integration tests require a separate `_test` database.
+
+[`render.yaml`](../render.yaml) is a safe PAPER bootstrap, not the current LIVE
+service's complete configuration. Preserve the existing tokens, encryption key,
+database and AI budget identity during environment updates. Use `/readyz` for
+health checks and confirm the deployment reaches `live`; a build alone is not
+release evidence. Free hosting can sleep/restart and does not guarantee a
+continuous worker. Jobs, evidence and event cursors survive in PostgreSQL.
+
+The optional [cron configuration](../deploy/cron-job.example.json) checks public
+readiness only; it contains no administrator or wallet credential. It cannot
+guarantee uptime or prove worker health. Do not create duplicate hosting projects
+or run a second worker supervisor over the same service.
+
 ## Dedicated accounts and custody
 
 Use a new treasury contract account, Brain account, Hand account, Scout recipient, accountant account and offline owner. Never copy unrelated wallet keys into this project. The service must not possess the owner's key.
@@ -10,7 +68,12 @@ Provision per-role function-call keys with limited gas allowances and only the r
 
 The supplied runtime composes the agents on one host. Separate processes/roles are supported; host-level credential isolation and attested execution of the orchestrator are not claimed. A NEAR function-call key has one allowed receiver, so LIVE Intents payments use separate `INTENTS_BRAIN_PRIVATE_KEY` and `INTENTS_HAND_PRIVATE_KEY` values scoped to `intents.near`, while treasury keys target the treasury contract. Register those dedicated Intents public keys on the verifier.
 
-## Configure LIVE
+## LIVE execution prerequisites
+
+This is an execution checklist, not an instruction to arm the current deployment.
+Configuration, owner permissions, capital/gas, compute allowance, approved TEE
+evidence and viable economics remain independent requirements. Selecting LIVE
+observation alone does not authorize any of these actions.
 
 Start from `.env.example`. Required live values include:
 
@@ -44,7 +107,7 @@ Model preflight is non-billable. The completion POST is paid. Hardware collatera
 
 ## Build and initialize the treasury
 
-Use the [funded execution runbook](MAINNET_EXECUTION.md) and `npm run live:inspect` to review the rebuilt WASM, current mainnet storage lock and configured account/code identities before funding. This inspector performs read-only RPC calls and does not authorize deployment or trading.
+Use `npm run live:inspect` to review the rebuilt WASM, current mainnet storage lock and configured account/code identities before any separately reviewed funding/deployment. This inspector performs read-only RPC calls and does not authorize deployment or trading. The existing mainnet foundation is already deployed; do not repeat account creation.
 
 `npm run contract:build` creates `artifacts/symbiochain_treasury.wasm` and its SHA-256. Deploy only this treasury WASM; **never deploy the MPC mock for live use**.
 
@@ -117,7 +180,7 @@ The recorded npm audit has no high/critical findings and retains transitive low/
 
 ## User-facing fault and cost demonstration
 
-Open `/dashboard` and connect with the administrator token. On the colocated PAPER Render profile, `ENABLE_CHAOS_DEMO=true` enables the crash control and `NFT_SHARE_BPS=100` demonstrates the approval gate. Local `.env.example` keeps both features opt-in; its normal CLI demo uses zero rights.
+Use an **isolated local PAPER backend**, following [JUDGING](JUDGING.md). Open that backend's `/dashboard` with its local administrator token. `ENABLE_CHAOS_DEMO=true` enables the crash control and `NFT_SHARE_BPS=100` demonstrates the approval gate. Local `.env.example` keeps both features opt-in; its normal CLI demo uses zero rights. The shared hosted deployment is LIVE and refuses this demo.
 
 1. Pause Scout using its agent card.
 2. Create a PAPER cycle; its Scout job remains queued.
@@ -131,3 +194,50 @@ Open `/dashboard` and connect with the administrator token. On the colocated PAP
 Cancel an armed crash before resuming if the target is wrong. Pause/resume controls remain available independently of crash injection. The spending pause governs new backend spending; the offline owner must pause the contract separately when on-chain signing needs to stop.
 
 For LIVE, leave chaos controls disabled. Supply actual gas/hosting valuation and evidence references for cost approval. Receipt budgets are not final realized charges; a complete business expense observation window and funding costs are still needed for runway.
+
+## Business funding and manual top-ups
+
+The [business architecture](ARCHITECTURE.md#revenue-and-reported-costs) and
+[private API](API.md#business-accounting-and-funding) define the ledger-to-payment
+boundary. Keep `BUSINESS_PAYOUTS_ENABLED=false` until separately funded validation
+is authorized. Outbound funding also requires armed LIVE execution, exact
+`BUSINESS_RECEIVER_ID` / `BUSINESS_INTENTS_ASSET`, reviewed treasury code and
+rights, dedicated `BUSINESS_INTENTS_PRIVATE_KEY` / `BUSINESS_PAYOUT_PRIVATE_KEY`,
+and positive `BUSINESS_MAX_PAYOUT_ATOMS`, `BUSINESS_DAILY_PAYOUT_ATOMS`,
+`BUSINESS_MAX_GAS_YOCTO` and `BUSINESS_MIN_NATIVE_RESERVE_YOCTO` limits.
+
+The payout key must support the distribution's attached native deposit and be
+separate from cycle-finalization/Intents keys; never substitute an owner recovery
+key. Inspect `npm run business:funding -- status` before explicit queue/step/cancel
+operations. The runner persists exact identities before sending, stops after
+three submissions per stage and holds unknown/refunded outcomes for review.
+An RPC with sufficient receipt history is required for recovery. Native gas
+allowances are estimates, not transaction-level maximum gas prices.
+
+The following creates operator tasks from eligible proceeds; it does not buy
+provider credits:
+
+```sh
+npm run business:bridge -- --once --max-atoms APPROVED_INTEGER --credit-usd-micros APPROVED_INTEGER
+```
+
+LIVE tasks require `NEAR_AI_ORG_ID` and freeze
+that target. Operator confirmation remains `OPERATOR_REPORTED_UNVERIFIED`,
+leaves the reservation held and cannot change compute budgets or TEE approval.
+An optional `OPERATOR_TOPUP_WEBHOOK_URL` sends generic alerts only when explicitly
+configured; uncertain sends are not automatically repeated. The PAPER frontend
+can record only PAPER reports; LIVE reports require the private admin API.
+
+## Release and rollback
+
+Validate a compatible backend before releasing its paired frontend on the
+existing projects. Preserve financial journals, private evidence, budget IDs and
+additive database migrations. Check mode, finalized reads, strict schemas,
+credential isolation and the release identity after publication. Documentation
+changes alone need no backend runtime redeployment.
+
+For an incident, disarm execution and reconcile already submitted identities
+before rolling back. Restore a compatible PAPER backend/environment before
+promoting a PAPER-only frontend; an old backend image must not inherit a new
+LIVE configuration. An environment restart or rollback must not reset cumulative
+AI allowances, discard reservations or relabel old PAPER records as LIVE.
