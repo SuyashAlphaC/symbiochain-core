@@ -67,6 +67,11 @@ SYNC_STAKING_CREDITS=false
 
 This authorizes up to $1 of cumulative application spending, with a $0.10 per-request admission ceiling. Before each paid request the backend checks canonical model metadata and reviewed rate ceilings, then reserves the maximum input-context charge plus bounded output/reasoning. At the reviewed catalog values this holds 84,219 USD micros; it is a conservative reservation, not a charged fee. The reservation and inference attempt are committed atomically to the existing PostgreSQL journal. Concurrent workers cannot reserve the same remaining allowance.
 
+The snippet illustrates initial configuration, not a budget reset. Preserve the
+deployed budget ID and cumulative holds; the recorded manual probe has already
+reserved 6 micro-USD from the shared allowance, leaving 999,994 micro-USD for
+automation. Do not restore that hold by copying the example into production.
+
 Actual charges come from `POST /v1/billing/costs` using the inference key and the response's `inference-id`; no organization session is needed for that endpoint. Successful reconciliation releases unused allowance. Timeouts or unavailable billing retain the reservation. A charge above the reservation is recorded and halts further paid requests. See the official [usage-reporting guide](https://docs.near.ai/cloud/guides/usage-reporting) and [GLM reasoning controls](https://docs.near.ai/cloud/reasoning-models).
 
 Keep the budget ID and database stable across restarts, redeploys and key rotation. The budget does not reset daily. Returning to the provider-balance policy preserves the journal for a later return to the same budget. No schema migration is needed.

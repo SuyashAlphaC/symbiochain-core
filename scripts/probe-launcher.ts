@@ -87,7 +87,7 @@ print(json.dumps({'rebuildExempt': registry in policy.skip_reproducibility_image
   if (!report.provenanceVerified) process.exitCode = 2;
 } catch {
   console.error(
-    'Launcher diagnostic unavailable. Check the pinned prerequisites in docs/TEE_LAUNCHER_POLICY.md. No inference was requested.',
+    'Launcher diagnostic unavailable. Check the pinned prerequisites in docs/PRIVATE_INFERENCE.md#launcher-provenance-and-the-brave-verifier. No inference was requested.',
   );
   process.exitCode = 2;
 }

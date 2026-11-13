@@ -67,7 +67,8 @@ results see [VERIFICATION](VERIFICATION.md).
 - [Treasury contract](../contracts/treasury/src/lib.rs): roles, token caps, reserves and one-use payload construction.
 - [Workflow](../src/engine.ts) and [store](../src/store.ts): admission, fencing, reservations and durable recovery.
 - [Provider adapters](../src/providers): quotes, signing, settlement and inference verification.
-- [API contract](API.md), [operations](OPERATIONS.md) and [deployment](DEPLOYMENT.md).
+- [Architecture](ARCHITECTURE.md), [API contract](API.md) and [operations/deployment](OPERATIONS.md).
+- [Release identities](RELEASE_REVISIONS.md): current application baseline and dated deployment artifacts.
 - [Private inference policy](PRIVATE_INFERENCE.md) and [recorded Brave audit](../artifacts/brave-cli-verification.json).
 - [Human demo/X-post draft](DEMO_POST.md) and [idea field](../HACKATHON.md#idea-field-pitch).
 

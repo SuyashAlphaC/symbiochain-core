@@ -79,7 +79,7 @@ Start from `.env.example`. Required live values include:
 
 | Setting                                                                                            | Purpose                                                                                    |
 | -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| `EXECUTION_MODE=LIVE`, `LIVE_TRADING_ENABLED=true`                                                 | Explicit live arming                                                                       |
+| `EXECUTION_MODE=LIVE`, `EXECUTION_ENABLED=true`, `LIVE_TRADING_ENABLED=true`                       | Explicit live arming                                                                       |
 | `NEAR_NETWORK=mainnet`, `NEAR_RPC_URL`                                                             | Actual mainnet; 1Click has no testnet                                                      |
 | `NEAR_CONTRACT_ID`                                                                                 | Deployed guarded treasury                                                                  |
 | `NEAR_BRAIN_ACCOUNT_ID`, `NEAR_BRAIN_PRIVATE_KEY`                                                  | Brain authorization signer                                                                 |
