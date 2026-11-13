@@ -1,151 +1,86 @@
-# Verification record
+# Verification and evidence
+
+[Five-minute walkthrough](JUDGING.md) · [Release identities](RELEASE_REVISIONS.md) · [Public evidence](https://symbiochain.vercel.app/evidence)
+
+## Recorded application checks
+
+The latest validated application comprises **290 automated tests**: 162 backend
+unit, 81 isolated PostgreSQL integration, 19 wallet-tool and 28 frontend tests.
+Rust unit and local NEAR sandbox checks run separately. The
+[RPC recovery release record](../artifacts/mainnet-rpc-recovery.json) identifies
+the application revisions and hosted browser checks. These are recorded results,
+not a claim that this documentation cleanup reran financial actions.
+
+| Check                    | What it establishes                                                                                                     |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------- |
+| Backend unit/integration | Admission, accounting, leases, exact-identity recovery, cost holds and credential/mode boundaries                       |
+| Wallet-tool checks       | Reviewed transaction plans, fee/capital limits and receipt reconciliation without signing                               |
+| Rust/local sandbox       | Roles, token/reserve caps, one-use payloads, distribution liabilities and pull claims                                   |
+| Frontend/browser         | Strict schemas, operator session boundaries, desktop/mobile evidence, stale recovery and no exposed backend credentials |
+| Isolated PAPER replay    | A simulated three-agent cycle reaches `CLOSED` with balanced persistent accounting                                      |
+
+The sandbox's MPC stub produces an intentionally invalid signature. It tests
+contract behavior; actual network signature evidence is listed separately below.
+The [judge guide](JUDGING.md#implementation-checks) has isolated database and
+contract commands. The [frontend test guide](https://github.com/AviraL0013/SymbioChain/blob/main/docs/testing.md)
+keeps mutating browser tests on localhost PAPER backends.
+
+## Mainnet mechanics — November 7–12, 2026
+
+| Evidence                                                                    | Observed outcome and scope                                                                                                         |
+| --------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| [Deployment](../artifacts/mainnet-paused-deployment.json)                   | Treasury WASM and dedicated accounts deployed; original paused foundation                                                          |
+| [Acceptance](../artifacts/mainnet-acceptance.json)                          | Rechecked mainnet receipts and service-balance deposit/withdrawal; owner funding, not sales                                        |
+| [Bounded activation](../artifacts/mainnet-bounded-activation.json)          | Scoped Intents registration and original owner policy; later limits supersede that policy                                          |
+| [Permissions and funding](../artifacts/mainnet-wallet-provisioning.json)    | Reviewed capital, policy updates, original funding outcomes and refunds                                                            |
+| [Internal Intents settlement](../artifacts/mainnet-intents-settlement.json) | Two real internal agent payments; not external revenue                                                                             |
+| [Fresh gas funding](../artifacts/mainnet-fresh-gas-funding.json)            | Actual 1Click/Intents conversions to derived Base/Solana wallets                                                                   |
+| [Owner-authorized MPC transfers](../artifacts/mainnet-owned-execution.json) | Confirmed Base USDC and Solana SOL fixtures, two closed cycles and eight successful NEAR receipts; zero gross P&L                  |
+| [RPC read recovery](../artifacts/mainnet-rpc-recovery.json)                 | Mainnet-verified fallback after transient primary failure, preserved finalized block hashes and hosted HTTP 200 after cache expiry |
+
+The owner authorized the controlled scripts using scoped agent-role keys. The
+AI engine did not initiate those transactions. Funding failures/refunds remain
+in their original records; capital plus recorded continuation NEAR fees stayed
+within the 0.50-NEAR ceiling. This does not value all operating costs in USD.
 
 ## Manual API probe — November 12, 2026
 
-The [recorded probe](../artifacts/manual-ai-probe.json) is one real, explicitly
-authorized unverified inference request. The Gateway returned HTTP 200 and
-`NEAR_AI_OK` from `z-ai/glm-5.3-flash`; usage was 31 prompt and 6 completion
-tokens. Its `inference-id` reconciled to 5,480 nano-USD through the published
-per-request billing API. No inference retry, treasury call, blockchain action,
-TEE acceptance or response-signature verification occurred. Organization binding
-is configured but not independently verified by the completion.
+One authorized [Manual API Probe (Unverified Inference)](../artifacts/manual-ai-probe.json)
+returned HTTP 200 and `NEAR_AI_OK` from `z-ai/glm-5.3-flash`. Provider billing
+reconciled 31 prompt / 6 completion tokens to **5,480 nano-USD ($0.00000548)**.
+It used the newer configured user-owned Cloud key, not the Builders grant key.
+The completion does not independently establish organization membership,
+response-signature verification or TEE approval.
 
-This request is separate from the automated inference ledger, which remains at
-zero. A 6-micro-USD hold reduces the shared $1 allowance's automatic portion to
-999,994 micro-USD. The evidence endpoint reads the captured artifact and cannot
-trigger inference. Earlier zero-request records below remain historical facts.
+There was no retry, treasury invocation or blockchain action. The manual count
+is one; automated paid requests remain zero. A rounded 6-micro-USD hold leaves
+999,994 micro-USD of the shared $1 application allowance for automation. The
+public evidence endpoint reads this artifact and cannot request inference.
 
-## Controlled mainnet release — November 12, 2026
+## TEE audit — November 7, 2026
 
-The [paired release record](../artifacts/mainnet-controlled-release.json)
-identifies the deployed frontend/backend revisions, CI and production checks.
-Current validation passes **152 backend unit tests, 81 isolated PostgreSQL
-integration tests, 19 owner-tool tests and 28 frontend tests**, plus strict checks
-and production builds. Backend and contract CI pass. Local wallet/gas rehearsals
-remain separate from actual network evidence.
+The unmodified pinned Brave CLI's provenance-only run exited **1**. Hardware,
+GPU and TLS subchecks passed, but required launcher provenance, source/OS pins
+and measured services did not meet the full policy. The
+[invocation summary](../artifacts/brave-cli-verification.json) and
+[raw report](../artifacts/brave-cli-provenance-only-report.json) preserve the
+result. No paid completion was issued by that audit. See
+[the policy explanation](PRIVATE_INFERENCE.md#launcher-provenance-and-the-brave-verifier).
 
-Two [owner-authorized MPC transfer fixtures](../artifacts/mainnet-owned-execution.json)
-finalized on Base and Solana, and both contract cycles closed with zero gross
-P&L. Eight successful NEAR receipts cover authorization, signing, submission and
-finalization. Fresh Intents conversions funded destination gas. Failed/expired
-funding attempts and principal refunds are retained in the fee reconciliation.
-Capital input plus actual continuation NEAR fees stayed below 0.50 NEAR.
+## Historical testnet and PAPER records
 
-Hosted desktop/mobile checks cover the new evidence panels, live balances,
-receipt lookup, wallet choices, stale recovery and credential exposure. There
-were zero browser credential findings, direct browser-to-backend requests or
-paid inference requests. The runtime remains disarmed and TEE-quarantined.
-Owner permissions, capital and gas checks pass; profitable trading, external
-revenue, automatic provider credit purchases and business-funded NFT payouts
-remain unproven. Submission is on hold. Older sections below describe dated
-observations and do not override this release.
+- [Testnet rehearsal](../artifacts/testnet-rehearsal.json): real testnet contract/MPC checks with explicitly synthetic economics.
+- [Hosted PAPER verification](../artifacts/hosted-paper-verification.json) and [operator recovery](../artifacts/operator-hosted-verification.json): earlier simulation and worker crash/reclaim checks.
+- [Funding release manifest](../artifacts/funding-release-manifest.json): isolated conversion/distribution recovery checks and state-preserving testnet upgrade; no business-funded mainnet payout.
 
-## Testnet rehearsal on 2026-11-02
+These artifacts retain their dates and scope. Separate Sepolia/devnet transfers
+are authorization fixtures, not a complete profitable AI workflow. The current
+public evidence route prioritizes mainnet; `/testnet` redirects to it.
 
-The [separate report](../artifacts/testnet-rehearsal.json) records the actual
-testnet treasury deployment, role/policy rejection checks, pause/resume, funded
-NEAR_LEDGER service payments, real testnet MPC ECDSA and Ed25519 signatures,
-testnet NFT mint and test-token distribution/claim. The signed target-chain
-fixtures were not broadcast. Settlement and positive reported P&L are synthetic;
-faucet funding and distributions are not business revenue.
+## Interpretation
 
-The free authenticated gateway/model hardware audit passes. Final deployment
-approval and signed inference remain blocked by the documented provenance policy.
-No paid inference request or mainnet transaction was made. The run left the
-treasury paused. See [reproduction and scope](TESTNET_REHEARSAL.md).
-
-Local validation passes 96 backend unit tests, 50 PostgreSQL integration tests,
-TypeScript and the production build. The frontend has 20 regression tests plus a
-Chromium check of `/testnet` on desktop and at 390px. This is an isolated rehearsal,
-not evidence of a live autonomous trading business or of funded mainnet settlement.
-
-## Earlier verification
-
-Local and hosted verification performed on 2026-10-27. Evidence categories are kept separate. The Render/Supabase PAPER backend is publicly hosted and verified. No funded mainnet transaction, authenticated real model completion or external financial self-sufficiency is asserted.
-
-| Gate                   | Result                                                                                                                                                                                                                                                                                          |
-| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Prisma migrations      | Seven versioned migrations applied to local PostgreSQL, the isolated `_test` database and dedicated Supabase; all 18 backend tables have RLS and zero Data API grants                                                                                                                           |
-| TypeScript             | Strict typecheck and production build pass                                                                                                                                                                                                                                                      |
-| Unit tests             | 35 pass: units, commitments, policy economics, encryption, quote/response signatures, hardware policy, malformed DCAP input, EVM/SOL assembly, receipt freshness, archives, safe RPC values, optional JWT, plus five public-ITA cases for signature, nonce, time, issuer and platform rejection |
-| PostgreSQL integration | 34 pass: workflow closure, concurrent processing, stale leases, held reserves, auth/replay, immutable journals, paid-inference and Intents nonce recovery, cost approval, plus 12 LIVE-orchestration cases covering both legs, dropped sends, refunds, retry limits and idle funding            |
-| Rust unit tests        | 12 pass: roles/revocation, pause, budget and independent token caps, one-use signing, service conservation, receipt mechanics, failed payout credit and Solana payload structure                                                                                                                |
-| NEAR sandbox           | 10 checks pass: real local contract calls, payload equality against viem/web3.js, duplicate/unauthorized rejection, NFT mint, distribution/claim, service settlement/storage and withdrawal protection                                                                                          |
-| PAPER demo             | Reaches CLOSED with zero active reservation, balanced journals and explicit SIMULATED evidence                                                                                                                                                                                                  |
-| Export/replay          | A private PAPER archive exports and replays with source mode preserved and checksum valid                                                                                                                                                                                                       |
-| Docker                 | Non-root image builds; local container readiness returns 200, authenticated swarm read returns 200, unauthenticated read returns 401                                                                                                                                                            |
-| Hosted deployment      | Render free service reaches `live`; public readiness 200, unauthorized read/write rejection 401, authenticated HTTPS/WSS and cursor replay pass. All three workers close a PAPER cycle with zero reserves and balanced journals.                                                                |
-| npm audit              | Zero high/critical findings; transitive low/moderate findings remain documented in the operations guide                                                                                                                                                                                         |
-| Public market probe    | Actual dry quotes verified using the approved 1Click manager key; captured conservative return is below input, so profit gate rejects it                                                                                                                                                        |
-| Public gateway probe   | Real Intel Trust Authority gateway token: PS384 signature, pinned issuer/key source, fresh signed nonce, expiry, UpToDate TDX and debug-disabled claims verified; application measurement remains unapproved and model inference remains unverified                                             |
-
-GitHub CI [run 40544585877](https://github.com/SuyashAlphaC/symbiochain-core/actions/runs/40544585877) passes both backend and contract jobs at `af16c74068a28b99f668b1b57528f484ae8261df`. This includes 35 unit tests, 34 PostgreSQL integration tests, the PAPER demo, audit gate, 12 Rust tests and 10 sandbox checks. cron-job.org recorded two scheduled HTTP 200 responses from the hosted readiness endpoint. See [hosting evidence](../artifacts/hosting-preflight.json).
-
-## Commands
-
-```bash
-npm run check
-npm run test:integration
-npm run demo
-npm run contract:test
-npm run contract:build
-bash scripts/build-mock.sh
-bash scripts/install-sandbox.sh
-npm run contract:integration
-npm run probe:market
-npm run probe:attestation
-npm audit --audit-level=high
-docker build -t symbiochain-core:local .
-```
-
-`artifacts/market-probe.json` is a real public quote snapshot with signatures and its capture time. It is not a settlement. Sandbox output uses an intentionally invalid-signature MPC stub and synthetic accountant-reported P&L. Hardware-policy tests inject verified-report fixtures; the separate malformed-quote test calls the actual DCAP library and rejects invalid bytes. Valid offline signing tests use locally generated keys, not MPC-generated signatures.
-
-`test/integration/live.test.ts` exercises the production LIVE orchestration against PostgreSQL with injected RPC, treasury, inference and payment transports. Quotes and EVM/Solana transaction signatures are cryptographically verified using local test keys; network balances, hardware evidence and chain settlement are fixtures. These tests reproduce the PostgreSQL advisory-lock deserialization failure, recover lost broadcasts using identical signed bytes, retain reservations on exhausted retries, close first-leg refund authorizations, and verify the idle-funding confirmation boundary. They do not establish mainnet execution or genuine confidential inference. Production configuration exposes no fixture or attestation-bypass switch.
-
-The optional-JWT regression first failed with `LIVE requires ONECLICK_JWT` and now passes without a partner token. The same test still rejects unarmed trading, missing approved model measurements and a missing inference key. This removes an unnecessary access dependency; it does not waive anonymous platform fees or establish funded settlement. `live:preflight` now lists the remaining 16 missing settings and reports the selected 1Click authentication mode separately.
-
-The contract build emits the current `artifacts/symbiochain_treasury.wasm` SHA-256. Use the hash from your build/release; an artifact hash alone does not imply deployment.
-
-`artifacts/public-attestation-probe.json` contains a real public gateway ITA token and Intel public keys acquired from a pinned HTTPS endpoint. The signature and signed caller nonce were checked at capture time. The token expires after a short interval; the artifact records historical verification, not permanent freshness. `deploymentMeasurementApproved` and `modelInferenceVerified` are false. This diagnostic neither exercises the production DCAP verifier nor purchases inference or moves funds. Its adversarial unit cases use locally generated RSA fixtures.
-
-## Remaining live evidence
-
-Infrastructure verification additionally checked the pinned SDK's types, preservation of Docker builds/API migration/readiness/worker startup, and a read-only Railway plan with three additions, zero changes and zero destructions. See [plan summary](../artifacts/infrastructure-plan.json). Provisioning attempts are rejected despite Hobby metadata; the selected empty environment has no services or pending deployment work. A queued template response was not counted as successful provisioning. The alternative Railway plan remains unapplied. Separate [hosted PAPER verification](../artifacts/hosted-paper-verification.json) establishes the selected Render/Supabase runtime checks.
-
-Run `npm run live:preflight` to list missing configuration **names** without displaying secrets or issuing a transaction. Dedicated funded accounts/wallets, provider/session credentials, approved measurements and target-chain gas remain prerequisites. Supabase and Render were selected for the PAPER deployment. Real attested inference, actual MPC signing, funded two-leg settlement, live cost valuation and a demonstrated compute-funding cycle remain external validation work. Direct purchase of NEAR AI credits also needs a supported customer payment protocol; the inspected public interfaces do not supply one. See the [provider funding decision](PROVIDER_FUNDING.md). Do not replace those gates with paper/sandbox output.
-
-## Operator and economics work on 2026-10-29
-
-Local strict TypeScript/build and 35 unit tests pass. PostgreSQL integration now has 39 passing cases, including operator access control, disabled/LIVE crash rejection, one-shot crash consumption/cancellation, same-job lease recovery, cost approval wake-up, and negative-profit rejection after explicit settlement fees. Receipt profit calculation now deducts those separately recorded base-asset settlement fees in addition to approved operating costs.
-
-The [local browser record](../artifacts/operator-local-verification.json) uses actual Chromium against the API/worker supervisor. It verifies disabled read-only controls, a real worker SIGKILL, supervisor exit 137/restart, Scout reclaim on attempt two, cost-gated reconciliation, immutable approval and closure with explicitly simulated 100-bps rights. Desktop and 390px mobile checks report no horizontal overflow or page errors. The local restart supervisor emulates host restart; hosted recovery evidence must be recorded separately after deployment.
-
-This does not establish a compute-credit purchase, complete actual business costs, independently verified cost valuation, funded mainnet execution or an actual mainnet NFT mint.
-
-Hosted operator verification passes on Render at revision `10964bb497bcdb283a2fe3fc30569f89b1c187dd`: actual targeted worker crash, same-job recovery on attempt two, WSS reconnection, administrative cost approval and closure with explicitly simulated rights. PostgreSQL checks confirm one settlement journal, one simulated inference usage record, one crash-trigger event and zero unbalanced journal/asset groups. The [hosted record](../artifacts/operator-hosted-verification.json) includes fresh Supabase TLS/RLS/grant checks. GitHub CI [run 40911885653](https://github.com/SuyashAlphaC/symbiochain-core/actions/runs/40911885653) passes both backend and contract jobs (35 unit, 39 integration, 12 Rust tests, 10 sandbox checks). The delayed-request browser regression also verifies that other controls stay disabled throughout pending actions.
-
-## Earned-proceeds funding checks — November 6, 2026
-
-`npm run check` passes TypeScript, 129 unit tests and the production build.
-`npm run test:integration` passes 70 cases on isolated PostgreSQL. Rust has 14
-passing unit tests, and the local NEAR sandbox passes real distribution/pull-claim,
-pause and duplicate-reference checks. The paired frontend passes 23 regression
-tests, its full production check, and isolated Chromium/Fastify/PostgreSQL browser
-checks at desktop and 390px. No backend credential exposure or direct browser
-request to the backend was observed. These are implementation checks, not funded
-mainnet business proof.
-
-Funding tests cover exact signed-quote/payload bounds, destination-credit parsing,
-nonce and finality checks, lost accepted responses for each payment, restart and
-concurrency, one journal per stage, retry exhaustion, disabled writes, operating
-loss/unknown-charge holds, cancellations, refunds and gas-cap breaches. The
-compute-purchase endpoint returns 409 without creating a payment or ledger row.
-
-The [public protocol check](../artifacts/funding-protocol-review.json) validates a
-real unsigned provider response with zero signatures/submissions. The
-[credit parser check](../artifacts/funding-credit-proof-review.json) validates a
-third party's final public receipt, not a SymbioChain sale or swap. The
-[testnet treasury upgrade](../artifacts/testnet-funding-upgrade.json) changes code
-only, preserves stored state and leaves the treasury paused. No mainnet funds or
-paid inference were used. Exact candidate/deployment/submission boundaries are in
-the [funding manifest](../artifacts/funding-release-manifest.json).
+Current scope and unfinished business claims are consolidated in the
+[README](../README.md#5-not-yet-proven). A passing unit test, owner deposit,
+invoice, manual purchase report or sandbox payout cannot substitute for external
+revenue, realized net profit or purchased provider credits. Automated execution
+remains disarmed and TEE-quarantined. Submission remains on hold.

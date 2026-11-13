@@ -1,5 +1,7 @@
 # Private inference verification
 
+[Overview](../README.md) · [Recorded checks](VERIFICATION.md) · [Operations](OPERATIONS.md)
+
 Use the NEAR AI Cloud gateway at `https://cloud-api.near.ai`. Model privacy is a separate choice: NEAR-operated Confidential TEE models support the NEAR model-evidence flow, while Incognito models run on upstream providers outside that model TEE. Third-party confidential providers have different evidence formats. See the current [model catalog documentation](https://docs.near.ai/cloud/models).
 
 ## Selected model
@@ -45,6 +47,12 @@ Previously completed inference caches also recheck deployment policy. Removing a
 
 ## Builders keys and application budgets
 
+The current service uses the newer user-owned Cloud key configured with its
+organization ID. The earlier Builders-key workaround remains supported. Neither
+an org ID in configuration nor a successful completion independently verifies
+organization membership. The single [manual probe](../artifacts/manual-ai-probe.json)
+used the newer key and reconciled to $0.00000548 without opening any TEE gate.
+
 `COMPUTE_CREDIT_POLICY=PROVIDER_BALANCE` preserves the original organization-balance guard. Unknown, expired, or insufficient balance stops LIVE inference. Staking-credit sync is available only with that policy.
 
 For a Builders grant whose organization is inaccessible, use the provided inference key and select:
@@ -59,6 +67,11 @@ SYNC_STAKING_CREDITS=false
 
 This authorizes up to $1 of cumulative application spending, with a $0.10 per-request admission ceiling. Before each paid request the backend checks canonical model metadata and reviewed rate ceilings, then reserves the maximum input-context charge plus bounded output/reasoning. At the reviewed catalog values this holds 84,219 USD micros; it is a conservative reservation, not a charged fee. The reservation and inference attempt are committed atomically to the existing PostgreSQL journal. Concurrent workers cannot reserve the same remaining allowance.
 
+The snippet illustrates initial configuration, not a budget reset. Preserve the
+deployed budget ID and cumulative holds; the recorded manual probe has already
+reserved 6 micro-USD from the shared allowance, leaving 999,994 micro-USD for
+automation. Do not restore that hold by copying the example into production.
+
 Actual charges come from `POST /v1/billing/costs` using the inference key and the response's `inference-id`; no organization session is needed for that endpoint. Successful reconciliation releases unused allowance. Timeouts or unavailable billing retain the reservation. A charge above the reservation is recorded and halts further paid requests. See the official [usage-reporting guide](https://docs.near.ai/cloud/guides/usage-reporting) and [GLM reasoning controls](https://docs.near.ai/cloud/reasoning-models).
 
 Keep the budget ID and database stable across restarts, redeploys and key rotation. The budget does not reset daily. Returning to the provider-balance policy preserves the journal for a later return to the same budget. No schema migration is needed.
@@ -72,3 +85,71 @@ The [gateway TLS flow](https://docs.near.ai/cloud/verification/cloud-api/tls) re
 [Client-to-model E2EE](https://docs.near.ai/cloud/guides/e2ee-chat-completions) is an optional additional layer. It requires a verified model encryption key and a compatible serving path. It is a separate implementation from TLS binding and must not be claimed from an API-key check.
 
 The [gateway verification guide](https://docs.near.ai/cloud/verification/cloud-api) defines the full request path. Prefer its current requirements over older example scripts or static model tables.
+
+## Launcher provenance and the Brave verifier
+
+The recorded November 7 audit pins
+[brave/near-verifier at 72a1a994](https://github.com/brave/near-verifier/tree/72a1a994f3ab44c00ed4747398c68d38ac46bffa).
+Its image verifier requires signed SLSA provenance and an accepted source commit
+**before** applying the launcher's rebuild exemption. A source pin does not
+replace missing build-to-source evidence. The
+[compose-manager reproducibility issue](https://github.com/nearai/compose-manager/issues/64)
+does not approve an unsigned image.
+
+The unmodified CLI's `--skip-reproducibility` audit exited **1**. It did not
+rebuild images. Intel TDX, GPU and TLS subchecks passed, but the exact launcher's
+SLSA record was unavailable; OS/source pins also differed and two expected
+gateway services were absent. These are separate failures. Successful subchecks
+cannot establish complete deployment approval.
+
+Preserved evidence: [launcher diagnostic](../artifacts/launcher-provenance-verification.json),
+[CLI invocation and flags](../artifacts/brave-cli-verification.json),
+[raw CLI report](../artifacts/brave-cli-provenance-only-report.json).
+The affected image is:
+
+```text
+nearaidev/compose-manager-launcher@sha256:079a14b41deb11e0e27f9b69648e8b3d89bd6fb9ccf6071643b8f447fa415085
+```
+
+`npm run probe:launcher` runs the targeted diagnostic using the pinned verifier
+checkout and prerequisites identified in its recorded artifact. It purchases no
+inference and installs no approved measurement. For an independent CLI rerun,
+use that exact source revision and recorded flags; supply `NEAR_API_KEY` privately
+through the process environment, not command history or committed files.
+
+For the targeted diagnostic, use Python 3.11+, Poetry and Git. Clone the verifier
+into `.data/tee-gates/brave-near-verifier`, check out the exact revision above
+and run `POETRY_VIRTUALENVS_IN_PROJECT=true poetry install --only main --no-interaction`
+there. Install the official Linux AMD64
+[cosign v3.0.6](https://github.com/sigstore/cosign/releases/tag/v3.0.6) at
+`.data/tee-gates/bin/cosign` with executable permission and SHA-256
+`c956e5dfcac53d52bcf058360d579472f0c1d2d9b69f55209e256fe7783f4c74`.
+Return to the backend root before running the probe. It refuses changed verifier
+source or a different binary. These optional tools are not production dependencies.
+
+Keep automated inference quarantined until required provenance and the complete
+observed deployment are independently reviewed, or a reviewed replacement is
+available. Neither a manual paid completion nor this rebuild exemption can waive
+the application policy. Backend workers themselves remain outside a TEE.
+
+## Provider credit purchases
+
+The recorded public-interface review found request-cost reporting, organization
+balances and staking-credit sync, but no supported customer automation contract
+binding invoice, payment, idempotent recovery and final credit attribution. See
+the reviewed [public OpenAPI](https://github.com/nearai/docs/blob/main/api-reference/openapi.json)
+and [billing architecture](https://github.com/nearai/cloud-api/blob/main/CLAUDE.md#external-billing-service).
+Staking sync, grants and privileged balance updates are not proceeds-funded
+credit purchases.
+
+The [sanitized PingPay checkout inspection](../artifacts/pingpay-checkout-review.json)
+proves only that an unpaid organization-targeted checkout existed. Its private
+URL and customer identifiers remain outside Git. NEAR AI's merchant credentials
+are not available to this project; a separate SymbioChain merchant account would
+not purchase Cloud credits. No undocumented browser RPC or invented payment
+endpoint is used. A new API key or mainnet deployment alone cannot implement
+this missing protocol.
+
+The implemented [manual bridge](ARCHITECTURE.md#human-in-the-loop-metabolic-bridge)
+records tasks and unverified operator reports. It cannot mark provider credits
+purchased, increase allowance, settle a proceeds reservation or approve a TEE.

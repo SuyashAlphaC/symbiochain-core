@@ -85,8 +85,12 @@ in the [judge walkthrough](docs/JUDGING.md).
 
 Source map: [workflow](src/engine.ts), [durable ledger/jobs](src/store.ts),
 [provider adapters](src/providers), [NEAR contract](contracts/treasury/src/lib.rs),
-[API/WebSocket contract](docs/API.md), [operations](docs/OPERATIONS.md),
-[deployment](docs/DEPLOYMENT.md), [demo/X-post draft](docs/DEMO_POST.md).
+[architecture](docs/ARCHITECTURE.md), [API/WebSocket contract](docs/API.md),
+[operations and deployment](docs/OPERATIONS.md),
+[private inference](docs/PRIVATE_INFERENCE.md), [release identities](docs/RELEASE_REVISIONS.md)
+and [demo/X-post draft](docs/DEMO_POST.md). The judge walkthrough and verification
+guide above complete the eight-document reference set; dated evidence stays in
+`artifacts/` rather than separate status reports.
 
 ## 4. Simulated vs. Real
 
@@ -98,7 +102,7 @@ Source map: [workflow](src/engine.ts), [durable ledger/jobs](src/store.ts),
 | Historical testnet   | Real testnet MPC plus separately confirmed Sepolia/devnet transfers; synthetic economics | Test-network signing and transfer mechanics                                          |
 | Manual unverified AI | One actual Cloud API completion with reconciled billing                                  | Key authentication, model availability and per-request cost reporting                |
 
-Detailed [testnet records](docs/TESTNET_REHEARSAL.md) retain their original dates.
+Historical [testnet records](docs/VERIFICATION.md#historical-testnet-and-paper-records) retain their original dates.
 The manual AI probe used the configured Cloud key; the response does not
 independently establish its configured organization membership or a verified
 response signature.
@@ -116,7 +120,7 @@ response signature.
   is owner capital; complete operating-cost valuation and market demand remain
   to be established.
 - **Automatic AI-credit purchases.** The published customer payment-to-credit
-  interface needed for automation is unavailable; the [manual funding bridge](docs/SERVICE_LOOP.md#human-in-the-loop-metabolic-bridge)
+  interface needed for automation is unavailable; the [manual funding bridge](docs/ARCHITECTURE.md#human-in-the-loop-metabolic-bridge)
   records operator tasks.
 - **Profit-funded NFT distributions.** Conversion/allocation/recovery code is
   implemented and tested; business-profit-backed mainnet payouts remain unproven.

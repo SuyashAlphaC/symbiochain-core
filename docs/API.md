@@ -1,5 +1,7 @@
 # Frontend integration contract
 
+[Architecture](ARCHITECTURE.md) · [Operations](OPERATIONS.md) · [Frontend proxy](https://github.com/AviraL0013/SymbioChain/blob/main/docs/backend-integration.md)
+
 The server uses Fastify and **raw WebSockets**, not Socket.IO. `/docs` exposes Swagger UI; `/openapi.json` requires read authentication. Amounts and sequence numbers are strings to preserve precision. Dates are UTC ISO 8601.
 
 ## Authentication
@@ -30,6 +32,21 @@ Normal responses omit signed transaction bytes, private keys, raw model prompts,
 | `POST /api/admin/agents/SCOUT/pause`    | Admin  | Pause a lane; role is SCOUT/BRAIN/HAND; action is pause/resume                                   |
 
 Lane pause is a durable control, not a shell command that kills arbitrary processes. In-flight work can finish its current step. The independent NEAR contract pause is an owner operation; see the runbook.
+
+## Mainnet publication
+
+These read-authenticated routes are separate from mode-bound PAPER viewer
+routes. Next.js proxies fixed curated projections without exposing the backend
+token. LIVE reads do not arm execution or construct a signer.
+
+| Route                                                                                                                                         | Result                                                                |
+| --------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `GET /api/runtime`                                                                                                                            | Explicit mode, network and execution-enabled state                    |
+| `GET /api/mainnet/snapshot`                                                                                                                   | Finalized treasury/account state at one pinned block hash             |
+| `GET /api/mainnet/activation`, `/api/mainnet/preparation`                                                                                     | Owner policy, permissions and read-only preparation gates             |
+| `GET /api/mainnet/wallet?accountId=...`                                                                                                       | Validated public account balance                                      |
+| `GET /api/mainnet/transaction?hash=...`                                                                                                       | Bounded transaction/receipt lookup                                    |
+| `GET /api/evidence/mainnet-intents`, `/api/evidence/mainnet-provisioning`, `/api/evidence/mainnet-execution`, `/api/evidence/manual-ai-probe` | Captured evidence; never triggers a new trade, signature or inference |
 
 ## Create a paper cycle
 
@@ -114,3 +131,37 @@ Administrator-only crash controls:
 - `POST /api/admin/demo/cancel-crash` cancels an unconsumed command.
 
 Controls require PAPER, `ENABLE_CHAOS_DEMO=true`, and colocated API/worker processes. The Render supervisor declares colocation. The worker consumes the ephemeral command after claiming the matching durable job and sends **SIGKILL to itself**. It accepts no arbitrary process ID, executable or file path from the API. The host restarts the service; the expired PostgreSQL job lease can then be reclaimed. All three lanes share that worker process in this hosting profile. The dashboard reconnects with its event cursor; it does not describe an agent pause as a process crash. Crash controls are refused in LIVE.
+
+## Business accounting and funding
+
+All writes and private report/task reads require administrator authorization;
+the existing frontend provides no public financial-write proxy. LIVE/disarmed
+mode independently refuses mutations. References are immutable and retries with
+changed terms conflict. [Architecture](ARCHITECTURE.md#revenue-and-reported-costs)
+explains revenue recognition and accountant trust boundaries. Canonical input
+schemas are in [business.ts](../src/business.ts), [risk-services.ts](../src/risk-services.ts)
+and [business-funding.ts](../src/business-funding.ts).
+
+| Endpoint                                                                      | Access / behavior                                                                                |
+| ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `GET /api/business/status`, `/api/business/funding`, `/api/operations/status` | Read; curated accounting, implementation capability and operational status                       |
+| `POST /api/business/invoices`                                                 | Admin; crystallize a closed cycle's fee with agreed terms and complete reported costs            |
+| `POST /api/business/invoices/:reference/receipt`                              | Admin; reconcile existing final LIVE receipt using `txHash` and `senderId`; sends no payment     |
+| `POST /api/business/windows`                                                  | Admin; close a nonoverlapping cost observation window                                            |
+| `POST /api/business/reservations`                                             | Admin; reserve reported available net for `COMPUTE_PURCHASE` or `NFT_DISTRIBUTION`; no payment   |
+| `POST /api/business/payouts`                                                  | Admin; queue `reservationReference` and positive `minimumNearYocto` under explicit funding gates |
+| `POST /api/business/payouts/:reference/cancel`                                | Admin; cancel only before submission/conversion; unknown outcomes remain held                    |
+| `POST /api/business/compute-purchases`                                        | Admin; returns 409 `PROVIDER_PURCHASE_PROTOCOL_REQUIRED`, creates no payment                     |
+| `POST /api/business/services`                                                 | Admin; create immutable prepaid `risk-assessment` terms and a durable job                        |
+| `POST /api/business/services/:reference/simulate-payment`                     | Admin; PAPER-only synthetic advance                                                              |
+| `GET /api/business/services/:reference/report`                                | Admin; delivered private report, otherwise 404                                                   |
+| `GET /api/business/compute-topups`                                            | Admin; bounded private task list                                                                 |
+| `POST /api/business/compute-topups`                                           | Admin; task from `reservationReference` and `requestedCreditUsdMicros`                           |
+| `POST /api/business/compute-topups/report`                                    | Admin; immutable unverified report, not provider-credit proof                                    |
+
+Cost inputs use integer-atom strings for all of `compute`, `gas`, `hosting`,
+`venue` and `other`, plus references, approver and complete billed-inference
+reconciliation. No financial record has an edit/delete endpoint. A manual top-up
+report freezes the task organization and records a receipt digest, reported USD
+credits and funding source. It cannot settle reservations, change an allowance
+or open the TEE gate. See [recovery and configuration](OPERATIONS.md#business-funding-and-manual-top-ups).
